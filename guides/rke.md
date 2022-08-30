@@ -4,7 +4,9 @@
 [Setting up Rancher on Your Local Machine with an RKE Provisioned Cluster](https://community.suse.com/posts/setting-up-rancher-on-your-local-machine-with-an-rke-provisioned-cluster)
 
 ## Pre-flight checklist
-- [ ] Install [RKE](https://rancher.com/docs/rke/latest/en/installation/#download-the-rke-binary) on your host machine.
+- [ ] Install these pre-requisites on your host machine:
+  - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+  - [RKE](https://rancher.com/docs/rke/latest/en/installation/#download-the-rke-binary)
 - [ ] 4 VMs (CPU Cores 4, RAM 8GB, Storage 25GB, Rocky Linux release 8.6).
 - [ ] 3 VMs (CPU Cores >=8, RAM >=16GB, OS Storage 50GB, Data Storage 100GB, Rocky Linux release 8.6).
 - [ ] 2 Public IPs, and allow access to port 80 and 443.
