@@ -6,9 +6,9 @@
 ## Pre-flight checklist
 Fulfill all these items before running the script:
 - [ ] Install all required packages and libraries.
-  - [ ] kubectl.
-  - [ ] passlib (pip).
-- [ ] Prepare a dedicated host for VIKINGS.
+  - [ ] [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+  - [ ] [passlib](https://pypi.org/project/passlib)
+- [ ] Prepare a dedicated domain name for VIKINGS.
 - [ ] Prepare a remote SQL database for VIKINGS (recommended: PostgreSQL or MariaDB).
 - [ ] [Replace binary files](#replace-binary-files) under `template/binaries` according to your institution.
 
