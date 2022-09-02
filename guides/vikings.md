@@ -179,13 +179,6 @@ Field('SECRET_KEY', 'Django Secret Key', special=True, immutable=True, secret=Tr
 Field('SUPPORT_EMAIL', 'Support Email Address', required=True, default='ifirexman@sifulan.my'),
 Field('STORAGE_CLASS', 'PVC Storage Class', required=True, immutable=True, default='freenas-nfs-csi'),
 Field('STORAGE_SIZE', 'PVC Storage Size', required=True, default='50Mi'),
-# additional
-Field('NAMESPACE', 'Kubernetes Namespace', hidden=False),
-Field('HOST', 'Application Host', hidden=False),
-Field('BRAND_NAME', 'Brand Name', hidden=True),
-Field('MANIFEST_PATH', 'Manifest Path', hidden=True),
-Field('HOST_EMAIL', 'Host Email', hidden=True),
-Field('HOST_LDAP', 'Host LDAP', hidden=True),
 ```
 
 ### Verify new config
