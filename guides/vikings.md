@@ -3,6 +3,7 @@
 ## Pre-flight checklist
 Fulfill all these items before running the script:
 - [ ] Provisioned a Kubernetes cluster and logged into your Login node.
+- [ ] Prepare a Kubernetes namespace for VIKINGS.
 - [ ] Prepare a dedicated domain name for VIKINGS.
 - [ ] Prepare a remote MariaDB database for VIKINGS.
 
