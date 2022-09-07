@@ -4,16 +4,7 @@ In this tutorial, we are going to setup a Kubernetes cluster by using the [Ranch
 
 ## Pre-flight checklist
 
-- [ ] 4 VMs (CPU Cores 4, RAM 8GB, Storage 25GB, Rocky Linux release 8.6).
-  - [ ] 1 Login node.
-  - [ ] 3 Master nodes.
-- [ ] 3 VMs (CPU Cores >=8, RAM >=16GB, OS Storage 50GB, Data Storage 100GB, Rocky Linux release 8.6).
-  - [ ] 3 Worker nodes.
-- [ ] 2 Public IPs, and allow access to port 80 and 443.
-- [ ] Domain name (pointed to one of these Public IPs):
-  - fedmanager.{{ your own domain name }}
-  - ds.{{ your own domain name }}
-  - mdq.{{ your own domain name }}
+Please refer to [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file for pre-flight checklist.
 
 ---
 
@@ -174,6 +165,16 @@ chmod +x ./rke
 mv rke /usr/local/bin/
 ```
 
+#### ```helm```
+
+Helm helps you manage Kubernetes applications — Helm Charts help you define, install, and upgrade even the most complex Kubernetes application.
+
+To install ```helm``` at the login node:
+
+```bash
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+
 --- 
 ### Prepare Kubernetes Cluster file
 
@@ -301,10 +302,259 @@ kubectl get nodes
 
 ---
 
-## Set up Longhorn block storage
-- pass.
+## Setting Up Longhorn Storage
+
+Longhorn is a lightweight, reliable, and powerful distributed block storage system for Kubernetes. Longhorn implements distributed block storage using containers and microservices. The storage controller and replicas are themselves orchestrated using Kubernetes. We will use Longhorn for storing persistent storage objects.
+
+### Longhorn Node Preparation
+
+For each __worker__ node:
+
+1. Login to the node by using SSH
+2. Create ```/var/lib/longhorn``` folder
+
+   ```bash
+   mkdir /var/lib/longhorn
+   ```
+
+3. Format the dedicated disk for data storage and mount it at the ```/var/lib/longhorn``` folder
+
+   ```bash
+   mkfs.ext4 /dev/sdb
+   mount /dev/sdb /var/lib/longhorn
+   ```
+
+   In the above example, it is assumed that the drive letter for the dedicated disk for data storage is ```sdb```. You can use the ```fdisk -l``` command to find out the drive letter for your system. To make the operating system to automatically mount the disk, you can add the following entry at the last line of the ```/etc/fstab``` file:
+
+   ```bash
+   /dev/sdb                /var/lib/longhorn       ext4    defaults        0 0
+   ```
+
+4. Install NFSv4 client and open-iscsi
+
+   ```bash
+   yum --setopt=tsflags=noscripts install iscsi-initiator-utils -y
+   echo "InitiatorName=$(/sbin/iscsi-iname)" > /etc/iscsi/initiatorname.iscsi
+   systemctl enable iscsid
+   systemctl start iscsid
+   modprobe iscsi_tcp
+   yum install nfs-utils -y
+   ```
+
+### Install Longhorn
+
+At the login node:
+
+1. Install Longhorn on the Kubernetes cluster using this command:
+
+   ```bash
+   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/longhorn.yaml
+   ```
+
+   You can use the ```k9s``` tool or ```kubectl get pods -n longhorn``` to monitor the status. A successfully deployed Longhorn looks something like this:
+
+   ```bash
+   NAME                                READY   STATUS    RESTARTS      AGE
+   longhorn-iscsi-installation-9m8bg   1/1     Running   2 (50d ago)   50d
+   longhorn-iscsi-installation-th4d6   1/1     Running   2 (50d ago)   50d
+   longhorn-iscsi-installation-z67c5   1/1     Running   1 (50d ago)   50d
+   longhorn-nfs-installation-8hrtv     1/1     Running   1 (50d ago)   50d
+   longhorn-nfs-installation-95rzq     1/1     Running   2 (50d ago)   50d
+   longhorn-nfs-installation-fcrl6     1/1     Running   2 (50d ago)   50d
+   ```
+
+2. Once the installation is completed, you can check whether Longhorn storage class was successfully created by using the command below:
+
+   ```bash
+   kubectl get sc
+   ```
+
+   The output should be something like this:
+
+   ```bash
+   NAME                 PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+   longhorn (default)   driver.longhorn.io   Delete          Immediate           true                   49d
+   ```
 
 ---
 
-## Configure load balancer (MetalLB) and Nginx Ingress
-- pass.
+## Setting up MetalLB, NGINX Ingress, and Cert Manager
+
+We are going to use MetalLB as the Load-Balancer for our kubernetes cluster and configure the nginx ingress to take IP address that connect external network with the pods.
+
+### Install MetalLB
+
+At the login node:
+
+1. Run the following command to install MetalLB:
+
+   ```bash
+   kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.5/config/manifests/metallb-native.yaml
+   ```
+
+   You can use the ```k9s``` tool or ```kubectl get pods -n metallb-system``` to monitor the status. A successfully installed MetalLB looks something like this:
+
+   ```bash
+   NAME                          READY   STATUS    RESTARTS   AGE
+   controller-6b8d7594db-hkxg7   1/1     Running   0          382d
+   speaker-2c467                 1/1     Running   2          382d
+   speaker-46g8r                 1/1     Running   0          60d
+   speaker-4vqlg                 1/1     Running   0          60d
+   speaker-756k5                 1/1     Running   3          390d
+   speaker-7frzw                 1/1     Running   0          382d
+   speaker-98zdv                 1/1     Running   4          409d
+   speaker-d5mfk                 1/1     Running   0          60d
+   speaker-vnrjd                 1/1     Running   0          310d
+   ```
+
+2. Create ```IPAddressPool``` and ```L2Advertisement``` objects by creating a kubernetes manifest file. To do so, create ```metallb-configuration.yaml``` file and insert the following manifest:
+
+    ```yaml
+    apiVersion: metallb.io/v1beta1
+    kind: IPAddressPool
+    metadata:
+      name: rke-ip-pool
+      namespace: metallb-system
+    spec:
+      addresses:
+      - 192.168.1.240-192.168.1.250
+    ---
+    apiVersion: metallb.io/v1beta1
+    kind: L2Advertisement
+    metadata:
+      name: rke-ip-pool-l2-advertisement
+      namespace: metallb-system
+    spec:
+      ipAddressPools:
+      - rke-ip-pool
+    ```
+
+    You shall replace the IP address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned in the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file.
+
+### Reconfigure NGINX Ingress
+
+We need to reconfigure NGINX Ingress to use ```LoadBalancer``` as the ServiceTypes. To do so, run the following command:
+
+```bash
+kubectl edit svc nginx-ingress-controller-nginx-ingress -n kube-system
+```
+
+Find ```type``` parameter under the ```spec``` and change its value to ```LoadBalancer```. After that you can save the manifest and check whether the MetalLB assigned an IP address from the ```rke-ip-pool``` by using the following command:
+
+```bash
+kubectl get svc nginx-ingress-controller-nginx-ingress -n kube-system
+```
+
+You should have output something like this:
+
+```bash
+NAME                                     TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)                      AGE
+nginx-ingress-controller-nginx-ingress   LoadBalancer   10.43.65.53   192.168.1.64   80:32757/TCP,443:31381/TCP   50d
+```
+
+### Install Cert-Manager
+
+We are going to use Cert-Manager to manage X.509 certificate, particularly to obtain certificates from Let's Encrypt, for our services. cert-manager is a powerful and extensible X.509 certificate controller for Kubernetes workloads. It will obtain certificates from a variety of Issuers, both popular public Issuers as well as private Issuers, and ensure the certificates are valid and up-to-date, and will attempt to renew certificates at a configured time before expiry.
+
+Below are the steps to install Cert-Manager and use it to obtain certificate from Let's Encrypt:
+
+1. Add Cert-Manager Helm repository:
+
+   ```bash
+   helm repo add jetstack https://charts.jetstack.io
+   ```
+
+2. Update your local Helm chart repository cache:
+
+   ```bash
+   helm repo update
+   ```
+
+3. Install Cert-Manager:
+
+   ```bash
+   helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.9.1   --set installCRDs=true --set 'extraArgs={--acme-http01-solver-nameservers=1.1.1.1:53\,8.8.8.8:53}'
+   ```
+
+4. Check Installation:
+
+   ```bash
+   kubectl get pods --namespace cert-manager
+   ```
+
+   The output should be something like this:
+
+   ```bash
+   NAME                                                     READY   STATUS    RESTARTS      AGE
+   cert-manager-v1-1658198981-6dcb6dcbdb-sbncz              1/1     Running   2 (50d ago)   50d
+   cert-manager-v1-1658198981-cainjector-67bf9cf97c-r5bdz   1/1     Running   4 (50d ago)   50d
+   cert-manager-v1-1658198981-webhook-69fc6dbdb6-vrfvq      1/1     Running   4 (50d ago)   50d
+   ```
+
+5. Create an ACME HTTP Validator manifest file (e.g. letsencrypt-http-validation.yaml):
+
+   ```yaml
+   apiVersion: cert-manager.io/v1
+   kind: ClusterIssuer
+   metadata:
+     name: letsencrypt-http-staging
+     namespace: cert-manager
+   spec:
+     acme:
+       # The ACME server URL
+       server: https://acme-staging-v02.api.letsencrypt.org/directory
+       # Email address used for ACME registration
+       email: user@example.com
+       # Name of a secret used to store the ACME account private key
+       privateKeySecretRef:
+         name: letsencrypt-http-staging
+       # Enable the HTTP-01 challenge provider
+       solvers:
+       # An empty 'selector' means that this solver matches all domains
+       - selector: {}
+         http01:
+           ingress:
+             class: nginx
+   ---
+   apiVersion: cert-manager.io/v1
+   kind: ClusterIssuer
+   metadata:
+     name: letsencrypt-http-prod
+     namespace: default
+   spec:
+     acme:
+       # The ACME server URL
+       server: https://acme-v02.api.letsencrypt.org/directory
+       # Email address used for ACME registration
+       email: user@example.com
+       # Name of a secret used to store the ACME account private key
+       privateKeySecretRef:
+         name: letsencrypt-http-prod
+       # Enable the HTTP-01 challenge provider
+       solvers:
+       # An empty 'selector' means that this solver matches all domains
+       - selector: {}
+         http01:
+           ingress:
+             class: nginx
+   ```
+
+   Replace ```user@example.com``` with your email address. Apply this manifest file by using the following command:
+
+   ```bash
+   kubectl apply -f letsencrypt-http-validation.yaml -n cert-manager
+   ```
+
+   You can check the result by using the following command:
+
+   ```bash
+   kubectl get clusterissuer
+   ```
+
+   The output looks something like this:
+
+   ```bash
+   NAME                  READY   AGE
+   letsencrypt-http-prod      True    480d
+   letsencrypt-http-staging   True    480d
+   ```
