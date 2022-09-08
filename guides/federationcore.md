@@ -67,3 +67,99 @@ From the login node:
 To ensure that the metadata feeds provided by a Federation operator is genuine, the metadata feeds are need to be digitally signed by the Federation operator. For this purpose, we will use a combination of [PyFF](https://pyff.io/) and [xmlsectool](https://shibboleth.atlassian.net/wiki/spaces/XSTJ3/overview) (for simplicity, we will call it as Metadata Signer). These tools that can be used to digitally sign metadata feeds.
 
 The Metadata Signer will be deployed as a cronjob, which will periodically download the metadata from Jagger and sign it.
+
+### Installation
+
+From the login node:
+
+1. Open the `signer` directory inside the `manifest` folder.
+
+   ```bash
+   cd ifirexman-training/manifest/signer
+   ```
+
+2. Generate a self-signed certificate and private key for the Metadata Signer. You can use the following command:
+
+   ```bash
+   openssl req -x509 -newkey rsa:4096 -keyout cert_unencrypted.key -out cert.crt -days 3650 -nodes
+   ```
+
+   When running this command, openssl may ask you to enter some information. Below is an example of the information that you need to enter:
+
+   ```bash
+   You are about to be asked to enter information that will be incorporated
+   into your certificate request.
+   What you are about to enter is what is called a Distinguished Name or a DN.
+   There are quite a few fields but you can leave some blank
+   For some fields there will be a default value,
+   If you enter '.', the field will be left blank.
+   -----
+   Country Name (2 letter code) []:MY
+   State or Province Name (full name) []:
+   Locality Name (eg, city) []:
+   Organization Name (eg, company) []:SIFULAN Malaysian Access Federation
+   Organizational Unit Name (eg, section) []:
+   Common Name (eg, fully qualified host name) []:Metadata Signer
+   Email Address []:
+   ```
+
+   OpenSSL will then generate a certificate and private key. You can use the following command to verify the certificate:
+
+   ```bash
+   openssl x509 -in cert.crt -text -noout
+   ```
+
+   You need to create a copy of the private key that we just created and set it with a passphrase. You can use the following command:
+
+   ```bash
+   openssl rsa -aes256 -in cert_unencrypted.key -out cert.key
+   ```
+
+   When running this command, openssl will ask you to enter a passphrase. You can enter any passphrase that you want. You will need to enter the passphrase when you configure the Metadata Signer.
+
+   Now, let's validate all the keys that we just created:
+
+   ```bash
+   openssl rsa -in cert.key -modulus -noout
+   openssl rsa -in cert_unencrypted.key -modulus -noout
+   openssl x509 -in cert.crt -modulus -noout
+   ```
+
+   Make sure that all the modulus values are the same.
+
+3. Create a secret for the Metadata Signer.
+
+   ```bash
+   kubectl create secret generic signer-config --from-file=cert.crt --from-file=cert_unencrypted.key --from-file=cert.key -n central-svcs
+   kubectl create secret generic metadata-signer-keypassword --from-literal=password=YOUR_PRIVATE_KEY_PASSPHRASE -n central-svcs
+   ```
+
+   Replace `YOUR_PRIVATE_KEY_PASSPHRASE` with the passphrase that you entered when you created the private key.
+
+4. Edit the `update.sh` file and update the `FEDERATION` with your federation name set at Jagger. After that run the following command:
+
+   ```bash
+   kubectl create cm metadata-signer-update-sh --from-file=update.sh -n central-svcs
+   kubectl create cm metadata-signer-sign-sh --from-file=sign.sh -n central-svcs
+   ```
+
+5. Edit the `edugain.fd` file and update the `domain.com` with your federation's registration authority name. After that run the following command:
+
+   ```bash
+   kubectl create cm metadata-signer-edugain-fd --from-file=edugain.fd -n central-svcs
+   kubectl create cm metadata-signer-edugain-ca --from-file=eduGAIN-signer-ca.pem -n central-svcs
+   ```
+
+6. Edit the `full.fd` file and update the `FEDERATION` with your federation name set at Jagger. After that run the following command:
+
+   ```bash
+   kubectl create cm metadata-signer-full-fd --from-file=full.fd -n central-svcs
+   ```
+
+7. Deploy the Metadata Signer.
+
+   ```bash
+   kubectl apply -f cron.yaml -n central-svcs
+   ```
+
+   Kuebernetes will create a job that will periodically (every 1 hour) download the metadata from Jagger and sign it. The signed metadata will be accessible at ```https://fedmanager.domain.com/metadata.xml```, ```https://federation.domain.com/edugain-export-metadata.xml```, and ```https://fedmanager.domain.com/full-metadata.xml```. Of course you need to replace `domain.com` with your domain name.

@@ -1,0 +1,17 @@
+- load:
+    - file:///metadata/edugain-metadata-feed.xml as edugain-md /cert/eduGAIN-signer-ca.pem
+- select:
+    - "edugain-md!//md:EntityDescriptor[md:Extensions/mdrpi:RegistrationInfo/@registrationAuthority and not(md:Extensions/mdrpi:RegistrationInfo/@registrationAuthority='https://domain.com')]"
+- fork merge remove:
+- xslt:
+    stylesheet: tidy.xsl
+- finalize:
+    Name: urn:mace:federation:edugain-export
+    ID: edugain-export
+    cacheDuration: PT24H
+    validUntil: P28D
+- sign:
+    key: /cert/cert_unencrypted.key
+    cert: /cert/cert.crt
+- publish:
+    - /metadata/edugain-export-metadata.xml
