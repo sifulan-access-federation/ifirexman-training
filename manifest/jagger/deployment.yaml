@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jagger
+  labels:
+    app: jagger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jagger
+  template:
+    metadata:
+      labels:
+        app: jagger
+    spec:
+      containers:
+      - name: jagger
+        image: ghcr.io/sifulan-access-federation/jagger:0.1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: jagger-config
+          mountPath: /opt/jagger/application/config/config_rr.php
+          subPath: config_rr.php
+        - name: jagger-config
+          mountPath: /opt/jagger/application/config/config.php
+          subPath: config.php
+        - name: jagger-config
+          mountPath: /opt/jagger/application/config/database.php
+          subPath: database.php
+        - name: jagger-config
+          mountPath: /opt/jagger/application/config/email.php
+          subPath: email.php
+        - name: jagger-config
+          mountPath: /opt/jagger/application/config/memcached.php
+          subPath: memcached.php
+      volumes:
+      - name: jagger-config
+        secret:
+          secretName: jagger-config
+          items:
+          - key: config_rr.php
+            path: config_rr.php
+          - key: config.php
+            path: config.php
+          - key: database.php
+            path: database.php
+          - key: email.php
+            path: email.php
+          - key: memcached.php
+            path: memcached.php
+      
