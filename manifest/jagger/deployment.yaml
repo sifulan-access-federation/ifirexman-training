@@ -36,6 +36,8 @@ spec:
         - name: jagger-config
           mountPath: /opt/jagger/application/config/memcached.php
           subPath: memcached.php
+        - name: jagger-www
+          mountPath: /var/www/html
       volumes:
       - name: jagger-config
         secret:
@@ -51,4 +53,7 @@ spec:
             path: email.php
           - key: memcached.php
             path: memcached.php
+      - name: jagger-www
+        persistentVolumeClaim:
+          claimName: jagger-pvc
       
