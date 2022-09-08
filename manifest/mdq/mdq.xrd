@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XRDS xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+  <XRD>
+    <Link rel="urn:oasis:names:tc:SAML:2.0:metadata" href="https://fedmanager.domain.com/full-metadata.xml"/>
+  </XRD>
+  <XRD>
+    <Subject>https://fedmanager.domain.com/full-metadata.xml</Subject>
+    <Link rel="urn:oasis:names:tc:SAML:2.0:metadata" href="https://fedmanager.domain.com/full-metadata.xml">
+        <Title>FEDERATION</Title>
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+            <ds:X509Data>
+                <ds:X509Certificate>
+                MIIFkDCCA3igAwIBAgIJAPNDhPnLnxGoMA0GCSqGSIb3DQEBCwUAMF0xCzAJBgNV
+                BAYTAk1ZMSwwKgYDVQQKDCNTSUZVTEFOIE1hbGF5c2lhbiBBY2Nlc3MgRmVkZXJh
+                dGlvbjEgMB4GA1UEAwwXU0lGVUxBTiBNZXRhZGF0YSBTaWduZXIwHhcNMTkwMTE4
+                MDMyNjQzWhcNMzkwMTEzMDMyNjQzWjBdMQswCQYDVQQGEwJNWTEsMCoGA1UECgwj
+                U0lGVUxBTiBNYWxheXNpYW4gQWNjZXNzIEZlZGVyYXRpb24xIDAeBgNVBAMMF1NJ
+                RlVMQU4gTWV0YWRhdGEgU2lnbmVyMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIIC
+                CgKCAgEAorfbjDAb7aSj3yo+fZqzQFDPwR+qKw9E1Pbmbhr+3OfXhe8x+p5LJcPG
+                OEgK4SfSRCAT67gQbuXuDljX/fajQ94/cD9y6I69f0Kb3v08DJaCVaj3DUzX667r
+                M9bXZ6vKoaYCmOHli5yF6gxK/JEKLVFSLpAyPV7eda3omfEWnRdF8bPg+hlEfYWZ
+                rDlzW/GGY5aOMygKiacUKuVK8nMmUBxMCjUb6CyOEZHVeml42YqsvJVo1rd9iwVz
+                fxbYUzvW0XWWibMnrt8kvnQm7wq3SRxgnaFHbYplPytVoPIYeBWLfoFFqSsgH6PU
+                1KiFLYUmX9StNZUIF1u/S6FFnUO2TMxVq9UPLbcmxkEsdXw/cCqYqpJhuq+Ivcu2
+                UWNybVDwR7n1unawpqtHgqMpOQEsNPfvvdtpm3juprnWjU8sXmPj2RAQ3LEFfAju
+                tHBvuJt7hm5+eNqMeliNk7VF8h4xws1TJ0oBmfQyE0eFmhJT/pioia5CmV8RbsPO
+                zF8ecG4WzA80FJNXEbUuHnZrO/vOTvoYcD+TJncOPORNRwMLC07RblYdMBLd+Na0
+                5WAMW5ivLFnJDMUtO5/E+ZIA03RkfSRG0hylIJq5rdx/zNrj1IKAdeLfN0b+tEwt
+                JSoJl0G1BKL+gTlEMKHOhwcYzYJuBh9iiHo3kHrg4wfn91yLruECAwEAAaNTMFEw
+                HQYDVR0OBBYEFNfx3NmCDAGc5+nB0bujsInjrWBZMB8GA1UdIwQYMBaAFNfx3NmC
+                DAGc5+nB0bujsInjrWBZMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQAD
+                ggIBACISF1ZjDHTJoUxXkUScb9QPQpXA8KzswmhcetKuqJ+lVSefNrvYF6RTgOLY
+                9XoGDTO4oh4AYnrdGFS6+T2iaCq9XOHqXoRtGp7TZtryo0eglnY5t+rldVII9Urh
+                ze91K5TCm1UGltvWGMz/xKq8fyQHYTeEMuzlniVerusqKLw06Xnzy/tx/DTTLJFw
+                rIVZhvtJO/eK8mR09jS1t55dFqdXDK7ZCLdwl6kFvjNlhLsrtOks+5JWE8B9VcAk
+                sB1n7IrDTmp2UQtmZOjS+4I1B3HZgfFdIDeRN2AjsEllVttrXN1wD6a1Lcakt4GX
+                9yJawyz6CXbz2sBlM5KXGV30GAejh0+JjcdRMlnBaglCkHNCXju9TGokQfJKEbQ+
+                6Qgy4+3wECjaLk9NSqz+BU1ZgLKvOXBtEFMwrbPbxIaXaaYrN+nDbZ50PAMW3YLa
+                Z95XuGtkDwekLw/t3nZu4mtFAImNoRvDsoJyv3AvlFDBbiZ06di2OMwnLXvJKsYK
+                zwkwqTv70SQRyNksmr8J60JwBCfQt7oCAkt8NCcX4jub0Id4DgHHconCpXh0ukX7
+                xHpGpB3jLdkLi5iqV6PDJJieQZOW/tQKH0OxkuChwi/QB/Lrhk/aIHNr5/kbzUtr
+                4b5KC6klAqfV+dMnOTFRlHrbd3ATnOeqN4Ka1cQ5WDOI0Bi9
+                </ds:X509Certificate>
+            </ds:X509Data>
+      </ds:KeyInfo>
+    </Link>
+  </XRD>
+</XRDS>

@@ -143,14 +143,14 @@ From the login node:
    kubectl create cm metadata-signer-sign-sh --from-file=sign.sh -n central-svcs
    ```
 
-5. Edit the `edugain.fd` file and update the `domain.com` with your federation's registration authority name. After that run the following command:
+5. Edit the `edugain.fd` file and update the `domain.com` with your federation's registration authority name and `federation` with your federation name set at Jagger. After that run the following command:
 
    ```bash
    kubectl create cm metadata-signer-edugain-fd --from-file=edugain.fd -n central-svcs
    kubectl create cm metadata-signer-edugain-ca --from-file=eduGAIN-signer-ca.pem -n central-svcs
    ```
 
-6. Edit the `full.fd` file and update the `FEDERATION` with your federation name set at Jagger. After that run the following command:
+6. Edit the `full.fd` file and update the `FEDERATION` and `federation` with your federation name set at Jagger. After that run the following command:
 
    ```bash
    kubectl create cm metadata-signer-full-fd --from-file=full.fd -n central-svcs
@@ -163,3 +163,39 @@ From the login node:
    ```
 
    Kuebernetes will create a job that will periodically (every 1 hour) download the metadata from Jagger and sign it. The signed metadata will be accessible at ```https://fedmanager.domain.com/metadata.xml```, ```https://federation.domain.com/edugain-export-metadata.xml```, and ```https://fedmanager.domain.com/full-metadata.xml```. Of course you need to replace `domain.com` with your domain name.
+
+## Metadata Query
+
+The Metadata Query (MDQ) is a web service that can be used to query the metadata (on-demand) of a Federation operator. In comparison with the traditional method to download the full set of metadata file from the Federation operator, the MDQ allows Identity Provider or Service Provider to query the metadata of the entities that are requested only from the Federation operator. Hence, it significantly reduce the amount of computer memory needed to store the metadata. However, when MDQ is out of service, the Identity Provider or Service Provider will not be able to query the metadata of the entities that are requested. Therefore, it is important to ensure that the MDQ is always available.
+
+### Installation
+
+From the login node:
+
+1. Open the `mdq` directory inside the `manifest` folder.
+
+   ```bash
+   cd ifirexman-training/manifest/mdq
+   ```
+
+2. Edit the `mdq.fd` file and update the `federation` with your federation name. After that run the following command:
+
+   ```bash
+   kubectl create cm mdq-fd --from-file=mdq.fd -n central-svcs
+   ```
+
+3. Edit the `mdq.xrd` file and update the `FEDERATION` with your federation name, replace `domain.com` with your domain name, and replace the `X509Certificate` with the content of `cert.crt` file (without the `BEGIN CERTIFICATE` and `END CERTIFICATE` statement) from the signer folder. After that run the following command:
+
+   ```bash
+   kubectl create cm mdq-xrd --from-file=mdq.xrd -n central-svcs
+   ```
+
+4. Deploy the Metadata Query.
+
+   ```bash
+   kubectl apply -f deployment.yaml -n central-svcs
+   kubectl apply -f svc.yaml -n central-svcs
+   kubectl apply -f ingress.yaml -n central-svcs
+   ```
+
+   Kubernetes will create a pod that will serve the metadata query. The metadata query will be accessible at ```https://mdq.domain.com/```. Of course you need to replace `domain.com` with your domain name.

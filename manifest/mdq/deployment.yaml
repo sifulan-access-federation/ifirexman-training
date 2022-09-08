@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdq
+  labels:
+    name: mdq
+spec:
+  selector:
+    matchLabels:
+      name: mdq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mdq
+    spec:
+      containers:
+        - name: mdq
+          image: ghcr.io/sifulan-access-federation/pyff:0.1.0
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
+          command: ["pyffd"]
+          args: ["-f","-H","0.0.0.0","-P","80","--no-caching","mdq.fd"]
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "mdq.fd"
+              name: mdq-fd
+              subPath: mdq.fd
+            - mountPath: "mdq.xrd"
+              name: mdq-xrd
+              subPath: mdq.xrd
+            - mountPath: "cert.crt"
+              name: metadata-signer
+              subPath: cert.crt
+              readOnly: true
+            - mountPath: "cert_unencrypted.key"
+              name: metadata-signer
+              subPath: cert_unencrypted.key
+              readOnly: true
+      volumes:
+        - name: mdq-fd
+          configMap: 
+            name: mdq-fd
+            items:
+              - key: mdq.fd
+                path: mdq.fd
+        - name: mdq-xrd
+          configMap:
+            name: mdq-xrd
+            items:
+              - key: mdq.xrd
+                path: mdq.xrd
+        - name: metadata-signer
+          secret:
+            secretName: metadata-signer
+            items:
+              - key: cert.crt
+                path: cert.crt
+              - key: cert_unencrypted.key
+                path: cert_unencrypted.key
