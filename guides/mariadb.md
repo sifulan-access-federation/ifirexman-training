@@ -2,39 +2,18 @@
 
 ## Pre-flight checklist
 Fulfill all these items before running the script:
-- [ ] Provisioned a Kubernetes cluster and logged into your Login node.
+- [ ] Provision a Kubernetes cluster and log into your Login node.
+- [ ] Install pre-requisites on your Login node.
+  - [ ] `git`
+  - [ ] `kubectl`
 
 ## Login node preparation
 
 ### Install pre-requisites
 
-#### Update `yum` repository
+#### `python3` and `python3-pip`
 ```sh
-sudo yum update -y
-```
-
-#### `git`, `python3` and `python3-pip`
-```sh
-sudo yum install -y git python3 python3-pip
-```
-
-#### `kubectl`
-```sh
-# add kubernetes.repo to yum repo
-cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOF
-
-# install kubectl
-sudo yum install -y kubectl
-
-# check installation
-kubectl version --client
+sudo yum install -y python3 python3-pip
 ```
 
 #### `passlib`

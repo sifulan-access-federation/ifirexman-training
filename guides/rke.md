@@ -111,6 +111,15 @@ In Rocky Linux 8, two extra services are included on the NetworkManager: nm-clou
 
 ### Install Several Kubernetes management tools
 
+#### ```git```
+[Git](https://git-scm.com) is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
+
+To install ```git``` on the login node:
+
+```bash
+yum install -y git
+```
+
 #### ```kubectl```
 
 The Kubernetes command-line tool, [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/), allows you to run commands against Kubernetes clusters. You can use ```kubectl``` to deploy applications, inspect and manage cluster resources, and view logs. For more information including a complete list of kubectl operations, see the ```kubectl``` [reference documentation](https://kubernetes.io/docs/reference/kubectl/).
