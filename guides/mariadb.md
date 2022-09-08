@@ -44,7 +44,7 @@ From the login node:
        FLUSH PRIVILEGES;
        exit
     ```
-    When the mariadb is asking for the root password, enter the password that you took note earlier.
+    When the mariadb is asking for the root password, enter the password that you took note earlier. Replace `YOUR_DATABASE_NAME`, `YOUR_USER_NAME` and `YOUR_PASSWORD` with your own values.
 
     To exit the mariadb client run:
      
