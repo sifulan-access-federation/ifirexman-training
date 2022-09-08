@@ -4,7 +4,7 @@ In this tutorial, we are going to setup a Kubernetes cluster by using the [Ranch
 
 ## Pre-flight checklist
 
-Please refer to [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file for pre-flight checklist.
+Please refer to the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file for pre-flight checklist.
 
 ---
 
@@ -20,17 +20,17 @@ Please refer to [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_T
    ```
 
    You don't have to set a passphrase for the private key for this purpose.
-3. Copy the public key to each kubernetes node. In this tutorial we assume that a service account/user ```ifirexman``` is exist on each node.
+3. Copy the public key to each Kubernetes node. In this tutorial, we assume that a service account/user ```ifirexman``` exists on each node.
 
    ```bash
      ssh-copy-id -i ~/.ssh/id_ecdsa.pub ifirexman@<kubernetes nodes ip address>
    ```
 
-4. Try to login to each kubernetes node by using SSH. If you able to login to each node without having to key-in password, then you have successfully setup passwordless login to the kubernetes nodes.
+4. Try to login to each Kubernetes node by using SSH. If you are able to login to each node without having to key-in the password, then you have successfully set up passwordless login to the Kubernetes nodes.
 
 ### Set up Docker Engine
 
-At each kubernetes nodes, you need install Docker Engine from Docker. Before you perform the steps below, you need to perform these steps as user ```root``` or as a user with ```sudo``` permission. If you choose the later one, you need to add ```sudo``` command for each command.
+On each Kubernetes node, you need to install Docker Engine from Docker. Before you perform the steps below, you need to perform these steps as user ```root``` or as a user with ```sudo``` permission. If you choose the latter, you need to add ```sudo``` at the start of each command.
 
 1. Remove any existing docker installation:
   
@@ -54,8 +54,8 @@ At each kubernetes nodes, you need install Docker Engine from Docker. Before you
 4. Start the Docker Engine
 
   ```bash
-    systemctl start docker && sudo systemctl enable docker
-    systemctl start containerd && sudo systemctl enable containerd
+    systemctl start docker && systemctl enable docker
+    systemctl start containerd && systemctl enable containerd
   ```
 
 5. Add service account/user access to docker service
@@ -115,10 +115,10 @@ In Rocky Linux 8, two extra services are included on the NetworkManager: nm-clou
 
 The Kubernetes command-line tool, [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl/), allows you to run commands against Kubernetes clusters. You can use ```kubectl``` to deploy applications, inspect and manage cluster resources, and view logs. For more information including a complete list of kubectl operations, see the ```kubectl``` [reference documentation](https://kubernetes.io/docs/reference/kubectl/).
 
-To install ```kubectl``` at the login node:
+To install ```kubectl``` on the login node:
 
 ```bash
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -Lo kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x kubectl
 mv kubectl /usr/local/bin
 ```
@@ -127,49 +127,42 @@ mv kubectl /usr/local/bin
 
 ```kubectx``` is a tool to switch between contexts (clusters) on kubectl faster while ```kubens``` is a tool to switch between Kubernetes namespaces (and configure them for kubectl) easily.
 
-To install ```kubectx``` and ```kubens``` at the login node:
+To install ```kubectx``` and ```kubens``` on the login node:
 
 ```bash
-wget https://github.com/ahmetb/kubectx/releases/download/v0.9.4/kubectx_v0.9.4_linux_x86_64.tar.gz
-wget https://github.com/ahmetb/kubectx/releases/download/v0.9.4/kubens_v0.9.4_linux_x86_64.tar.gz
-tar zxf kubectx_v0.9.4_linux_x86_64.tar.gz
-tar zxf kubens_v0.9.4_linux_x86_64.tar.gz
-chmod +x kubectx
-chmod +x kubens
-mv kubectx /usr/local/bin/
-mv kubens /usr/local/bin/
+git clone https://github.com/ahmetb/kubectx /opt/kubectx
+ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
+ln -s /opt/kubectx/kubens /usr/local/bin/kubens
 ```
 
 #### ```k9s```
 
-K9s is a terminal based UI to interact with your Kubernetes clusters. K9s continually watches Kubernetes for changes and offers subsequent commands to interact with your observed resources.
+K9s is a terminal-based UI to interact with your Kubernetes clusters. K9s continually watches Kubernetes for changes and offers subsequent commands to interact with your observed resources.
 
-To install ```k9``` at the login node:
+To install ```k9s``` on the login node:
 
 ```bash
-wget https://github.com/derailed/k9s/releases/download/v0.26.3/k9s_Linux_x86_64.tar.gz
-tar zxf k9s_Linux_x86_64.tar.gz
-chmod +x k9s
-mv k9s /usr/local/bin
+curl -Lo k9s_Linux_x86_64.tar.gz "https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_x86_64.tar.gz"
+tar -C /usr/local/bin -zxf k9s_Linux_x86_64.tar.gz k9s
 ```
 
 #### ```rke```
 
-Rancher Kubernetes Engine (RKE) is a CNCF-certified Kubernetes distribution that runs entirely within Docker containers. It works on bare-metal and virtualized servers. With RKE, the installation and operation of Kubernetes are both simplified and easily automated, and they are entirely independent of the operating system and platform you’re running.
+Rancher Kubernetes Engine (RKE) is a CNCF-certified Kubernetes distribution that runs entirely within Docker containers. It works on bare-metal and virtualised servers. With RKE, the installation and operation of Kubernetes are both simplified and easily automated, and they are entirely independent of the operating system and platform you’re running.
 
-To install ```rke``` at the login node:
+To install ```rke``` on the login node:
 
 ```bash
 curl -Lo rke https://github.com/rancher/rke/releases/download/v1.3.14/rke_linux-amd64
-chmod +x ./rke
-mv rke /usr/local/bin/
+chmod +x rke
+mv rke /usr/local/bin
 ```
 
 #### ```helm```
 
 Helm helps you manage Kubernetes applications — Helm Charts help you define, install, and upgrade even the most complex Kubernetes application.
 
-To install ```helm``` at the login node:
+To install ```helm``` on the login node:
 
 ```bash
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
@@ -178,7 +171,7 @@ curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 --- 
 ### Prepare Kubernetes Cluster file
 
-To setup a kubernetes cluster by using ```rke```, first we need to create a ```cluster.yml``` file which consist of our kubernetes cluster configuration from the Login node. Below is an example of a ```cluster.yml``` file which you can use for this training.
+To setup a Kubernetes cluster by using ```rke```, first we need to create a ```cluster.yml``` file which consists of our Kubernetes cluster configuration from the Login node. Below is an example of a ```cluster.yml``` file which you can use for this training.
 
 ```yaml
 # Cluster Nodes
@@ -304,7 +297,7 @@ kubectl get nodes
 
 ## Setting Up Longhorn Storage
 
-Longhorn is a lightweight, reliable, and powerful distributed block storage system for Kubernetes. Longhorn implements distributed block storage using containers and microservices. The storage controller and replicas are themselves orchestrated using Kubernetes. We will use Longhorn for storing persistent storage objects.
+Longhorn is a lightweight, reliable, and powerful distributed block storage system for Kubernetes. Longhorn implements distributed block storage using containers and microservices. The storage controller and replicas themselves are orchestrated using Kubernetes. We will use Longhorn for storing persistent storage objects.
 
 ### Longhorn Node Preparation
 
@@ -324,7 +317,7 @@ For each __worker__ node:
    mount /dev/sdb /var/lib/longhorn
    ```
 
-   In the above example, it is assumed that the drive letter for the dedicated disk for data storage is ```sdb```. You can use the ```fdisk -l``` command to find out the drive letter for your system. To make the operating system to automatically mount the disk, you can add the following entry at the last line of the ```/etc/fstab``` file:
+   In the above example, it is assumed that the drive letter for the dedicated disk for data storage is ```sdb```. You can use the ```fdisk -l``` command to find the actual drive letter for your system. To make the operating system automatically mount the disk upon booting, you can add the following entry at the last line of the ```/etc/fstab``` file:
 
    ```bash
    /dev/sdb                /var/lib/longhorn       ext4    defaults        0 0
@@ -343,7 +336,7 @@ For each __worker__ node:
 
 ### Install Longhorn
 
-At the login node:
+On the login node:
 
 1. Install Longhorn on the Kubernetes cluster using this command:
 
@@ -363,7 +356,7 @@ At the login node:
    longhorn-nfs-installation-fcrl6     1/1     Running   2 (50d ago)   50d
    ```
 
-2. Once the installation is completed, you can check whether Longhorn storage class was successfully created by using the command below:
+2. Once the installation is complete, you can check whether the Longhorn storage class was successfully created by using the command below:
 
    ```bash
    kubectl get sc
@@ -380,11 +373,11 @@ At the login node:
 
 ## Setting up MetalLB, NGINX Ingress, and Cert Manager
 
-We are going to use MetalLB as the Load-Balancer for our kubernetes cluster and configure the nginx ingress to take IP address that connect external network with the pods.
+We are going to use MetalLB as the Load-Balancer for our Kubernetes cluster and configure the nginx ingress to take the IP address that connects the external network with the pods.
 
 ### Install MetalLB
 
-At the login node:
+On the login node:
 
 1. Run the following command to install MetalLB:
 
@@ -407,7 +400,7 @@ At the login node:
    speaker-vnrjd                 1/1     Running   0          310d
    ```
 
-2. Create ```IPAddressPool``` and ```L2Advertisement``` objects by creating a kubernetes manifest file. To do so, create ```metallb-configuration.yaml``` file and insert the following manifest:
+2. Create ```IPAddressPool``` and ```L2Advertisement``` objects by creating a Kubernetes manifest file. To do so, create ```metallb-configuration.yaml``` file and insert the following manifest:
 
     ```yaml
     apiVersion: metallb.io/v1beta1
@@ -439,7 +432,7 @@ We need to reconfigure NGINX Ingress to use ```LoadBalancer``` as the ServiceTyp
 kubectl edit svc nginx-ingress-controller-nginx-ingress -n kube-system
 ```
 
-Find ```type``` parameter under the ```spec``` and change its value to ```LoadBalancer```. After that you can save the manifest and check whether the MetalLB assigned an IP address from the ```rke-ip-pool``` by using the following command:
+Find ```type``` parameter under the ```spec``` and change its value to ```LoadBalancer```. After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
 
 ```bash
 kubectl get svc nginx-ingress-controller-nginx-ingress -n kube-system
@@ -454,9 +447,9 @@ nginx-ingress-controller-nginx-ingress   LoadBalancer   10.43.65.53   192.168.1.
 
 ### Install Cert-Manager
 
-We are going to use Cert-Manager to manage X.509 certificate, particularly to obtain certificates from Let's Encrypt, for our services. cert-manager is a powerful and extensible X.509 certificate controller for Kubernetes workloads. It will obtain certificates from a variety of Issuers, both popular public Issuers as well as private Issuers, and ensure the certificates are valid and up-to-date, and will attempt to renew certificates at a configured time before expiry.
+We are going to use Cert-Manager to manage X.509 certificates, particularly to obtain certificates from Let's Encrypt, for our services. cert-manager is a powerful and extensible X.509 certificate controller for Kubernetes workloads. It will obtain certificates from a variety of Issuers, both popular public Issuers as well as private Issuers, and ensure the certificates are valid and up-to-date, and will attempt to renew certificates at a configured time before expiry.
 
-Below are the steps to install Cert-Manager and use it to obtain certificate from Let's Encrypt:
+Below are the steps to install Cert-Manager and use it to obtain a certificate from Let's Encrypt:
 
 1. Add Cert-Manager Helm repository:
 
@@ -479,7 +472,7 @@ Below are the steps to install Cert-Manager and use it to obtain certificate fro
 4. Check Installation:
 
    ```bash
-   kubectl get pods --namespace cert-manager
+   kubectl get pods -n cert-manager
    ```
 
    The output should be something like this:
@@ -491,7 +484,7 @@ Below are the steps to install Cert-Manager and use it to obtain certificate fro
    cert-manager-v1-1658198981-webhook-69fc6dbdb6-vrfvq      1/1     Running   4 (50d ago)   50d
    ```
 
-5. Create an ACME HTTP Validator manifest file (e.g. letsencrypt-http-validation.yaml):
+5. Create an ACME HTTP Validator manifest file (e.g. ```letsencrypt-http-validation.yaml```):
 
    ```yaml
    apiVersion: cert-manager.io/v1
