@@ -112,7 +112,7 @@ $config['nameids'] = array(
 	'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
 		);
 
-$config['metadata_validuntil_days'] = '7';
+$config['metadata_validuntil_days'] = '28';
 
 
 $config['policy_dropdown'] = array('0' => 'never', '1' => 'permit only if required', '2' => 'permit if required or desired');
@@ -120,7 +120,7 @@ $config['policy_dropdown'] = array('0' => 'never', '1' => 'permit only if requir
 /**
  * default registrationAuthority for example http://www.heanet.ie
  */
-$config['registrationAutority'] = null;
+$config['registrationAutority'] = 'https://example.com';
 /**
  * (boolean) load default registrationAuthority to localy managed entities if not  set. It will be visible in generated metadata 
  */
