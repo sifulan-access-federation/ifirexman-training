@@ -1,0 +1,101 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: metadata-signer
+spec:
+  schedule: "0 */1 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            name: metadata-signer
+        spec:
+          containers:
+          - name: metadata-signer
+            image: ghcr.io/sifulan-access-federation/signer:0.1.0
+            imagePullPolicy: "IfNotPresent"
+            command: ["bash"]
+            args: ["update.sh"]
+            env:
+              - name: CERTPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: password
+                    name: metadata-signer-keypassword
+            volumeMounts:
+              - mountPath: "/cert/cert.crt"
+                name: metadata-signer
+                subPath: cert.crt
+                readOnly: true
+              - mountPath: "/cert/cert.key"
+                name: metadata-signer
+                subPath: cert.key
+                readOnly: true
+              - mountPath: "/cert/cert_unencrypted.key"
+                name: metadata-signer
+                subPath: cert_unencrypted.key
+                readOnly: true
+              - mountPath: "/cert/eduGAIN-signer-ca.pem"
+                name: metadata-signer-edugain-ca
+                subPath: eduGAIN-signer-ca.pem
+                readOnly: true 
+              - mountPath: "signer-www"
+                name: signer-www
+              - mountPath: sign.sh
+                subPath: sign.sh
+                name: sifulan-signer-sign-sh
+              - mountPath: update.sh
+                subPath: update.sh
+                name: metadata-signer-update-sh
+              - mountPath: edugain.fd
+                subPath: edugain.fd
+                name: metadata-signer-edugain-fd
+              - mountPath: metadata-full.fd
+                subPath: metadata-full.fd
+                name: metadata-signer-full-fd
+          volumes:
+            - name: signer-www
+              persistentVolumeClaim:
+                claimName: jagger-pvc
+            - name: metadata-signer
+              secret:
+                secretName: metadata-signer
+                items:
+                  - key: signer.pem
+                    path: cert.crt
+                  - key: signer.key
+                    path: cert.key
+                  - key: signer_unencrypted.key
+                    path: cert_unencrypted.key
+            - name: metadata-signer-sign-sh
+              configMap: 
+                name: metadata-signer-sign-sh
+                items:
+                  - key: sign.sh
+                    path: sign.sh
+            - name: metadata-signer-update-sh
+              configMap:
+                name: metadata-signer-update-sh
+                items:
+                  - key: update.sh
+                    path: update.sh
+            - name: metadata-signer-edugain-fd
+              configMap:
+                name: metadata-signer-edugain-fd
+                items:
+                  - key: edugain.fd
+                    path: edugain.fd
+            - name: metadata-signer-full-fd
+              configMap:
+                name: metadata-signer-full-fd
+                items:
+                  - key: full.fd
+                    path: full.fd
+            - name: metadata-signer-edugain-ca
+              configMap:
+                name: metadata-signer-edugain-ca
+                items:
+                  - key: eduGAIN-signer-ca.pem
+                    path: eduGAIN-signer-ca.pem
+          restartPolicy: OnFailure

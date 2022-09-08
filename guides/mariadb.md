@@ -37,7 +37,7 @@ From the login node:
     Then, inside the container, run the following commands:
      
     ```bash
-       mysql -u root -p
+       mysql -h mariadb.central-svcs.svc.cluster.local -u root -p
        CREATE DATABASE YOUR_DATABASE_NAME;
        CREATE USER 'YOUR_USER_NAME'@'%' IDENTIFIED BY 'YOUR_PASSWORD';
        GRANT ALL PRIVILEGES ON YOUR_DATABASE_NAME.* TO 'YOUR_USER_NAME'@'%';
