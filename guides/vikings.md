@@ -9,11 +9,15 @@ Fulfill all these items before running the script:
 - [ ] Install pre-requisites on your Login node.
   - [ ] `git`
   - [ ] `kubectl`
-  - [ ] `python3`
-  - [ ] `python3-pip`
-  - [ ] `passlib`
 
 ## Login node preparation
+
+### Install pre-requisites
+
+#### `python3` and `python3-pip`
+```sh
+sudo yum install -y python3 python3-pip
+```
 
 ### Clone the VIKINGS iFIRExMAN Template repository
 ```sh
@@ -34,6 +38,11 @@ cp MY_ORG_LOGO.png ~/ifirexman-vikings-client/template/binaries/vikings-logo.png
 ```sh
 # cd MY_REPO_LOCATION
 cd ~/ifirexman-vikings-client
+```
+
+### Install required pip packages
+```sh
+pip3 install -r requirements.txt
 ```
 
 ### Run the script
