@@ -22,7 +22,7 @@ spec:
             name: jagger-svc
             port:
               number: 80
-        path: /rr3
+        path: /
         pathType: Prefix
   tls:
   - hosts:

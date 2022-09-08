@@ -24,35 +24,46 @@ From the login node:
    ```bash
    kubectl create secret generic jagger-config --from-file=database.php --from-file=config_rr.php --from-file=config.php --from-file=email.php --from-file=memcached.php -n federation
    ```
+8. Create a PVC for Jagger.
 
-8. Deploy Jagger.
+   ```bash
+   kubectl apply -f jagger-pvc.yaml -n central-svcs
+   ```
+
+9. Deploy Jagger.
 
    ```bash
    kubectl apply -f deployment.yaml -n central-svcs
    ```
 
-9. Create a service for Jagger.
+10. Create a service for Jagger.
 
    ```bash
    kubectl apply -f svc.yaml -n central-svcs
    ```
 
-10. Edit the `ingress.yaml` file and update the `host` variable.
-11. Create an ingress for Jagger.
+11. Edit the `ingress.yaml` file and update the `host` variable.
+12. Create an ingress for Jagger.
 
     ```bash
     kubectl apply -f ingress.yaml -n central-svcs
     ```
 
-12. By using `k9` tool, login to Jagger pod.
-13. Edit file `/opt/jagger/application/config/config_rr.php` and set `$config['rr_setup_allowed']` to `TRUE`.
-14. Go to `/opt/jagger/application` folder and run the following commands:
+13. By using `k9s` tool, login to Jagger pod.
+14. Edit file `/opt/jagger/application/config/config_rr.php` and set `$config['rr_setup_allowed']` to `TRUE`.
+15. Go to `/opt/jagger/application` folder and run the following commands:
 
     ```bash
     ./doctrine orm:schema-tool:create
     ./doctrine orm:generate-proxies
     ```
 
-15. Verify owner of `/opt/jagger/application/models/Proxies/*` folder - `www-data` user should be owner
-16. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.domain.com/setup`) and fill in the form.
-17. Back to the Jagger pod, edit file `/opt/jagger/application/config/config_rr.php` and set `$config['rr_setup_allowed']` to `FALSE`.
+16. Verify owner of `/opt/jagger/application/models/Proxies/*` folder - `www-data` user should be owner
+17. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.domain.com/rr3/setup`) and fill in the form.
+18. Back to the Jagger pod, edit file `/opt/jagger/application/config/config_rr.php` and set `$config['rr_setup_allowed']` to `FALSE`.
+
+## Metadata Signer
+
+To ensure that the metadata feeds provided by a Federation operator is genuine, the metadata feeds are need to be digitally signed by the Federation operator. For this purpose, we will use a combination of [PyFF](https://pyff.io/) and [xmlsectool](https://shibboleth.atlassian.net/wiki/spaces/XSTJ3/overview) (for simplicity, we will call it as Metadata Signer). These tools that can be used to digitally sign metadata feeds.
+
+The Metadata Signer will be deployed as a cronjob, which will periodically download the metadata from Jagger and sign it.
