@@ -62,11 +62,11 @@ spec:
               secret:
                 secretName: metadata-signer
                 items:
-                  - key: signer.pem
+                  - key: cert.crt
                     path: cert.crt
-                  - key: signer.key
+                  - key: cert.key
                     path: cert.key
-                  - key: signer_unencrypted.key
+                  - key: cert_unencrypted.key
                     path: cert_unencrypted.key
             - name: metadata-signer-sign-sh
               configMap: 

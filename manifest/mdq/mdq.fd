@@ -1,0 +1,27 @@
+- when update:
+  - load xrd mdq-loaded.xrd:
+    - mdq.xrd
+  - select
+  - stats
+- when request:
+  - select
+  - pipe:
+    - when accept application/xml:
+      - xslt:
+          stylesheet: tidy.xsl
+      - first
+      - finalize:
+          Name: urn:mace:federation:federation-full-export
+          ID: federation-full-export
+          cacheDuration: PT24H
+          validUntil: P28D
+      - sign:
+          key: cert_unencrypted.key
+          cert: cert.crt
+      - emit application/xml
+      - break
+    - when accept application/json:
+      - xslt:
+         stylesheet: discojson.xsl
+      - emit application/json:
+      - break
