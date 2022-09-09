@@ -444,20 +444,20 @@ On the login node:
 We need to reconfigure NGINX Ingress to use ```LoadBalancer``` as the ServiceTypes. To do so, run the following command:
 
 ```bash
-kubectl edit svc nginx-ingress-controller-nginx-ingress -n kube-system
+kubectl edit svc ingress-nginx-controller-admission -n ingress-nginx
 ```
 
 Find ```type``` parameter under the ```spec``` and change its value to ```LoadBalancer```. After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
 
 ```bash
-kubectl get svc nginx-ingress-controller-nginx-ingress -n kube-system
+kubectl get svc ingress-nginx-controller-admission -n ingress-nginx
 ```
 
 You should have output something like this:
 
 ```bash
 NAME                                     TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)                      AGE
-nginx-ingress-controller-nginx-ingress   LoadBalancer   10.43.65.53   192.168.1.64   80:32757/TCP,443:31381/TCP   50d
+ingress-nginx-controller-admission   LoadBalancer   10.43.65.53   192.168.1.64   80:32757/TCP,443:31381/TCP   50d
 ```
 
 ### Install Cert-Manager
