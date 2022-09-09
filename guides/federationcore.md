@@ -48,7 +48,7 @@ From the login node:
    kubectl apply -f svc.yaml -n central-svcs
    ```
 
-11. Edit the `ingress.yaml` file and update the `host` variable.
+11. Edit the `ingress.yaml` file and update the `host` and `hosts` variables. Defaults to `fedmanager.domain.com`.
 12. Create an ingress for Jagger.
 
     ```bash
