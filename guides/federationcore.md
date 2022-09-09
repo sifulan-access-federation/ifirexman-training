@@ -50,17 +50,17 @@ From the login node:
     ```
 
 13. By using `k9s` tool, login to Jagger pod.
-14. Edit file `/opt/jagger/application/config/config_rr.php` and set `$config['rr_setup_allowed']` to `TRUE`.
-15. Go to `/opt/jagger/application` folder and run the following commands:
+14. Go to `/opt/jagger/application` folder and run the following commands:
 
     ```bash
     ./doctrine orm:schema-tool:create
     ./doctrine orm:generate-proxies
     ```
 
-16. Verify owner of `/opt/jagger/application/models/Proxies/*` folder - `www-data` user should be owner
-17. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.domain.com/rr3/setup`) and fill in the form.
-18. Back to the Jagger pod, edit file `/opt/jagger/application/config/config_rr.php` and set `$config['rr_setup_allowed']` to `FALSE`.
+15. Verify owner of `/opt/jagger/application/models/Proxies/*` folder - `www-data` user should be owner
+16. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.domain.com/rr3/setup`) and fill in the form.
+17. Edit file `deployment.yaml` and set `RR_SETUP_ALLOWED` to `FALSE`.
+
 
 ## Metadata Signer
 
