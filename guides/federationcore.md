@@ -33,7 +33,7 @@ From the login node:
 9.  Create a PVC for Jagger.
 
    ```bash
-   kubectl apply -f jagger-pvc.yaml -n central-svcs
+   kubectl apply -f pvc.yaml -n central-svcs
    ```
 
 11. Deploy Jagger.
