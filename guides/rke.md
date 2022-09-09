@@ -433,6 +433,12 @@ On the login node:
 
     You shall replace the IP address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned in the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file.
 
+3. Apply the newly created manifest ```metallb-configuration.yaml```:
+
+   ```bash
+   kubectl apply -f metallb-configuration.yaml
+   ```
+
 ### Reconfigure NGINX Ingress
 
 We need to reconfigure NGINX Ingress to use ```LoadBalancer``` as the ServiceTypes. To do so, run the following command:
