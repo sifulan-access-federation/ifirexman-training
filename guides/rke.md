@@ -353,7 +353,7 @@ On the login node:
    kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/longhorn.yaml
    ```
 
-   You can use the ```k9s``` tool or ```kubectl get pods -n longhorn``` to monitor the status. A successfully deployed Longhorn looks something like this:
+   You can use the ```k9s``` tool or ```kubectl get pods -n longhorn-system``` to monitor the status. A successfully deployed Longhorn looks something like this:
 
    ```bash
    NAME                                READY   STATUS    RESTARTS      AGE
