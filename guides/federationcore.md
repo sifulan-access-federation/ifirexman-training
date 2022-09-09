@@ -28,7 +28,7 @@ From the login node:
 8. Create a secret for Jagger.
 
    ```bash
-   kubectl create secret generic jagger-config --from-file=database.php --from-file=config_rr.php --from-file=config.php --from-file=email.php --from-file=memcached.php -n federation
+   kubectl create secret generic jagger-config --from-file=database.php --from-file=config_rr.php --from-file=config.php --from-file=email.php --from-file=memcached.php -n central-svcs
    ```
 9.  Create a PVC for Jagger.
 
