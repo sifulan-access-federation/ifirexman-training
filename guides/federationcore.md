@@ -22,7 +22,7 @@ From the login node:
 7. Create a secret for Jagger.
 
    ```bash
-   kubectl create secret generic jagger-config --from-file=database.php --from-file=config_rr.php --from-file=config.php --from-file=email.php --from-file=memcached.php -n federation
+   kubectl create secret generic jagger-config --from-file=database.php --from-file=config_rr.php --from-file=config.php --from-file=email.php --from-file=memcached.php -n central-svcs
    ```
 8. Create a PVC for Jagger.
 
@@ -60,6 +60,11 @@ From the login node:
 15. Verify owner of `/opt/jagger/application/models/Proxies/*` folder - `www-data` user should be owner
 16. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.domain.com/rr3/setup`) and fill in the form.
 17. Edit file `deployment.yaml` and set `RR_SETUP_ALLOWED` to `FALSE`.
+18. Run the following command to update the deployment:
+
+    ```bash
+    kubectl apply -f deployment.yaml -n central-svcs
+    ```
 
 
 ## Metadata Signer
