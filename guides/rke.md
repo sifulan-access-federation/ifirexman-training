@@ -111,6 +111,9 @@ In Rocky Linux 8, two extra services are included on the NetworkManager: nm-clou
 
 ### Install Several Kubernetes management tools
 
+#### ```docker```
+Follow the same steps used in the [Set up Docker Engine](#set-up-docker-engine) section to install Docker on the login node.
+
 #### ```git```
 [Git](https://git-scm.com) is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 
@@ -353,7 +356,7 @@ On the login node:
    kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/longhorn.yaml
    ```
 
-   You can use the ```k9s``` tool or ```kubectl get pods -n longhorn``` to monitor the status. A successfully deployed Longhorn looks something like this:
+   You can use the ```k9s``` tool or ```kubectl get pods -n longhorn-system``` to monitor the status. A successfully deployed Longhorn looks something like this:
 
    ```bash
    NAME                                READY   STATUS    RESTARTS      AGE
@@ -433,25 +436,31 @@ On the login node:
 
     You shall replace the IP address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned in the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file.
 
+3. Apply the newly created manifest ```metallb-configuration.yaml```:
+
+   ```bash
+   kubectl apply -f metallb-configuration.yaml
+   ```
+
 ### Reconfigure NGINX Ingress
 
 We need to reconfigure NGINX Ingress to use ```LoadBalancer``` as the ServiceTypes. To do so, run the following command:
 
 ```bash
-kubectl edit svc nginx-ingress-controller-nginx-ingress -n kube-system
+kubectl edit svc ingress-nginx-controller-admission -n ingress-nginx
 ```
 
 Find ```type``` parameter under the ```spec``` and change its value to ```LoadBalancer```. After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
 
 ```bash
-kubectl get svc nginx-ingress-controller-nginx-ingress -n kube-system
+kubectl get svc ingress-nginx-controller-admission -n ingress-nginx
 ```
 
 You should have output something like this:
 
 ```bash
 NAME                                     TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)                      AGE
-nginx-ingress-controller-nginx-ingress   LoadBalancer   10.43.65.53   192.168.1.64   80:32757/TCP,443:31381/TCP   50d
+ingress-nginx-controller-admission   LoadBalancer   10.43.65.53   192.168.1.64   80:32757/TCP,443:31381/TCP   50d
 ```
 
 ### Install Cert-Manager

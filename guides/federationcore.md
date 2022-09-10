@@ -8,41 +8,47 @@ Jagger is a federation management tool developed by HEAnet to manage the Edugate
 
 From the login node:
 
-1. Create a database for Jagger at MariaDB. You can refer at [MariaDB](guides/mariadb.md) guide for more information. Take note the database name, username and password will be used in the next step.
-2. Open the `jagger` directory inside the `manifest` folder.
+1. Create a database for Jagger at MariaDB. You can refer at [MariaDB](guides/mariadb.md) guide for more information. Take note of the database name, username and password which will be used in the next step.
+2. Clone the [ifirexman-training](https://github.com/sifulan-access-federation/ifirexman-training) repository.
+
+   ```bash
+   git clone https://github.com/sifulan-access-federation/ifirexman-training.git
+   ```
+
+3. Open the `jagger` directory inside the `manifest` folder.
 
    ```bash
    cd ifirexman-training/manifest/jagger
    ```
 
-3. Edit the `database.php` file and replace the database hostname, name, username and password with the ones you created in step 1.
-4. Edit the `config_rr.php` file and update the `$config['syncpass']`, `$config['support_mailto']`, `$config['registrationAutority']` variables.
-5. Edit the `config.php` file and update the `$config['encryption_key']` variable.
-6. Edit the `email.php` file and update the `$config['smtp_host']`, `$config['smtp_user']`, `$config['smtp_pass']` variables.
-7. Create a secret for Jagger.
+4. Edit the `database.php` file and replace the database hostname, name, username and password with the ones you created in step 1.
+5. Edit the `config_rr.php` file and update the `$config['syncpass']`, `$config['support_mailto']`, `$config['registrationAutority']` variables.
+6. Edit the `config.php` file and update the `$config['encryption_key']` variable.
+7. Edit the `email.php` file and update the `$config['smtp_host']`, `$config['smtp_user']`, `$config['smtp_pass']` variables.
+8. Create a secret for Jagger.
 
    ```bash
    kubectl create secret generic jagger-config --from-file=database.php --from-file=config_rr.php --from-file=config.php --from-file=email.php --from-file=memcached.php -n central-svcs
    ```
-8. Create a PVC for Jagger.
+9.  Create a PVC for Jagger.
 
    ```bash
-   kubectl apply -f jagger-pvc.yaml -n central-svcs
+   kubectl apply -f pvc.yaml -n central-svcs
    ```
 
-9. Deploy Jagger.
+11. Deploy Jagger.
 
    ```bash
    kubectl apply -f deployment.yaml -n central-svcs
    ```
 
-10. Create a service for Jagger.
+11. Create a service for Jagger.
 
    ```bash
    kubectl apply -f svc.yaml -n central-svcs
    ```
 
-11. Edit the `ingress.yaml` file and update the `host` variable.
+11. Edit the `ingress.yaml` file and update the `host` and `hosts` variables. Defaults to `fedmanager.domain.com`.
 12. Create an ingress for Jagger.
 
     ```bash
