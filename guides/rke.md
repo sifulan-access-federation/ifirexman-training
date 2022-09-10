@@ -424,11 +424,11 @@ On the login node:
       addresses:
       - 192.168.1.240-192.168.1.250
     ---
-    apiVersion: metallb.io/v1beta1
-    kind: L2Advertisement
-    metadata:
-      name: rke-ip-pool-l2-advertisement
-      namespace: metallb-system
+      apiVersion: metallb.io/v1beta1
+      kind: L2Advertisement
+      metadata:
+        name: rke-ip-pool-l2-advertisement
+        namespace: metallb-system
     spec:
       ipAddressPools:
       - rke-ip-pool
@@ -526,6 +526,7 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
          http01:
            ingress:
              class: nginx
+             serviceType: ClusterIP
    ---
    apiVersion: cert-manager.io/v1
    kind: ClusterIssuer
@@ -548,6 +549,7 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
          http01:
            ingress:
              class: nginx
+             serviceType: ClusterIP
    ```
 
    Replace ```user@example.com``` with your email address. Apply this manifest file by using the following command:
