@@ -16,10 +16,13 @@ spec:
     spec:
       containers:
       - name: jagger
-        image: ghcr.io/sifulan-access-federation/jagger:0.1.0
+        image: ghcr.io/sifulan-access-federation/jagger:0.1.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
+        env:
+        - name: RR_SETUP_ALLOWED
+          value: "TRUE"
         volumeMounts:
         - name: jagger-config
           mountPath: /opt/jagger/application/config/config_rr.php
