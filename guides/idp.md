@@ -35,7 +35,7 @@ From the login node:
     cd ifirexman-shibboleth-idp-ORG_SHORT_NAME
     ```
 
-3. Edit the `values.yaml` file. Replace `idp.vikings.e-id.my` with the sub-domain you registered for the IdP (e.g. `idp.example.com`) and word `vikings` in the `shib-tls-cert-vikings` words with organization's short name (e.g. `example`). Below is an example of the `values.yaml` file with the sub-domain and word replaced:
+3. Edit the `values.yaml` file. Replace `idp.example.com` with the sub-domain you registered for the IdP  and word `example` in the `shib-tls-cert-example` words with organization's short name (e.g. `example`). Below is an example of the `values.yaml` file with the sub-domain and word replaced:
 
     ```yaml
     replicaCount: 1
