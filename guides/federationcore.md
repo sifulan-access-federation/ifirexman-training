@@ -55,15 +55,20 @@ From the login node:
     kubectl apply -f ingress.yaml -n central-svcs
     ```
 
-13. By using `k9s` tool, login to Jagger pod.
-14. Go to `/opt/jagger/application` folder and run the following commands:
+13. By using the `k9s` tool, login to the Jagger pod by locating the pod in the correct namespace, and press <kbd>s</kbd>.
+14. Go to the `/opt/rr3/application` folder and run the following commands:
 
     ```bash
     ./doctrine orm:schema-tool:create
     ./doctrine orm:generate-proxies
     ```
 
-15. Verify owner of `/opt/jagger/application/models/Proxies/*` folder - `www-data` user should be owner
+15. Verify the owner of the `/opt/rr3/application/models/Proxies/*` folder - `www-data` user should be the owner:
+
+    ```bash
+    ls -l /opt/rr3/application/models/Proxies
+    ```
+
 16. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.domain.com/rr3/setup`) and fill in the form.
 17. Edit file `deployment.yaml` and set `RR_SETUP_ALLOWED` to `FALSE`.
 18. Run the following command to update the deployment:
