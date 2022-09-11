@@ -57,7 +57,7 @@ From the login node:
       enabled: true
       className: "nginx"
       annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-http-prod
+        #cert-manager.io/cluster-issuer: letsencrypt-http-prod
         nginx.ingress.kubernetes.io/affinity: cookie
         nginx.ingress.kubernetes.io/affinity-mode: persistent
         nginx.ingress.kubernetes.io/proxy-body-size: 100m
@@ -71,9 +71,9 @@ From the login node:
             - path: /
               pathType: Prefix
       tls:
-        - secretName: shib-tls-cert-example
-          hosts:
+        - hosts:
             - idp.example.com
+          #secretName: shib-tls-cert-example
     
     resources:
       limits:
@@ -106,8 +106,43 @@ From the login node:
     sudo chown ifirexman: *
     ```
 
-7. Edit the `secrets.properties` file and replace the `idp.example.com` with the sub-domain you registered for the IdP (e.g. `idp.example.com`).
+7. Edit the `secrets.properties` file and replace the `idp.example.com` with the sub-domain you registered for the IdP.
 
     ```bash
     vi secrets.properties
     ```
+
+    add the following lines at the end of the file:
+
+    ```bash
+    idp.dbms.host = mariadb.central-svcs.svc.cluster.local
+    idp.dbms.name = <database name>
+    idp.dbms.username = <database username>
+    idp.dbms.password = <database password>
+    ```
+
+    Replace `<database name>`, `<database username>` and `<database password>` with the database name, username and password you created for the IdP.
+
+  8. Edit the `attribute-resolver.xml` file and replace the `example.com` with the domain you of the organization and replace the `Example Organization` with the name of the organization.
+
+  9. Edit the `idp.properties` file and replace the `idp.example.com` with the sub-domain you registered for the IdP (e.g. `idp.example.com`) and `example.com` with the domain name of the organization.
+
+  10. Edit the `metadata-based-attribute-filter.xml` file and replace the `FEDERATION` with the (short) name of your federation and replace `FEDERATION_REGISTRATION_AUTHORITY` with your federation registration authority name.
+
+  11. Edit the `metadata-provider-mdq.xml` file and replace the `FEDERATION` with the (short) name of your federation and replace `mdq.example.com` with your federation mdq server.
+
+  12. Copy your federation metadata signer public key to the `shibboleth/metadata` folder and name it as `FEDERATION-signer.pem` (you shall replace `FEDERATION` with the (short) name of your federation).
+
+  13. Deploy the IdP:
+
+      ```bash
+      helm install ORG_SHORT_NAME --namespace ORG_SHORT_NAME --create-namespace ./
+      ```
+  
+  14. Check the status of the IdP deployment:
+  
+      ```bash
+      kubectl get pods -n ORG_SHORT_NAME
+      ```
+  
+  15. When the IdP is ready, you can access the IdP's metadata at `https://idp.example.com/idp/shibboleth`. Copy/download the metadata and register it at the federation manager/jagger. 
