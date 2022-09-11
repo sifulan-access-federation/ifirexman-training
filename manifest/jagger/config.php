@@ -366,5 +366,7 @@ $config['proxy_ips'] = '';
 $config['standardize_newlines'] = TRUE;
 $config['composer_autoload'] = TRUE;
 
+$config['sess_save_path'] = sys_get_temp_dir();
+
 /* End of file config.php */
 /* Location: ./application/config/config.php */
