@@ -25,19 +25,19 @@ spec:
           value: "TRUE"
         volumeMounts:
         - name: jagger-config
-          mountPath: /opt/jagger/application/config/config_rr.php
+          mountPath: /opt/rr3/application/config/config_rr.php
           subPath: config_rr.php
         - name: jagger-config
-          mountPath: /opt/jagger/application/config/config.php
+          mountPath: /opt/rr3/application/config/config.php
           subPath: config.php
         - name: jagger-config
-          mountPath: /opt/jagger/application/config/database.php
+          mountPath: /opt/rr3/application/config/database.php
           subPath: database.php
         - name: jagger-config
-          mountPath: /opt/jagger/application/config/email.php
+          mountPath: /opt/rr3/application/config/email.php
           subPath: email.php
         - name: jagger-config
-          mountPath: /opt/jagger/application/config/memcached.php
+          mountPath: /opt/rr3/application/config/memcached.php
           subPath: memcached.php
         - name: jagger-www
           mountPath: /var/www/html
