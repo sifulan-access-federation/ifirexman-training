@@ -5,7 +5,7 @@ Fulfill all these items before running the script:
 - [ ] Provision a Kubernetes cluster and log into your Login node.
 - [ ] Prepare a remote MariaDB server.
 - [ ] Prepare a Kubernetes namespace for VIKINGS.
-- [ ] Prepare a dedicated domain name for VIKINGS.
+- [ ] Prepare a public domain name for VIKINGS.
 - [ ] Install pre-requisites on your Login node.
   - [ ] `git`
   - [ ] `kubectl`
