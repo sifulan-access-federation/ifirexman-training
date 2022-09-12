@@ -61,7 +61,7 @@ spec:
                 path: mdq.xrd
         - name: metadata-signer
           secret:
-            secretName: metadata-signer
+            secretName: signer-config
             items:
               - key: cert.crt
                 path: cert.crt
