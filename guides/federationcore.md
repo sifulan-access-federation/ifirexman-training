@@ -180,6 +180,18 @@ From the login node:
 
    Kuebernetes will create a job that will periodically (every 1 hour) download the metadata from Jagger and sign it. The signed metadata will be accessible at ```https://fedmanager.domain.com/metadata.xml```, ```https://federation.domain.com/edugain-export-metadata.xml```, and ```https://fedmanager.domain.com/full-metadata.xml```. Of course you need to replace `domain.com` with your domain name.
 
+8. If you would like to run the `metadata-signer` immediately, you can use the following command:
+
+   ```bash
+   kubectl apply -f signer.yaml -n central-svcs
+   ```
+
+   Note: If you would like to run the `metadata-signer` again, you need to delete the previous job first:
+
+   ```bash
+   kubectl delete -f singer.yaml -n central-svcs
+   ```
+
 ## Metadata Query
 
 The Metadata Query (MDQ) is a web service that can be used to query the metadata (on-demand) of a Federation operator. In comparison with the traditional method to download the full set of metadata file from the Federation operator, the MDQ allows Identity Provider or Service Provider to query the metadata of the entities that are requested only from the Federation operator. Hence, it significantly reduce the amount of computer memory needed to store the metadata. However, when MDQ is out of service, the Identity Provider or Service Provider will not be able to query the metadata of the entities that are requested. Therefore, it is important to ensure that the MDQ is always available.
