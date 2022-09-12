@@ -183,13 +183,13 @@ From the login node:
 8. If you would like to run the `metadata-signer` immediately, you can use the following command:
 
    ```bash
-   kubectl apply -f signer.yaml -n central-svcs
+   kubectl apply -f sign.yaml -n central-svcs
    ```
 
    Note: If you would like to run the `metadata-signer` again, you need to delete the previous job first:
 
    ```bash
-   kubectl delete -f singer.yaml -n central-svcs
+   kubectl delete -f sign.yaml -n central-svcs
    ```
 
 ## Metadata Query
