@@ -60,7 +60,7 @@ spec:
                 claimName: jagger-pvc
             - name: metadata-signer
               secret:
-                secretName: metadata-signer
+                secretName: signer-job
                 items:
                   - key: cert.crt
                     path: cert.crt
