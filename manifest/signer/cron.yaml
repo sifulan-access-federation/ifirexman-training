@@ -44,7 +44,7 @@ spec:
                 name: signer-www
               - mountPath: sign.sh
                 subPath: sign.sh
-                name: sifulan-signer-sign-sh
+                name: metadata-signer-sign-sh
               - mountPath: update.sh
                 subPath: update.sh
                 name: metadata-signer-update-sh
