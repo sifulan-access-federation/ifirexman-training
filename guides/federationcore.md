@@ -23,7 +23,7 @@ From the login node:
 
 4. Edit the `database.php` file and replace the database hostname, name, username and password with the ones you created in step 1.
 5. Edit the `config_rr.php` file and update the `$config['syncpass']`, `$config['support_mailto']`, `$config['registrationAutority']` variables.
-6. Edit the `config.php` file and update the `$config['encryption_key']` variable.
+6. Edit the `config.php` file and update the `$config['base_url']` and the `$config['encryption_key']` variables.
 7. Edit the `email.php` file and update the `$config['smtp_host']`, `$config['smtp_user']`, `$config['smtp_pass']` variables.
 8. Create a secret for Jagger.
 
