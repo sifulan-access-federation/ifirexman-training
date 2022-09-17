@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: mdq
   labels:
-    name: mdq
+    app: mdq
 spec:
   selector:
     matchLabels:
-      name: mdq
+      app: mdq
   replicas: 1
   template:
     metadata:
       labels:
-        name: mdq
+        app: mdq
     spec:
       containers:
         - name: mdq

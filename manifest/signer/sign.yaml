@@ -45,8 +45,8 @@ spec:
           - mountPath: edugain.fd
             subPath: edugain.fd
             name: metadata-signer-edugain-fd
-          - mountPath: metadata-full.fd
-            subPath: metadata-full.fd
+          - mountPath: full.fd
+            subPath: full.fd
             name: metadata-signer-full-fd
       volumes:
         - name: signer-www
