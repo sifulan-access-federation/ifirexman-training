@@ -48,7 +48,7 @@ On each Kubernetes node, you need to install Docker Engine from Docker. Before y
 3. Install Docker Engine
 
   ```bash
-    yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    yum install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
   ```
 
 4. Start the Docker Engine
@@ -262,7 +262,7 @@ network:
 dns:
   provider: coredns
   upstreamnameservers:
-    - 1.1.1.1
+    - <change to your local dns server's ip address>
 
 # Kubernetes Authorization mode
 # Enable RBAC
@@ -272,6 +272,10 @@ authorization:
 # Specify monitoring provider (metrics-server)
 monitoring:
   provider: metrics-server
+
+# Disable ingress controller
+ingress:
+  provider: none
 ```
 
 ### Provision your cluster
@@ -338,12 +342,83 @@ For each __worker__ node:
 4. Install NFSv4 client and open-iscsi
 
    ```bash
-   yum --setopt=tsflags=noscripts install iscsi-initiator-utils -y
-   echo "InitiatorName=$(/sbin/iscsi-iname)" > /etc/iscsi/initiatorname.iscsi
-   systemctl enable iscsid
-   systemctl start iscsid
-   modprobe iscsi_tcp
-   yum install nfs-utils -y
+   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/prerequisite/longhorn-iscsi-installation.yaml
+   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/prerequisite/longhorn-nfs-installation.yaml
+   ```
+
+5. After the deployment, run the following command to check pods’ status of the installer:
+
+   ```bash
+   kubectl get pod | grep longhorn-iscsi-installation
+   kubectl get pod | grep longhorn-nfs-installation
+   ```
+
+   The output should be similar to the following:
+
+   ```bash
+   longhorn-iscsi-installation-7k9m6   1/1     Running    0          47s
+   longhorn-iscsi-installation-dfhxc   1/1     Running    0          47s
+   longhorn-iscsi-installation-xqvdp   1/1     Running    0          47s
+   ```
+
+    ```bash
+    longhorn-nfs-installation-2l9sp     1/1     Running   0          111s
+    longhorn-nfs-installation-n2zp8     1/1     Running   0          111s
+    longhorn-nfs-installation-sgwd5     1/1     Running   0          111s
+    ```
+
+    And also can check the log with the following command to see the installation result:
+
+    ```bash
+    kubectl logs longhorn-iscsi-installation-7k9m6 -c iscsi-installation
+    ```
+
+    ```bash
+    kubectl logs longhorn-nfs-installation-2l9sp -c nfs-installation
+    ```
+
+    The output should be similar to the following:
+
+    ```bash
+    Installed:
+    iscsi-initiator-utils-6.2.1.4-4.git095f59c.el8.x86_64                         
+    iscsi-initiator-utils-iscsiuio-6.2.1.4-4.git095f59c.el8.x86_64                
+    isns-utils-libs-0.99-1.el8.x86_64                                             
+
+    iscsi install successfully
+    ```
+
+    ```bash
+    Installed:
+    gssproxy-0.8.0-20.el8.x86_64              keyutils-1.5.10-9.el8.x86_64        
+    libverto-libevent-0.3.0-5.el8.x86_64      nfs-utils-1:2.3.3-51.el8.x86_64     
+    python3-pyyaml-3.12-12.el8.x86_64         quota-1:4.04-14.el8.x86_64          
+    quota-nls-1:4.04-14.el8.noarch            rpcbind-1.2.5-8.el8.x86_64          
+
+    nfs install successfully
+    ```
+
+6. Run the following command to ensure that the nodes have all the necessary to install longhorn:
+
+   ```bash
+   curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/scripts/environment_check.sh | bash
+   ```
+
+   The output should be similar to the following:
+
+   ```bash
+   [INFO]  Required dependencies are installed.
+   [INFO]  Waiting for longhorn-environment-check pods to become ready (0/3)...
+   [INFO]  All longhorn-environment-check pods are ready (3/3).
+   [INFO]  Required packages are installed.
+   [INFO]  Cleaning up longhorn-environment-check pods...
+   [INFO]  Cleanup completed.
+    ```
+
+   Note: `jq` maybe required to be installed locally prior to running env check script. To install `jq` on Rocky Linux, run the following command:
+
+   ```bash
+   yum install -y jq
    ```
 
 ### Install Longhorn
@@ -359,13 +434,40 @@ On the login node:
    You can use the ```k9s``` tool or ```kubectl get pods -n longhorn-system``` to monitor the status. A successfully deployed Longhorn looks something like this:
 
    ```bash
-   NAME                                READY   STATUS    RESTARTS      AGE
-   longhorn-iscsi-installation-9m8bg   1/1     Running   2 (50d ago)   50d
-   longhorn-iscsi-installation-th4d6   1/1     Running   2 (50d ago)   50d
-   longhorn-iscsi-installation-z67c5   1/1     Running   1 (50d ago)   50d
-   longhorn-nfs-installation-8hrtv     1/1     Running   1 (50d ago)   50d
-   longhorn-nfs-installation-95rzq     1/1     Running   2 (50d ago)   50d
-   longhorn-nfs-installation-fcrl6     1/1     Running   2 (50d ago)   50d
+   NAME                                           READY   STATUS    RESTARTS   AGE
+   csi-attacher-dcb85d774-d6ct2                   1/1     Running   0          7m16s
+   csi-attacher-dcb85d774-f4qjb                   1/1     Running   0          7m16s
+   csi-attacher-dcb85d774-vpjzv                   1/1     Running   0          7m16s
+   csi-provisioner-5d8dd96b57-2ww7k               1/1     Running   0          7m16s
+   csi-provisioner-5d8dd96b57-g58ts               1/1     Running   0          7m16s
+   csi-provisioner-5d8dd96b57-x49gc               1/1     Running   0          7m16s
+   csi-resizer-7c5bb5fd65-hvt59                   1/1     Running   0          7m16s
+   csi-resizer-7c5bb5fd65-stmtd                   1/1     Running   0          7m16s
+   csi-resizer-7c5bb5fd65-tj7tj                   1/1     Running   0          7m16s
+   csi-snapshotter-5586bc7c79-869zp               1/1     Running   0          7m15s
+   csi-snapshotter-5586bc7c79-rqxpp               1/1     Running   0          7m15s
+   csi-snapshotter-5586bc7c79-zdxs5               1/1     Running   0          7m15s
+   engine-image-ei-766a591b-9nkw4                 1/1     Running   0          7m24s
+   engine-image-ei-766a591b-b2f24                 1/1     Running   0          7m24s
+   engine-image-ei-766a591b-xkn98                 1/1     Running   0          7m24s
+   instance-manager-e-8d454591                    1/1     Running   0          7m23s
+   instance-manager-e-d894e807                    1/1     Running   0          7m24s
+   instance-manager-e-e5aa709b                    1/1     Running   0          7m24s
+   instance-manager-r-0c0861f9                    1/1     Running   0          7m23s
+   instance-manager-r-d2d51044                    1/1     Running   0          7m24s
+   instance-manager-r-f6b6d7d8                    1/1     Running   0          7m24s
+   longhorn-admission-webhook-858d86b96b-bmfr8    1/1     Running   0          7m54s
+   longhorn-admission-webhook-858d86b96b-c8hvh    1/1     Running   0          7m54s
+   longhorn-conversion-webhook-576b5c45c7-4gbrz   1/1     Running   0          7m54s
+   longhorn-conversion-webhook-576b5c45c7-sz4xj   1/1     Running   0          7m54s
+   longhorn-csi-plugin-dh475                      2/2     Running   0          7m15s
+   longhorn-csi-plugin-dpljd                      2/2     Running   0          7m15s
+   longhorn-csi-plugin-j9rzf                      2/2     Running   0          7m15s
+   longhorn-driver-deployer-6687fb8b45-vhqhs      1/1     Running   0          7m54s
+   longhorn-manager-4ntvh                         1/1     Running   0          7m54s
+   longhorn-manager-ln4gs                         1/1     Running   0          7m54s
+   longhorn-manager-lttlz                         1/1     Running   0          7m54s
+   longhorn-ui-86b56b95c8-xxmc7                   1/1     Running   0          7m54s
    ```
 
 2. Once the installation is complete, you can check whether the Longhorn storage class was successfully created by using the command below:
@@ -400,16 +502,11 @@ On the login node:
    You can use the ```k9s``` tool or ```kubectl get pods -n metallb-system``` to monitor the status. A successfully installed MetalLB looks something like this:
 
    ```bash
-   NAME                          READY   STATUS    RESTARTS   AGE
-   controller-6b8d7594db-hkxg7   1/1     Running   0          382d
-   speaker-2c467                 1/1     Running   2          382d
-   speaker-46g8r                 1/1     Running   0          60d
-   speaker-4vqlg                 1/1     Running   0          60d
-   speaker-756k5                 1/1     Running   3          390d
-   speaker-7frzw                 1/1     Running   0          382d
-   speaker-98zdv                 1/1     Running   4          409d
-   speaker-d5mfk                 1/1     Running   0          60d
-   speaker-vnrjd                 1/1     Running   0          310d
+   NAME                         READY   STATUS    RESTARTS   AGE
+   controller-6d5cb87f6-p2rp6   1/1     Running   0          63m
+   speaker-kz2l6                1/1     Running   0          63m
+   speaker-pqxh6                1/1     Running   0          63m
+   speaker-txd75                1/1     Running   0          63m
    ```
 
 2. Create ```IPAddressPool``` and ```L2Advertisement``` objects by creating a Kubernetes manifest file. To do so, create ```metallb-configuration.yaml``` file and insert the following manifest:
@@ -442,26 +539,43 @@ On the login node:
    kubectl apply -f metallb-configuration.yaml
    ```
 
-### Reconfigure NGINX Ingress
+### Install NGINX Ingress
 
-We need to reconfigure NGINX Ingress to use ```LoadBalancer``` as the ServiceTypes. To do so, run the following command:
+On the login node:
 
-```bash
-kubectl edit svc ingress-nginx-controller-admission -n ingress-nginx
-```
+1. Run the following command to install NGINX Ingress:
 
-Find ```type``` parameter under the ```spec``` and change its value to ```LoadBalancer```. After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
+   ```bash
+   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.1/deploy/static/provider/baremetal/deploy.yaml
+   ```
 
-```bash
-kubectl get svc ingress-nginx-controller-admission -n ingress-nginx
-```
+   You can use the ```k9s``` tool or ```kubectl get pods -n ingress-nginx``` to monitor the status. A successfully installed NGINX Ingress looks something like this:
 
-You should have output something like this:
+   ```bash
+   NAME                                       READY   STATUS      RESTARTS   AGE
+   ingress-nginx-admission-create-4cvm5       0/1     Completed   0          32s
+   ingress-nginx-admission-patch-c5zbb        0/1     Completed   1          32s
+   ingress-nginx-controller-b7b55cccc-mcsjg   0/1     Running     0          32s
+   ```
 
-```bash
-NAME                                     TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)                      AGE
-ingress-nginx-controller-admission   LoadBalancer   10.43.65.53   192.168.1.64   80:32757/TCP,443:31381/TCP   50d
-```
+2. We need to reconfigure NGINX Ingress to use ```LoadBalancer``` as the ServiceTypes. To do so, run the following command:
+
+   ```bash
+   kubectl edit svc ingress-nginx-controller -n ingress-nginx
+   ```
+   
+   Find ```type``` parameter under the ```spec``` and change its value from ```NodePort``` to ```LoadBalancer```. After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
+   
+   ```bash
+   kubectl get svc ingress-nginx-controller -n ingress-nginx
+   ```
+   
+   You should have output something like this:
+   
+   ```bash
+   NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
+   ingress-nginx-controller   LoadBalancer   10.43.24.174   192.168.1.75   80:30590/TCP,443:31230/TCP   3m4s
+   ```
 
 ### Install Cert-Manager
 
@@ -484,7 +598,7 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
 3. Install Cert-Manager:
 
    ```bash
-   helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.9.1   --set installCRDs=true --set 'extraArgs={--acme-http01-solver-nameservers=1.1.1.1:53\,8.8.8.8:53}'
+   helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.9.1   --set installCRDs=true
    ```
 
 4. Check Installation:
@@ -496,13 +610,29 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
    The output should be something like this:
 
    ```bash
-   NAME                                                     READY   STATUS    RESTARTS      AGE
-   cert-manager-v1-1658198981-6dcb6dcbdb-sbncz              1/1     Running   2 (50d ago)   50d
-   cert-manager-v1-1658198981-cainjector-67bf9cf97c-r5bdz   1/1     Running   4 (50d ago)   50d
-   cert-manager-v1-1658198981-webhook-69fc6dbdb6-vrfvq      1/1     Running   4 (50d ago)   50d
+   NAME                                      READY   STATUS    RESTARTS   AGE
+   cert-manager-877fd747c-rffcd              1/1     Running   0          24s
+   cert-manager-cainjector-bbdb88874-788wh   1/1     Running   0          24s
+   cert-manager-webhook-5774d5d8f7-vc8jr     1/1     Running   0          24s
    ```
 
-5. Create an ACME HTTP Validator manifest file (e.g. ```letsencrypt-http-validation.yaml```):
+5. Run the following command to add an additional ```dnsConfig``` options at the ```cert-manager``` deployment:
+
+   ```bash
+   kubectl edit deployment cert-manager -n cert-manager
+   ```
+
+   Add the following lines under the `dnsPolicy: ClusterFirst` line:
+
+   ```yaml
+   dnsPolicy: ClusterFirst
+   dnsConfig:
+     options:
+       - name: ndots
+         value: "1"
+   ``` 
+
+6. Create an ACME HTTP Validator manifest file (e.g. ```letsencrypt-http-validation.yaml```):
 
    ```yaml
    apiVersion: cert-manager.io/v1
@@ -567,7 +697,7 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
    The output looks something like this:
 
    ```bash
-   NAME                  READY   AGE
-   letsencrypt-http-prod      True    480d
-   letsencrypt-http-staging   True    480d
+   NAME                       READY   AGE
+   letsencrypt-http-prod      True    7s
+   letsencrypt-http-staging   True    7s
    ```
