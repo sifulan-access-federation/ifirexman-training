@@ -4,7 +4,7 @@
     <Link rel="urn:oasis:names:tc:SAML:2.0:metadata" href="https://fedmanager.ifirexman.edu/full-metadata.xml"/>
   </XRD>
   <XRD>
-    <Subject>https://fedmanager.domain.com/full-metadata.xml</Subject>
+    <Subject>https://fedmanager.ifirexman.edu/full-metadata.xml</Subject>
     <Link rel="urn:oasis:names:tc:SAML:2.0:metadata" href="https://fedmanager.ifirexman.edu/full-metadata.xml">
         <Title>iFIRExMAN</Title>
         <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
