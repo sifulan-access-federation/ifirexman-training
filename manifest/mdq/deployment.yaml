@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: mdq
-          image: ghcr.io/sifulan-access-federation/pyff:0.1.0
+          image: ghcr.io/sifulan-access-federation/pyff:0.1.1
           imagePullPolicy: "IfNotPresent"
           resources:
             requests:
