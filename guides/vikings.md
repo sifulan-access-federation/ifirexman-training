@@ -5,12 +5,15 @@ Fulfill all these items before running the script:
 - [ ] Provision a Kubernetes cluster and log into your Login node.
 - [ ] Prepare a remote MariaDB server.
 - [ ] Prepare a Kubernetes namespace for VIKINGS.
-- [ ] Prepare a dedicated domain name for VIKINGS.
+- [ ] Prepare a public domain name for VIKINGS.
 - [ ] Install pre-requisites on your Login node.
   - [ ] `git`
   - [ ] `kubectl`
 
 ## Login node preparation
+
+### Create VIKINGS database
+Create a database for VIKINGS on MariaDB. You can refer to the [MariaDB](guides/mariadb.md) guide for more information. Take note of the database name, username and password which will be used later when deploying VIKINGS.
 
 ### Install pre-requisites
 
@@ -67,9 +70,9 @@ This will be used in your deployment and as a means to identify your manifests. 
 
 ### Prepare new config
 The following list are all the field values you are required to provide for a VIKINGS deployment:
-- `DB_NAME` - A database will be created for your VIKINGS deployment on your Remote MariaDB server using this name. Recommended name: `SHORT_ORG_NAME-vikings-maria-db`.
-- `DB_USER` - Root user of your remote database.
-- `DB_PASS` - Root user password of your remote database.
+- `DB_NAME` - Name of the database created for VIKINGS on MariaDB.
+- `DB_USER` - User of the database.
+- `DB_PASS` - User password of the database user.
 - `SUPPORT_EMAIL` - Support email address displayed by the Apache webserver in cases of error. Provide a support email address you can be reached from.
 
 ### Verify new config

@@ -23,7 +23,7 @@ From the login node:
 
 4. Edit the `database.php` file and replace the database hostname, name, username and password with the ones you created in step 1.
 5. Edit the `config_rr.php` file and update the `$config['syncpass']`, `$config['support_mailto']`, `$config['registrationAutority']` variables.
-6. Edit the `config.php` file and update the `$config['encryption_key']` variable.
+6. Edit the `config.php` file and update the `$config['base_url']` and the `$config['encryption_key']` variables.
 7. Edit the `email.php` file and update the `$config['smtp_host']`, `$config['smtp_user']`, `$config['smtp_pass']` variables.
 8. Create a secret for Jagger.
 
@@ -55,15 +55,20 @@ From the login node:
     kubectl apply -f ingress.yaml -n central-svcs
     ```
 
-13. By using `k9s` tool, login to Jagger pod.
-14. Go to `/opt/jagger/application` folder and run the following commands:
+13. By using the `k9s` tool, login to the Jagger pod by locating the pod in the correct namespace, and press <kbd>s</kbd>.
+14. Go to the `/opt/rr3/application` folder and run the following commands:
 
     ```bash
     ./doctrine orm:schema-tool:create
     ./doctrine orm:generate-proxies
     ```
 
-15. Verify owner of `/opt/jagger/application/models/Proxies/*` folder - `www-data` user should be owner
+15. Verify the owner of the `/opt/rr3/application/models/Proxies/*` folder - `www-data` user should be the owner:
+
+    ```bash
+    ls -l /opt/rr3/application/models/Proxies
+    ```
+
 16. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.domain.com/rr3/setup`) and fill in the form.
 17. Edit file `deployment.yaml` and set `RR_SETUP_ALLOWED` to `FALSE`.
 18. Run the following command to update the deployment:
@@ -174,6 +179,18 @@ From the login node:
    ```
 
    Kuebernetes will create a job that will periodically (every 1 hour) download the metadata from Jagger and sign it. The signed metadata will be accessible at ```https://fedmanager.domain.com/metadata.xml```, ```https://federation.domain.com/edugain-export-metadata.xml```, and ```https://fedmanager.domain.com/full-metadata.xml```. Of course you need to replace `domain.com` with your domain name.
+
+8. If you would like to run the `metadata-signer` immediately, you can use the following command:
+
+   ```bash
+   kubectl apply -f sign.yaml -n central-svcs
+   ```
+
+   Note: If you would like to run the `metadata-signer` again, you need to delete the previous job first:
+
+   ```bash
+   kubectl delete -f sign.yaml -n central-svcs
+   ```
 
 ## Metadata Query
 
