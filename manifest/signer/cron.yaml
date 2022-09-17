@@ -40,7 +40,7 @@ spec:
                 name: metadata-signer-edugain-ca
                 subPath: eduGAIN-signer-ca.pem
                 readOnly: true 
-              - mountPath: "signer-www"
+              - mountPath: "/www"
                 name: signer-www
               - mountPath: sign.sh
                 subPath: sign.sh
@@ -60,7 +60,7 @@ spec:
                 claimName: jagger-pvc
             - name: metadata-signer
               secret:
-                secretName: signer-job
+                secretName: metadata-signer-key
                 items:
                   - key: cert.crt
                     path: cert.crt

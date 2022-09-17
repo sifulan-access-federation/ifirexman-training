@@ -6,9 +6,13 @@ if (!defined('BASEPATH'))
 $config['rr_setup_allowed'] = getenv('RR_SETUP_ALLOWED');
 $config['site_logo'] = 'logo-default.png';
 
+/**
+ * Set very strong password for syncpass.
+ * You can use "date | md5sum" command to generate one
+ */
 $config['syncpass'] = 'verystrongpasss';
 
-$config['support_mailto'] = 'support@example.com';
+$config['support_mailto'] = 'support@ifirexman.edu';
 
 /**
  * Federation Registration
@@ -119,7 +123,7 @@ $config['policy_dropdown'] = array('0' => 'never', '1' => 'permit only if requir
 /**
  * default registrationAuthority for example http://www.heanet.ie
  */
-$config['registrationAutority'] = 'https://example.com';
+$config['registrationAutority'] = 'https://ifirexman.edu';
 /**
  * (boolean) load default registrationAuthority to localy managed entities if not  set. It will be visible in generated metadata 
  */

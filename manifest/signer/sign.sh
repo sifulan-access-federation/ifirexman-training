@@ -5,9 +5,9 @@ H=$2
 XMLSECTOOLDIR="/xmlsectool-2.0.0"
 Y="/metadata/tempfile"
 if [ $G -eq "provider" ]; then
- wget --no-check-certificate -O $Y https://fedmanager.example.com/rr3/tools/sync_metadata/metadataslist/${H}
+ wget --no-check-certificate -O $Y https://fedmanager.ifirexman.edu/rr3/tools/sync_metadata/metadataslist/${H}
 else
- wget --no-check-certificate -O $Y https://fedmanager.example.com/rr3/tools/sync_metadata/metadataslist
+ wget --no-check-certificate -O $Y https://fedmanager.ifirexman.edu/rr3/tools/sync_metadata/metadataslist
 fi
 
 for i in `cat ${Y}`; do
