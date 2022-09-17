@@ -47,11 +47,11 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'CHANGEME';
+$db['default']['hostname'] = 'mariadb.central-svcs.svc.cluster.local';
 $db['default']['username'] = 'CHANGEME';
 $db['default']['password'] = 'CHANGEME';
 $db['default']['database'] = 'CHANGEME';
-$db['default']['dsn']      = 'mysql:host=CHANGEME;port=3306;dbname=CHANGEME';
+$db['default']['dsn']      = 'mysql:host=mariadb.central-svcs.svc.cluster.local;port=3306;dbname=CHANGEME';
 $db['default']['dbdriver'] = 'pdo';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

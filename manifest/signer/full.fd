@@ -1,11 +1,11 @@
 - load:
-    - file:///metadata/signedmetadata/federation/FEDERATION/metadata.xml as federation-md /cert/cert.crt
+    - file:///metadata/signedmetadata/federation/iFIRExMAN/metadata.xml as federation-md /cert/cert.crt
     - file:///metadata/edugain-metadata-feed.xml as edugain-md /cert/eduGAIN-signer-ca.pem
 - select
 - xslt:
     stylesheet: tidy.xsl
 - finalize:
-    Name: urn:mace:federation:full-export
+    Name: urn:mace:ifirexman:full-export
     ID: full-export
     cacheDuration: PT24H
     validUntil: P28D

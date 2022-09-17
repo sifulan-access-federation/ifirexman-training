@@ -1,8 +1,21 @@
 # Setting Up Federation Core Services
 
+This guide will walk you through setting up the core services for a federation. It is assume that your federation have the following information:
+
+- Federation short name: `iFIRExMAN`
+- Federation long name: `iFIRExMAN Federation`
+- Federation domain: `ifirexman.edu`
+- Federation registration authority: `https://ifirexman.edu`
+- Jagger domain name: `fedmanager.ifirexman.edu`
+- MDQ domain name: `mdq.ifirexman.edu`
+
+You will need to replace the information/variables above with your own.
+
 ## Jagger
 
 Jagger is a federation management tool developed by HEAnet to manage the Edugate multiparty SAML federation. Other organisations use Jagger to manage their federations but it can be used to manage the web-of-trust for a single entity.
+
+For more detail about Jagger, you can watch the [Jagger video](https://www.youtube.com/watch?v=1REfW3N_On0) made by the [Australian Access Federation](https://www.aaf.edu.au) or read the [Jagger documentation](https://jagger.heanet.ie/docs/).
 
 ### Installation
 
@@ -21,7 +34,7 @@ From the login node:
    cd ifirexman-training/manifest/jagger
    ```
 
-4. Edit the `database.php` file and replace the database hostname, name, username and password with the ones you created in step 1.
+4. Edit the `database.php` file and replace the database name, username and password with the ones you created in step 1.
 5. Edit the `config_rr.php` file and update the `$config['syncpass']`, `$config['support_mailto']`, `$config['registrationAutority']` variables.
 6. Edit the `config.php` file and update the `$config['base_url']` and the `$config['encryption_key']` variables.
 7. Edit the `email.php` file and update the `$config['smtp_host']`, `$config['smtp_user']`, `$config['smtp_pass']` variables.
@@ -48,35 +61,42 @@ From the login node:
    kubectl apply -f svc.yaml -n central-svcs
    ```
 
-11. Edit the `ingress.yaml` file and update the `host` and `hosts` variables. Defaults to `fedmanager.domain.com`.
+11. Edit the `ingress.yaml` file and update the `host` and `hosts` variables with your Jagger domain name.
 12. Create an ingress for Jagger.
 
     ```bash
     kubectl apply -f ingress.yaml -n central-svcs
     ```
 
-13. By using the `k9s` tool, login to the Jagger pod by locating the pod in the correct namespace, and press <kbd>s</kbd>.
+13. By using the `k9s` tool, login to the Jagger pod by locating the pod in the correct namespace, and press `s`.
 14. Go to the `/opt/rr3/application` folder and run the following commands:
 
     ```bash
     ./doctrine orm:schema-tool:create
-    ./doctrine orm:generate-proxies
     ```
-
-15. Verify the owner of the `/opt/rr3/application/models/Proxies/*` folder - `www-data` user should be the owner:
-
-    ```bash
-    ls -l /opt/rr3/application/models/Proxies
-    ```
-
-16. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.domain.com/rr3/setup`) and fill in the form.
+15. Quit from the pod by typing `exit` and press `Enter`, then type `ctrl+c` to exit from the `k9s` tool.
+16. Open your web browser and go to Jagger URL (e.g. `https://fedmanager.ifirexman.edu/rr3/setup`) and create an admin account. You need to replace `fedmanager.ifirexman.edu` with your Jagger domain name.
 17. Edit file `deployment.yaml` and set `RR_SETUP_ALLOWED` to `FALSE`.
 18. Run the following command to update the deployment:
 
     ```bash
     kubectl apply -f deployment.yaml -n central-svcs
     ```
+19. Wait for about 1 minute and go to Jagger's main url (e.g. `https://fedmanager.ifirexman.edu/rr3/`) and login with the admin account you created in step 16.
+20. Go to `Administration` -> `System`. Click each `run process` button.
 
+### Creating a Federation
+
+To create a Federation:
+
+1. Go to `Register` -> `Federation`.
+2. Fill the `Internal/system name` with a short name of your federation (e.g. `iFIRExMAN`).
+3. Fill the `Federation name` with the full name of your federation (e.g. `iFIRExMAN Federation`).
+4. Fill the `Name in metadata` with the following format: `urn:mace:<federation shortname in lower letter>:<federation name>` (e.g. `urn:mace:ifirexman:ifirexman`).
+5. Fill the `Description` with some brief description of your federation.
+6. Click the `Register` button, then click the `1` icon at the top right to approve this federation registration. Click at `->` button, then click the `Accept request` button.
+
+You may repeat this step to create more federation.
 
 ## Metadata Signer
 
@@ -110,12 +130,12 @@ From the login node:
    For some fields there will be a default value,
    If you enter '.', the field will be left blank.
    -----
-   Country Name (2 letter code) []:MY
+   Country Name (2 letter code) [XX]:MY
    State or Province Name (full name) []:
-   Locality Name (eg, city) []:
-   Organization Name (eg, company) []:SIFULAN Malaysian Access Federation
+   Locality Name (eg, city) [Default City]:Kuala Lumpur
+   Organization Name (eg, company) [Default Company Ltd]:iFIRExMAN Federation
    Organizational Unit Name (eg, section) []:
-   Common Name (eg, fully qualified host name) []:Metadata Signer
+   Common Name (eg, your name or your server's hostname) []:Metadata Signer
    Email Address []:
    ```
 
@@ -143,54 +163,79 @@ From the login node:
 
    Make sure that all the modulus values are the same.
 
+   You shall share the `cert.crt` file with your federation members so that they can validate the metadata feed released by your federation. The trust of your federation relies on the signing key being secure. Hence, you MUST keep the `cert.key` and `cert_unencrypted.key` files in a safe place/securely stored. Should you lost these files or compromised, you will need to immediately regenerate the certificate and private key, and inform your federation members to update their copy of the `cert.crt` file.  
+
 3. Create a secret for the Metadata Signer.
 
    ```bash
-   kubectl create secret generic signer-config --from-file=cert.crt --from-file=cert_unencrypted.key --from-file=cert.key -n central-svcs
+   kubectl create secret generic metadata-signer-key --from-file=cert.crt --from-file=cert_unencrypted.key --from-file=cert.key -n central-svcs
    kubectl create secret generic metadata-signer-keypassword --from-literal=password=YOUR_PRIVATE_KEY_PASSPHRASE -n central-svcs
    ```
 
    Replace `YOUR_PRIVATE_KEY_PASSPHRASE` with the passphrase that you entered when you created the private key.
 
-4. Edit the `update.sh` file and update the `FEDERATION` with your federation name set at Jagger. After that run the following command:
+4. Edit the `sign.sh` file and update the `fedmanager.ifirexman.edu` domain with your Jagger domain name.
+
+5. Edit the `update.sh` file and update the `iFIRExMAN` with your federation shortname set at Jagger. After that run the following command:
 
    ```bash
    kubectl create cm metadata-signer-update-sh --from-file=update.sh -n central-svcs
    kubectl create cm metadata-signer-sign-sh --from-file=sign.sh -n central-svcs
    ```
 
-5. Edit the `edugain.fd` file and update the `domain.com` with your federation's registration authority name and `federation` with your federation name set at Jagger. After that run the following command:
+6. Edit the `edugain.fd` file and update the `ifirexman.edu` with your federation's registration authority name and `ifirexman` with your federation short name in lower letter set at Jagger. After that run the following command:
 
    ```bash
    kubectl create cm metadata-signer-edugain-fd --from-file=edugain.fd -n central-svcs
    kubectl create cm metadata-signer-edugain-ca --from-file=eduGAIN-signer-ca.pem -n central-svcs
    ```
 
-6. Edit the `full.fd` file and update the `FEDERATION` and `federation` with your federation name set at Jagger. After that run the following command:
+7. Edit the `full.fd` file and update the `iFIRExMAN` with your federation short name and `ifirexman` with your federation short name in lower letter set at Jagger. After that run the following command:
 
    ```bash
    kubectl create cm metadata-signer-full-fd --from-file=full.fd -n central-svcs
    ```
 
-7. Deploy the Metadata Signer.
-
-   ```bash
-   kubectl apply -f cron.yaml -n central-svcs
-   ```
-
-   Kuebernetes will create a job that will periodically (every 1 hour) download the metadata from Jagger and sign it. The signed metadata will be accessible at ```https://fedmanager.domain.com/metadata.xml```, ```https://federation.domain.com/edugain-export-metadata.xml```, and ```https://fedmanager.domain.com/full-metadata.xml```. Of course you need to replace `domain.com` with your domain name.
-
-8. If you would like to run the `metadata-signer` immediately, you can use the following command:
+8. Run the `metadata-signer` job by using the following command:
 
    ```bash
    kubectl apply -f sign.yaml -n central-svcs
    ```
+
+  To check the status of the job, first we need to get the name of the pod by using the following command:
+
+   ```bash
+   kubectl get pods -n central-svcs
+   ```
+
+   ```bash
+   NAME                        READY   STATUS    RESTARTS   AGE
+   jagger-8559f84f58-bggq6     1/1     Running   0          84m
+   mariadb-0                   1/1     Running   0          88m
+   metadata-signer-job-f96pq   1/1     Running   0          42s
+   ```
+
+   From the output above, the name of the pod is `metadata-signer-job-f96pq`. We can then use the following command to check the status of the job:
+
+   ```bash
+   kubectl logs -f metadata-signer-job-f96pq -n central-svcs
+   ```
+
+   You should able to see the output from the pod. To stop the log stream, you can press `ctrl + c`.
 
    Note: If you would like to run the `metadata-signer` again, you need to delete the previous job first:
 
    ```bash
    kubectl delete -f sign.yaml -n central-svcs
    ```
+
+9. Deploy the Metadata Signer.
+
+   ```bash
+   kubectl apply -f cron.yaml -n central-svcs
+   ```
+
+   Kuebernetes will create a job that will periodically (every 1 hour) download the metadata from Jagger and the eduGAIN, and sign it. The signed metadata will be accessible at ```https://fedmanager.ifirexman.edu/metadata.xml```, ```https://federation.ifirexman.edu/edugain-export-metadata.xml```, and ```https://fedmanager.ifirexman.edu/full-metadata.xml```. Of course you need to replace `ifirexman.edu` with your domain name.
 
 ## Metadata Query
 
@@ -206,19 +251,21 @@ From the login node:
    cd ifirexman-training/manifest/mdq
    ```
 
-2. Edit the `mdq.fd` file and update the `federation` with your federation name. After that run the following command:
+2. Edit the `mdq.fd` file and update the `ifirexman` with your federation short name in lower case. After that run the following command:
 
    ```bash
    kubectl create cm mdq-fd --from-file=mdq.fd -n central-svcs
    ```
 
-3. Edit the `mdq.xrd` file and update the `FEDERATION` with your federation name, replace `domain.com` with your domain name, and replace the `X509Certificate` with the content of `cert.crt` file (without the `BEGIN CERTIFICATE` and `END CERTIFICATE` statement) from the signer folder. After that run the following command:
+3. Edit the `mdq.xrd` file and update the `iFIRExMAN` with your federation short name, replace `ifirexman.edu` with your domain name, and replace the `X509Certificate` content with the content of `cert.crt` file (without the `BEGIN CERTIFICATE` and `END CERTIFICATE` statement) from the signer folder. After that run the following command:
 
    ```bash
    kubectl create cm mdq-xrd --from-file=mdq.xrd -n central-svcs
    ```
 
-4. Deploy the Metadata Query.
+4. Edit the `ingress.yaml` file and update the `ifirexman.edu` with your domain name. 
+
+5. Deploy the Metadata Query.
 
    ```bash
    kubectl apply -f deployment.yaml -n central-svcs
@@ -226,4 +273,4 @@ From the login node:
    kubectl apply -f ingress.yaml -n central-svcs
    ```
 
-   Kubernetes will create a pod that will serve the metadata query. The metadata query will be accessible at ```https://mdq.domain.com/```. Of course you need to replace `domain.com` with your domain name.
+   Kubernetes will create a pod that will serve the metadata query. The metadata query will be accessible at ```https://mdq.ifirexman.edu/```. Of course you need to replace `ifirexman.edu` with your domain name.

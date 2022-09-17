@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # FEDERATION
+mkdir /metadata
 bash sign.sh " "
 
-cp /metadata/signedmetadata/federation/FEDERATION/metadata.xml /www/metadata.xml
+cp /metadata/signedmetadata/federation/iFIRExMAN/metadata.xml /www/metadata.xml
 
 # EDUGAIN
 wget https://mds.edugain.org/edugain-v2.xml -O /metadata/edugain-metadata-feed.xml

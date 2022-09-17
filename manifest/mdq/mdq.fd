@@ -11,8 +11,8 @@
           stylesheet: tidy.xsl
       - first
       - finalize:
-          Name: urn:mace:federation:federation-full-export
-          ID: federation-full-export
+          Name: urn:mace:ifirexman:ifirexman-full-export
+          ID: ifirexman-full-export
           cacheDuration: PT24H
           validUntil: P28D
       - sign:

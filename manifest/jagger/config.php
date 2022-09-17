@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= '';
+$config['base_url']	= 'https://fedmanager.ifirexman.edu/rr3/';
 
 /*
 |--------------------------------------------------------------------------
@@ -222,6 +222,7 @@ $config['cache_path'] = '';
 |
 | If you use the Encryption class or the Session class you
 | MUST set an encryption key. See the user guide for info.
+| You can use "date | md5sum" command to generate one.
 |
 */
 $config['encryption_key'] = 'jhiufhi34hfhewhfsdfhsd';
