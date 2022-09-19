@@ -4,7 +4,6 @@
 Fulfill all these items before running the script:
 - [ ] Provision a Kubernetes cluster and log into your Login node.
 - [ ] Prepare a remote MariaDB server.
-- [ ] Prepare a Kubernetes namespace for VIKINGS.
 - [ ] Prepare a public domain name for VIKINGS.
 - [ ] Install pre-requisites on your Login node.
   - [ ] `git`
@@ -14,6 +13,17 @@ Fulfill all these items before running the script:
 
 ### Create VIKINGS database
 Create a database for VIKINGS on MariaDB. You can refer to the [MariaDB](guides/mariadb.md) guide for more information. Take note of the database name, username and password which will be used later when deploying VIKINGS.
+
+### Prepare a Kubernetes namespace
+Create a Kubernetes namespace dedicated to VIKINGS.
+```sh
+kubectl create ns vikings
+```
+
+Enter the created namespace.
+```sh
+kubens vikings
+```
 
 ### Install pre-requisites
 
