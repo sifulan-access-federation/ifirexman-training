@@ -81,9 +81,33 @@ From the login node:
 
     Replace `<database name>`, `<database username>` and `<database password>` with the database name, username and password you created for the IdP.
 
-7. Edit the `values.yaml` file. Replace `idp.ifirexman.edu` with the sub-domain you registered for the IdP  and word `ifirexman` in the `shib-tls-cert-ifirexman` words with organization's short name in lower letter.
+7. Back to the `ifirexman-shibboleth-idp-ORG_SHORT_NAME` folder and edit the `values.yaml` file. Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file. However, you need to pay attention for the following options:
+   
+   - `logo` : The logo of the organization should be in a base64 format. You can use the following command to convert the logo to base64 format:
 
+        ```bash
+        base64 <logo file>
+        ```
+      
+      The recommended logo size is 300x50 pixels.
 
+   - `signing_cert`, `backchannel_cert`, and `encryption_cert` : The value for these options should be the content of the certificate files in the `configs/credentials` folder (i.e.`idp-signing.crt`,`idp-backchannel.crt`, and `idp-encryption.crt`). You can use the following command to get the content of the certificate file:
+
+        ```bash
+        cat <certificate file>
+        ```
+
+    You shall omit the `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` lines.
+
+   - `signer_cert` : The value for this option should be the content of the federation's signing certificate file (i.e. `cert.crt`). You can use the following command to get the content of the certificate file:
+
+        ```bash
+
+        ```bash
+        cat <certificate file>
+        ```
+        
+     You shall omit the `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` lines.
 
 8. Deploy the IdP:
 
@@ -97,4 +121,4 @@ From the login node:
   kubectl get pods -n ORG_SHORT_NAME
   ```
   
-10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth`. Copy/download the metadata and register it at the federation manager/jagger. 
+10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (of course you need to replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the federation manager/jagger. 
