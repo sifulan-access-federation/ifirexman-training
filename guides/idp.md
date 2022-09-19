@@ -110,7 +110,7 @@ From the login node:
 8. Deploy the IdP:
 
    ```bash
-   helm install ORG_SHORT_NAME --namespace ORG_SHORT_NAME --create-namespace ./
+   helm install ORG_SHORT_NAME --namespace ORG_SHORT_NAME --create-namespace --wait --timeout 10m ./
    ```
   
 9. Check the status of the IdP deployment:
