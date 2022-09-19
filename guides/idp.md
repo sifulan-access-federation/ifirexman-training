@@ -102,11 +102,9 @@ From the login node:
    - `signer_cert` : The value for this option should be the content of the federation's signing certificate file (i.e. `cert.crt`). You can use the following command to get the content of the certificate file:
 
         ```bash
-
-        ```bash
         cat <certificate file>
         ```
-        
+
      You shall omit the `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` lines.
 
 8. Deploy the IdP:
@@ -117,8 +115,8 @@ From the login node:
   
 9. Check the status of the IdP deployment:
   
-  ```bash
-  kubectl get pods -n ORG_SHORT_NAME
-  ```
+   ```bash
+   kubectl get pods -n ORG_SHORT_NAME
+   ```
   
 10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (of course you need to replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the federation manager/jagger. 
