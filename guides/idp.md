@@ -26,7 +26,7 @@ From the login node:
     git clone https://github.com/sifulan-access-federation/ifirexman-shibboleth-idp.git ifirexman-shibboleth-idp-ORG_SHORT_NAME
     ```
 
-  Replace ```ORG_SHORT_NAME``` with the organization's short name.
+   Replace ```ORG_SHORT_NAME``` with the organization's short name.
 
 2. Open the `ifirexman-shibboleth-idp-ORG_SHORT_NAME` directory.
 
@@ -34,37 +34,43 @@ From the login node:
     cd ifirexman-shibboleth-idp-ORG_SHORT_NAME
     ```
 
-3. Edit the `values.yaml` file. Replace `idp.ifirexman.edu` with the sub-domain you registered for the IdP  and word `ifirexman` in the `shib-tls-cert-ifirexman` words with organization's short name in lower letter.
-
-4. Go to the `configs` directory and create a folder called credentials.
+3. Go to the `configs` folder and run the following command to generate key and certificate for the IdP:
 
     ```bash
-    cd configs
     mkdir credentials
+    docker run -it --rm -v $PWD/credentials:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh IDP_DOMAIN IDP_SCOPE
     ```
 
-5. Run the following command to generate key and certificate for the IdP:
+   Replace `IDP_DOMAIN` with the sub-domain you registered for the IdP (e.g. `idp.ifirexman.edu`) and `IDP_SCOPE` with the domain scope of the IdP  (e.g. `ifirexman.edu`).
 
-    ```bash
-    docker run -it --rm -v $PWD/credentials:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh IDP_SUBDOMAIN IDP_DOMAIN
-    ```
-
-   Replace `IDP_SUBDOMAIN` with the sub-domain you registered for the IdP (e.g. `idp.ifirexman.edu`) and `IDP_DOMAIN` with the domain you registered for the IdP (e.g. `ifirexman.edu`).
-
-6. Go to the `credentials` folder and change the ownership of the files to the service user (e.g. `ifirexman`)
+4. Go to the `credentials` folder and change the ownership of the files to the service user (e.g. `ifirexman`)
 
     ```bash
     cd credentials
     sudo chown ifirexman: *
     ```
 
-7. Edit the `secrets.properties` file and replace the `idp.ifirexman.edu` with the sub-domain you registered for the IdP.
+5. Generate a random string for the persistentId salt:
 
     ```bash
-    vi secrets.properties
+    openssl rand -base64 32
     ```
 
-    add the following lines at the end of the file:
+    Copy the output and save it for later use.
+
+6. Edit the `secrets.properties` file, and uncomment the `idp.persistentId.salt` option and replace its value from:
+
+    ```bash
+    idp.persistentId.salt = changethistosomethingrandom
+    ```
+
+    with the random string you generated in the previous step. Below is an example:
+
+    ```bash
+    idp.persistentId.salt=/X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
+    ```
+
+    If you are using VIKINGS as the backend authenticator, you need to add the following lines at the end of the file:
 
     ```bash
     idp.dbms.host = mariadb.central-svcs.svc.cluster.local
@@ -75,26 +81,20 @@ From the login node:
 
     Replace `<database name>`, `<database username>` and `<database password>` with the database name, username and password you created for the IdP.
 
-  8. Edit the `attribute-resolver.xml` file and replace the `ifirexman.edu` with the domain you of the organization and replace the `iFIRExMAN Virtual Organization` with the full name of the organization.
+7. Edit the `values.yaml` file. Replace `idp.ifirexman.edu` with the sub-domain you registered for the IdP  and word `ifirexman` in the `shib-tls-cert-ifirexman` words with organization's short name in lower letter.
 
-  9. Edit the `idp.properties` file and replace the `idp.ifirexman.edu` with the sub-domain you registered for the IdP and `ifirexman.edu` with the domain name of the organization.
 
-  10. Edit the `metadata-based-attribute-filter.xml` file and replace the `FEDERATION` with the (short) name of your federation and replace `FEDERATION_REGISTRATION_AUTHORITY` with your federation registration authority name.
 
-  11. Edit the `metadata-provider-mdq.xml` file and replace the `FEDERATION` with the (short) name of your federation and replace `mdq.ifirexman.edu` with your federation mdq server.
+8. Deploy the IdP:
 
-  12. Copy your federation metadata signer public key to the `shibboleth/metadata` folder and name it as `FEDERATION-signer.pem` (you shall replace `FEDERATION` with the (short) name of your federation).
-
-  13. Deploy the IdP:
-
-      ```bash
-      helm install ORG_SHORT_NAME --namespace ORG_SHORT_NAME --create-namespace ./
-      ```
+   ```bash
+   helm install ORG_SHORT_NAME --namespace ORG_SHORT_NAME --create-namespace ./
+   ```
   
-  14. Check the status of the IdP deployment:
+9. Check the status of the IdP deployment:
   
-      ```bash
-      kubectl get pods -n ORG_SHORT_NAME
-      ```
+  ```bash
+  kubectl get pods -n ORG_SHORT_NAME
+  ```
   
-  15. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth`. Copy/download the metadata and register it at the federation manager/jagger. 
+10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth`. Copy/download the metadata and register it at the federation manager/jagger. 
