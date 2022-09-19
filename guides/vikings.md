@@ -48,6 +48,10 @@ cd ~/ifirexman-vikings-client
 pip3 install -r requirements.txt
 ```
 
+### Create a Database
+
+Create a database for this VIKINGS deployment at MariaDB. You can refer at [MariaDB](guides/mariadb.md) guide for more information. Take note of the database name, username and password which will be used in the next step.
+
 ### Run the script
 ```sh
 ./kuborc
