@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wayf
+  labels:
+    app: wayf
+spec:
+  selector:
+    matchLabels:
+      app: wayf
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wayf
+    spec:
+      containers:
+        - name: wayf
+          image: ghcr.io/sifulan-access-federation/ifirexman-wayf:0.1.4
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "0.5"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/var/www/html/SWITCHwayf/etc/config.php"
+              name: wayf-config
+              subPath: config.php
+            - mountPath: "/metadata"
+              name: metadata
+              readOnly: true
+      volumes:
+        - name: wayf-config
+          configMap: 
+            name: wayf-config
+            items:
+              - key: config.php
+                path: config.php
+        - name: metadata
+          persistentVolumeClaim:
+            claimName: jagger-pvc
