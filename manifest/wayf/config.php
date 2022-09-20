@@ -246,20 +246,20 @@ $metadataLockFile = '/tmp/wayf_metadata.lock';
 // Use an absolute URL in case you want to use the embedded WAYF
 // The default assumes that this is in the same directory like
 // the WAYF script.
-//$imageURL = 'https://ds.example.org/SWITCHwayf/images';
+$imageURL = 'https://ds.ifirexman.edu/ds/images';
 
 // Absolute URL to point to css directory
 // The default assumes that this is in the same directory like
 // the WAYF script.
-//$cssURL = 'https://ds.example.org/SWITCHwayf/css';
+$cssURL = 'https://ds.ifirexman.edu/ds/css';
 
 // Absolute URL to point to javascript directory
 // The default assumes that this is in the same directory like
 // the WAYF script.
-//$javascriptURL = 'https://ds.example.org/SWITCHwayf/js';
+$javascriptURL = 'https://ds.ifirexman.edu/ds/js';
 
 // Abolute URL to point to APIs
-//$apiURL = 'https://ds.example.org/SWITCHwayf/api.php';
+$apiURL = 'https://ds.ifirexman.edu/ds/api.php';
 
 // 5. Appearance Settings
 //**************************

@@ -8,6 +8,7 @@ This guide will walk you through setting up the core services for a federation. 
 - Federation registration authority: `https://ifirexman.edu`
 - Jagger domain name: `fedmanager.ifirexman.edu`
 - MDQ domain name: `mdq.ifirexman.edu`
+- WAYF domain name: `ds.ifirexman.edu`
 
 You will need to replace the information/variables above with your own.
 
@@ -274,3 +275,33 @@ From the login node:
    ```
 
    Kubernetes will create a pod that will serve the metadata query. The metadata query will be accessible at ```https://mdq.ifirexman.edu/```. Of course you need to replace `ifirexman.edu` with your domain name.
+
+## WAYF (Where Are You From) / Discovery Service
+
+WAYF (Where Are You From) or sometimes referred as Discovery Service too is a service, usually used by a Service Provider, to guide a user to his or her Identity Provider (IdP). When the user would like to perform an authentication, the user will be redirected to the WAYF service. The WAYF service will then display a list of IdP that the user can choose from. The user will then select the IdP that he or she would like to use for the authentication. After the user has selected the IdP, the WAYF service will redirect the user to the IdP for the authentication. This tutorial will guide you how to setup a WAYF service using the [SWITCHaai's WAYF](https://www.switch.ch/aai/support/tools/wayf/) software.
+
+### Installation
+
+From the login node:
+
+1. Open the `wayf` directory inside the `manifest` folder.
+
+2. Edit the `config.conf` file and replace the `ifirexman.edu` with your domain name, `iFIRExMAN` with your federation short name, and `$supportContactEmail` with your federation support email.
+
+3. Run the following command to create a configmap of the `config.conf` file:
+
+   ```bash
+   kubectl create cm wayf-config --from-file=config.conf -n central-svcs
+   ```
+
+4. Edit the `ingress.yaml` file and replace the `ds.ifirexman.edu` with your WAYF service's domain name.
+
+5. Deploy the WAYF service.
+
+   ```bash
+   kubectl apply -f deployment.yaml -n central-svcs
+   kubectl apply -f svc.yaml -n central-svcs
+   kubectl apply -f ingress.yaml -n central-svcs
+   ```
+
+   Kubernetes will create a pod that will serve the WAYF service. The WAYF service will be accessible at ```https://ds.ifirexman.edu/ds/WAYF```. Of course you need to replace `ds.ifirexman.edu` with your WAYF service's domain name.
