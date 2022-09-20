@@ -28,4 +28,4 @@ spec:
   tls:
   - hosts:
     - ssotest.ifirexman.edu
-    secretName: ds-tls-cert
+    secretName: ssotest-tls-cert
