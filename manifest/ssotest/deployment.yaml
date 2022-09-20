@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: httpd
-          image: ghcr.io/sifulan-access-federation/ifirexman-ssotest:0.1.0
+          image: ghcr.io/sifulan-access-federation/ifirexman-ssotest:0.1.1
           imagePullPolicy: "IfNotPresent"
           resources:
             requests:
@@ -29,6 +29,11 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
+          env:
+            - name: FEDERATION_NAME
+              value: "iFIRExMAN Federation"
+            - name: FEDERATION_SUPPORT_EMAIL
+              value: "support@ifirexman.edu"
           volumeMounts:
             - mountPath: /var/run/shibboleth
               name: shib-socket
@@ -36,14 +41,12 @@ spec:
               name: shib-2-xml
               readOnly: true
               subPath: shibboleth2.xml
-            - mountPath: "/var/www/html"
-              name: sifulan-ssotest
             - mountPath: /etc/httpd/conf.d/servername.conf
               name: apache-config
               readOnly: true
               subPath: servername.conf
         - name: shibd
-          image: farhansj/shibboleth-sp:0.1.0
+          image: ghcr.io/sifulan-access-federation/ifirexman-shibboleth-sp:0.1.0
           imagePullPolicy: "IfNotPresent"
           resources:
             requests:
@@ -54,7 +57,7 @@ spec:
               cpu: "1"
           volumeMounts:
             - mountPath: /var/run/shibboleth
-              name: volume-shib-socket
+              name: shib-socket
             - mountPath: /etc/shibboleth/shibboleth2.xml
               name: shib-2-xml
               readOnly: true
