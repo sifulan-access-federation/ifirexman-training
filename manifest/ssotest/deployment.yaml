@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: httpd
-          image: ghcr.io/sifulan-access-federation/ifirexman-ssotest:0.1.1
+          image: ghcr.io/sifulan-access-federation/ifirexman-ssotest:0.1.2
           imagePullPolicy: "IfNotPresent"
           resources:
             requests:
