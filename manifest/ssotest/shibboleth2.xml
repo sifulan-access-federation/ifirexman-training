@@ -1,0 +1,47 @@
+<SPConfig xmlns="urn:mace:shibboleth:3.0:native:sp:config"
+    xmlns:conf="urn:mace:shibboleth:3.0:native:sp:config"
+    clockSkew="180">
+ 
+    <OutOfProcess tranLogFormat="%u|%s|%IDP|%i|%ac|%t|%attr|%n|%b|%E|%S|%SS|%L|%UA|%a" />
+ 
+    <ApplicationDefaults entityID="https://ssotest.ifirexman.edu/shibboleth"
+        signing="true" encryption="true"
+        REMOTE_USER="eppn subject-id pairwise-id persistent-id"
+        cipherSuites="DEFAULT:!EXP:!LOW:!aNULL:!eNULL:!DES:!IDEA:!SEED:!RC4:!3DES:!kRSA:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1">
+ 
+        <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
+                  checkAddress="false" handlerSSL="false" cookieProps="https">
+ 
+            <SSO discoveryProtocol="SAMLDS"
+                discoveryURL="https://ds.ifirexman.edu/ds/WAYF"
+                isDefault="true">
+                SAML2
+            </SSO>
+            <Logout>SAML2 Local</Logout>
+            <LogoutInitiator type="Admin" Location="/Logout/Admin" acl="127.0.0.1 ::1" />
+            <Handler type="MetadataGenerator" Location="/Metadata" signing="false"/>
+            <Handler type="Status" Location="/Status" acl="127.0.0.1 ::1"/>
+            <Handler type="Session" Location="/Session" showAttributeValues="false"/>
+            <Handler type="DiscoveryFeed" Location="/DiscoFeed"/>
+        </Sessions>
+ 
+        <Errors supportContact="support@ifirexman.edu"
+            helpLocation="/about.html"
+            styleSheet="/shibboleth-sp/main.css"/>
+
+
+        <MetadataProvider type="XML" url="https://fedmanager.ifirexman.edu/metadata.xml" backingFilePath="metadata.xml" maxRefreshDelay="7200">
+            <MetadataFilter type="Signature" certificate="/etc/shibboleth/federation-signer.pem"/>
+        </MetadataProvider>
+ 
+        <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
+        <AttributeFilter type="XML" validate="true" path="attribute-policy.xml"/>
+        <CredentialResolver type="File" use="signing" key="/etc/shibboleth/signing/tls.key" certificate="/etc/shibboleth/signing/tls.crt"/>
+        <CredentialResolver type="File" use="encryption" key="/etc/shibboleth/encrypt/tls.key" certificate="/etc/shibboleth/encrypt/tls.crt"/>
+ 
+    </ApplicationDefaults>
+ 
+    <SecurityPolicyProvider type="XML" validate="true" path="security-policy.xml"/>
+    <ProtocolProvider type="XML" validate="true" reloadChanges="false" path="protocols.xml"/>
+ 
+</SPConfig>
