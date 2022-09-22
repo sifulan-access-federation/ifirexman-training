@@ -1,0 +1,105 @@
+# Number of replicas of this Shibboleth IdP.
+replicaCount: 1
+
+# The image to use for the Shibboleth IdP.
+image:
+  shibboleth:
+    registry: ghcr.io
+    repository: sifulan-access-federation/ifirexman-shibboleth-idp-base
+    tag: "0.1.7"
+    pullPolicy: IfNotPresent
+
+  httpd:
+    registry: ghcr.io
+    repository: sifulan-access-federation/shibboleth-idp-httpd
+    tag: "master"
+    pullPolicy: IfNotPresent
+
+# The name of the cluster issuers for ingress. By default is set to letsencrypt with http01 challenge.
+ingress:
+  clusterIssuers: "letsencrypt-http-prod"
+
+# Set the minimum and maximum number of memory and cpu for the containers
+resources:
+  limits:
+    cpu: '1'
+    memory: 2Gi
+  requests:
+    cpu: '0.5'
+    memory: 1Gi
+
+# IdP Configuration
+idp:
+  # The sub-domain name of the IdP.
+  domain: "idp.ifirexman.edu"
+  # The scope name of the IdP. Typically set to the domain name.
+  scope: "ifirexman.edu"
+  # The full name of the organization where this IdP belongs to.
+  fullname: "iFIRExMAN Virtual Organization"
+  # The short name/acronym of the organization where this IdP belongs to.
+  shortname: "iFIRExMAN"
+  # Brief description of the organization where this IdP belongs to.
+  description: "Research and Education Communities"
+  # The website url of the organization where this IdP belongs to.
+  website: "https://ifirexman.edu"
+  # The country code (in lower letter) of the organization where this IdP belongs to.
+  country: "my"
+  # The support email address of the organization where this IdP belongs to. Should be a role-based email instead of a personal email.
+  support_email: "support@ifirexman.edu"
+  # The width of the logo image of the organization where this IdP belongs to.
+  logo_width: 300
+  # The height of the logo image of the organization where this IdP belongs to.
+  logo_height: 51
+  # The logo image of the organization where this IdP belongs to (in base64 format).
+  logo:
+  # IdP Signing Certificate
+  signing_cert:
+  # IdP Signing Key
+  signing_key:
+  # IdP Encryption Certificate
+  encryption_cert:
+  # IdP Encryption Key
+  encryption_key:
+  # IdP Sealer JKS
+  sealer_jks:
+  # IdP Sealer kver
+  sealer_kver:
+  # IdP secrets.properties file
+  secrets_properties:
+  # VIKINGS Specific Configuration
+  vikings:
+    # Set to true if this IdP use VIKINGS as the backend authenticator.
+    enabled: true
+    # Set VIKINGS's database server host.
+    database_hostname: mariadb.central-svcs.svc.cluster.local
+    # Set VIKINGS's database name.
+    database_name: vikings
+    # Set VIKINGS's database username.
+    database_username: vikings
+    # Set VIKINGS's database password.
+    database_password: vikings
+  # Azure AD Specific Configuration
+  azure_ad:
+    # Set to true if this IdP use Azure AD as the backend authenticator.
+    enabled: false
+    # Set Azure AD's entity_id.
+    entity_id: "https://sts.windows.net/9f8177eb-5934-427f-9748-f38e86a0a475/"
+    # Set Azure AD's metadata.
+    metadata: 
+    
+# Federation Configuration
+federation:
+  # Federation Full Name
+  fullname: "iFIRExMAN Federation"
+  # Federation Short Name/Acronym
+  shortname: "iFIRExMAN"
+  # Federation Registration Authority
+  registration_authority: "https://ifirexman.edu"
+  # Federation MDQ Server URL
+  mdq_url: "https://mdq.ifirexman.edu"
+  # Federation Support Email
+  support_email: "support@ifirexman.edu"
+  # Federation Syslog Server
+  syslog_server: "syslog.ifirexman.edu"
+  # Federation Signer Certificate
+  signer_cert:
