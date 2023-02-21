@@ -1,14 +1,10 @@
 # Setting up Kubernetes Cluster
 
-In this tutorial, we are going to setup a Kubernetes cluster by using the [Rancher Kubernetes Engine (RKE)](https://rancher.com/products/rke). RKE is a CNCF-certified Kubernetes distribution that runs entirely within Docker containers. It solves the common frustration of installation complexity with Kubernetes by removing most host dependencies and presenting a stable path for deployment, upgrades, and rollbacks. Before we start, make sure you have the following pre-flight checklist ready.
+In this tutorial, we are going to setup a Kubernetes cluster by using the [Rancher Kubernetes Engine 2 (RKE2)](https://rke2.io). RKE2 is a CNCF-certified Kubernetes distribution that that focuses on security and compliance within the U.S. Federal Government sector. It solves the common frustration of installation complexity with Kubernetes by removing most host dependencies and presenting a stable path for deployment, upgrades, and rollbacks. Before we start, make sure you have the following pre-flight checklist ready.
 
 ## Pre-flight checklist
 
 Please refer to the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file for pre-flight checklist.
-
----
-
-## Nodes preparation
 
 ### Set up passwordless login to the Kubernetes nodes
 
@@ -28,41 +24,33 @@ Please refer to the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC
 
 4. Try to login to each Kubernetes node by using SSH. If you are able to login to each node without having to key-in the password, then you have successfully set up passwordless login to the Kubernetes nodes.
 
-### Set up Docker Engine
+---
+
+## Nodes preparation
 
 On each Kubernetes node, you need to install Docker Engine from Docker. Before you perform the steps below, you need to perform these steps as user ```root``` or as a user with ```sudo``` permission. If you choose the latter, you need to add ```sudo``` at the start of each command.
 
-1. Remove any existing docker installation:
-  
-  ```bash
-    yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
-  ```
+### Network Config
 
-2. Install Docker Engine's yum repository:
+Create the following file, save it as ```rke2-canal.conf``` and place it in ```/etc/NetworkManager/conf.d```:
 
-  ```bash
-    yum install -y yum-utils
-    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-  ```
+```bash
+  [keyfile]
+  unmanaged-devices=interface-name:cali*;interface-name:flannel*
+```
 
-3. Install Docker Engine
+In Rocky Linux 8, two extra services are included on the NetworkManager: nm-cloud-setup.service and nm-cloud-setup.timer. These services add a routing table that interferes with the CNI plugin’s configuration. If these services are enabled, you must disable them using the command below, and then reboot the node to restore connectivity:
 
-  ```bash
-    yum install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-  ```
+```bash
+  systemctl disable nm-cloud-setup.service nm-cloud-setup.timer
+```
 
-4. Start the Docker Engine
+### Stop and disable firewall
 
-  ```bash
-    systemctl start docker && systemctl enable docker
-    systemctl start containerd && systemctl enable containerd
-  ```
-
-5. Add service account/user access to docker service
-
-  ```bash
-    usermod -aG docker ifirexman
-  ```
+```bash
+  systemctl stop firewalld
+  systemctl disable firewalld
+```
 
 ### Disable swap
 
@@ -71,13 +59,6 @@ We need to disable swap since Kubelet does not support swap yet.
 ```bash
   sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
   swapoff -a
-```
-
-### Stop and disable firewall
-
-```bash
-  systemctl stop firewalld
-  systemctl disable firewalld
 ```
 
 ### Modify bridge adapter settings
@@ -94,14 +75,12 @@ We need to disable swap since Kubelet does not support swap yet.
     net.bridge.bridge-nf-call-ip6tables = 1
     net.bridge.bridge-nf-call-iptables = 1
     net.ipv4.ip_forward = 1
+    net.ipv6.conf.all.forwarding = 1
    ```
 
-### Disable Extra NetworkManager Config
-
-In Rocky Linux 8, two extra services are included on the NetworkManager: nm-cloud-setup.service and nm-cloud-setup.timer. These services add a routing table that interferes with the CNI plugin’s configuration. If these services are enabled, you must disable them using the command below, and then reboot the node to restore connectivity:
+Finally, restart the node.
 
 ```bash
-  systemctl disable nm-cloud-setup.service nm-cloud-setup.timer
   reboot
 ```
 
@@ -112,9 +91,16 @@ In Rocky Linux 8, two extra services are included on the NetworkManager: nm-clou
 ### Install Several Kubernetes management tools
 
 #### ```docker```
-Follow the same steps used in the [Set up Docker Engine](#set-up-docker-engine) section to install Docker on the login node.
+
+Run the following command to install Docker Engine on the login node as user `root`:
+
+```bash
+curl https://releases.rancher.com/install-docker/20.10.sh | sh
+usermod -aG docker ifirexman
+```
 
 #### ```git```
+
 [Git](https://git-scm.com) is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
 
 To install ```git``` on the login node:
@@ -154,20 +140,8 @@ K9s is a terminal-based UI to interact with your Kubernetes clusters. K9s contin
 To install ```k9s``` on the login node:
 
 ```bash
-curl -Lo k9s_Linux_x86_64.tar.gz "https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_x86_64.tar.gz"
-tar -C /usr/local/bin -zxf k9s_Linux_x86_64.tar.gz k9s
-```
-
-#### ```rke```
-
-Rancher Kubernetes Engine (RKE) is a CNCF-certified Kubernetes distribution that runs entirely within Docker containers. It works on bare-metal and virtualised servers. With RKE, the installation and operation of Kubernetes are both simplified and easily automated, and they are entirely independent of the operating system and platform you’re running.
-
-To install ```rke``` on the login node:
-
-```bash
-curl -Lo rke https://github.com/rancher/rke/releases/download/v1.3.14/rke_linux-amd64
-chmod +x rke
-mv rke /usr/local/bin
+curl -Lo k9s_Linux_x86_64.tar.gz "https://github.com/derailed/k9s/releases/download/v0.27.3/k9s_Linux_amd64.tar.gz"
+tar -C /usr/local/bin -zxf k9s_Linux_amd64.tar.gz k9s
 ```
 
 #### ```helm```
@@ -180,134 +154,228 @@ To install ```helm``` on the login node:
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
---- 
-### Prepare Kubernetes Cluster file
+---
 
-To setup a Kubernetes cluster by using ```rke```, first we need to create a ```cluster.yml``` file which consists of our Kubernetes cluster configuration from the Login node. Below is an example of a ```cluster.yml``` file which you can use for this training.
+## Server Node Installation
+
+RKE2 provides an installation script that is a convenient way to install it as a service on systemd based systems. This script is available at [https://get.rke2.io](https://get.rke2.io). To install RKE2 using this method do the following as user ```root``` at the **first node**:
+
+### Download  the installer
+
+```bash
+curl -sfL https://get.rke2.io -o install.sh
+chmod +x install.sh
+```
+
+### Run the installer
+
+```bash
+INSTALL_RKE2_CHANNEL=stable;INSTALL_RKE2_TYPE="server" ./install.sh
+```
+
+Create ```/etc/rancher/rke2/config.yaml``` file, and insert the following values:
 
 ```yaml
-# Cluster Nodes
-nodes:
-  - address: < ip address of master node 1 >
-    user: ifirexman
-    role: 
-      - controlplane
-      - etcd
-    docker_socket: /var/run/docker.sock
-    ssh_key_path: ~/.ssh/id_ecdsa
-  - address: < ip address of master node 2 >
-    user: ifirexman
-    role: 
-      - controlplane
-      - etcd
-    docker_socket: /var/run/docker.sock
-    ssh_key_path: ~/.ssh/id_ecdsa
-  - address: < ip address of master node 3 >
-    user: ifirexman
-    role: 
-      - controlplane
-      - etcd
-    docker_socket: /var/run/docker.sock
-    ssh_key_path: ~/.ssh/id_ecdsa
-  - address: < ip address of worker node 1 >
-    user: ifirexman
-    role: 
-      - worker
-    docker_socket: /var/run/docker.sock
-    ssh_key_path: ~/.ssh/id_ecdsa
-  - address: < ip address of worker node 2 >
-    user: ifirexman
-    role: 
-      - worker
-    docker_socket: /var/run/docker.sock
-    ssh_key_path: ~/.ssh/id_ecdsa
-  - address: < ip address of worker node 3 >
-    user: ifirexman
-    role: 
-      - worker
-    docker_socket: /var/run/docker.sock
-    ssh_key_path: ~/.ssh/id_ecdsa
-
-# Name of the K8s Cluster
-cluster_name: rancher-cluster
-
-services:
-  kube-api:
-    # IP range for any services created on Kubernetes
-    # This must match the service_cluster_ip_range in kube-controller
-    service_cluster_ip_range: 10.43.0.0/16
-    # Expose a different port range for NodePort services
-    service_node_port_range: 30000-32767
-    pod_security_policy: false
-
-  kube-controller:
-    # CIDR pool used to assign IP addresses to pods in the cluster
-    cluster_cidr: 10.42.0.0/16
-    # IP range for any services created on Kubernetes
-    # This must match the service_cluster_ip_range in kube-api
-    service_cluster_ip_range: 10.43.0.0/16
-  
-  kubelet:
-    # Base domain for the cluster
-    cluster_domain: cluster.local
-    # IP address for the DNS service endpoint
-    cluster_dns_server: 10.43.0.10
-    # Fail if swap is on
-    fail_swap_on: false
-
-network:
-  plugin: flannel
-
-# Specify DNS provider (coredns or kube-dns)
-dns:
-  provider: coredns
-  upstreamnameservers:
-    - <change to your local dns server's ip address>
-
-# Kubernetes Authorization mode
-# Enable RBAC
-authorization:
-  mode: rbac
-
-# Specify monitoring provider (metrics-server)
-monitoring:
-  provider: metrics-server
-
-# Disable ingress controller
-ingress:
-  provider: none
+tls-san:
+  - <node 1 fqdn>
+  - <node 2 fqdn>
+  - <node 3 fqdn>
+node-taint:
+  - "CriticalAddonsOnly=true:NoExecute"
+disable: rke2-ingress-nginx
+write-kubeconfig-mode: 644
+cluster-cidr: 10.42.0.0/16,fd42:1:1::/56
+service-cidr: 10.43.0.0/16,fd43:1:1::/112
 ```
 
-### Provision your cluster
-
-Run the following command from the same directory as your `cluster.yml` file:
+### Enable the rke2-server service
 
 ```bash
-rke up
+systemctl enable rke2-server.service
+````
+
+### Start the rke2-server service
+
+```bash
+systemctl start rke2-server.service
 ```
 
-### Add cluster to your context
-
-When the cluster has been provisioned, the following files will be generated in the root directory:
-
-- `cluster.rkestate` - the cluster state file.
-- `kube_config_cluster.yml` - the kube config file.
-
-To add the cluster to your context, copy the kube config file
+### Copy the pre-shared secret key
 
 ```bash
-mkdir -p ~/.kube
-cp kube_config_cluster.yml ~/.kube/config
+cat /var/lib/rancher/rke2/server/node-token
 ```
 
-### Check your cluster
+Take note of the pre-shared secret key. You will need it to join the other nodes to the cluster.
 
-To ensure that your cluster of nodes is running and your host machine can connect to your cluster, run the following commands:
+Replace ```<token>``` with the pre-shared secret key you copied in the previous step. Replace ```<node 1 fqdn>```, ```<node 2 fqdn>```, and ```<node 3 fqdn>``` with the fully qualified domain names of the node 1,2, and 3.
+
+### Restart the rke2-server service:
 
 ```bash
-kubectl cluster-info
+systemctl restart rke2-server.service
+```
+
+***Login to node 2 and node 3, and do the following steps:***
+
+### Download the installer
+
+```bash
+curl -sfL https://get.rke2.io -o install.sh
+chmod +x install.sh
+```
+
+### Run the installer
+
+```bash
+INSTALL_RKE2_CHANNEL=stable;INSTALL_RKE2_TYPE="server" ./install.sh
+```
+
+### Create the config file
+
+Create ```/etc/rancher/rke2/config.yaml`` file, and insert the following values:
+
+```yaml
+server: https://<node 1 fqdn>:9345
+token: <token>
+write-kubeconfig-mode: "0644"
+tls-san:
+  - <node 1 fqdn>
+  - <node 2 fqdn>
+  - <node 3 fqdn>
+node-taint:
+  - "CriticalAddonsOnly=true:NoExecute"
+disable: rke2-ingress-nginx
+```
+
+Replace ```<node 1 fqdn>```, ```<node 2 fqdn>```, and ```<node 3 fqdn>``` with the fully qualified domain names of the node 1,2, and 3. Replace ```<token>``` with the pre-shared secret key you copied in the previous step.
+
+### Enable the rke2-server service
+
+```bash
+systemctl enable rke2-server.service
+````
+
+### Start the rke2-server service
+
+```bash
+systemctl start rke2-server.service
+```
+
+## Worker Node Installation
+
+Generally, the procedure to setup a worker node is the same as the procedure to setup a server node. The only difference is that you need to set the ```INSTALL_RKE2_TYPE``` flag to ```agent``` when you run the ```install.sh``` script.
+
+Below is the complete procedure to setup a worker node (repeat these steps for node 4,5, and 6):
+
+Login to the worker node by using SSH.
+
+### Download  the installer:
+
+```bash
+curl -sfL https://get.rke2.io -o install.sh
+chmod +x install.sh
+```
+
+### Run the installer
+
+```bash
+INSTALL_RKE2_CHANNEL=stable;INSTALL_RKE2_TYPE="agent" ./install.sh
+```
+
+### Create the config file
+
+Create ```/etc/rancher/rke2/config.yaml`` file, and insert the following values:
+
+```yaml
+server: https://<node 1 fqdn>:9345
+token: <token>
+```
+
+Replace ```<node 1 fqdn>``` with the fully qualified domain names of the node 1,2, and 3. Replace ```<token>``` with the pre-shared secret key you copied in the previous step.
+
+### Enable the rke2-agent service
+
+```bash
+systemctl enable rke2-agent.service
+````
+
+### Start the rke2-agent service
+
+```bash
+systemctl start rke2-agent.service
+```
+
+
+## Check your cluster
+
+To ensure that your cluster of nodes is running and your host machine can connect to your cluster, do the following steps:
+
+### Copy the kubeconfig file
+
+At the login node, create a ```~/.kube``` folder:
+
+```bash
+mkdir ~/.kube
+```
+
+From the first node, copy the ```kubeconfig``` file to the login node:
+
+```bash
+scp /etc/rancher/rke2/rke2.yaml ifirexman@<login node fqdn>:~/.kube/config
+```
+
+Replace ```<login node fqdn>``` with the fully qualified domain name of the login node. You need to perform this command as user ```root```.
+
+At the login node, edit the ```~/.kube/config``` file, and replace ```server: https://127.0.0.1:6443``` with ```server: https://<node 1 fqdn>:6443```.
+
+Change the file permission:
+
+```bash
+chmod 400 .kube/config
+```
+
+### Check the cluster
+
+At the login node, run the following commands:
+
+```bash
 kubectl get nodes
 ```
+
+You should see the following output:
+
+```bash
+NAME                      STATUS   ROLES                       AGE   VERSION
+<node 1 fqdn>             Ready    control-plane,etcd,master   30m   v1.24.10+rke2r1
+<node 2 fqdn>             Ready    control-plane,etcd,master   30m   v1.24.10+rke2r1
+<node 3 fqdn>             Ready    control-plane,etcd,master   30m   v1.24.10+rke2r1
+<node 4 fqdn>             Ready    <none>                      5m    v1.24.10+rke2r1
+<node 5 fqdn>             Ready    <none>                      5m    v1.24.10+rke2r1
+<node 6 fqdn>             Ready    <none>                      5m    v1.24.10+rke2r1
+```
+
+If you notice, the ROLES for node 4,5, and 6 are ```<none>```. We need to label them as worker nodes. To do that, run the following commands:
+
+```bash
+kubectl label node <node 4 fqdn> node-role.kubernetes.io/worker=worker
+kubectl label node <node 5 fqdn> node-role.kubernetes.io/worker=worker
+kubectl label node <node 6 fqdn> node-role.kubernetes.io/worker=worker
+```
+
+Run the ```kubectl get nodes``` command again, and you should see the following output:
+
+```bash
+NAME                      STATUS   ROLES                       AGE   VERSION
+<node 1 fqdn>             Ready    control-plane,etcd,master   31m   v1.24.10+rke2r1
+<node 2 fqdn>             Ready    control-plane,etcd,master   31m   v1.24.10+rke2r1
+<node 3 fqdn>             Ready    control-plane,etcd,master   31m   v1.24.10+rke2r1
+<node 4 fqdn>             Ready    worker                      6m    v1.24.10+rke2r1
+<node 5 fqdn>             Ready    worker                      6m    v1.24.10+rke2r1
+<node 6 fqdn>             Ready    worker                      6m    v1.24.10+rke2r1
+```
+
+If you see the above output, your kubernetes cluster is ready to use.
 
 ---
 
@@ -381,19 +449,19 @@ For each __worker__ node:
 
     ```bash
     Installed:
-    iscsi-initiator-utils-6.2.1.4-4.git095f59c.el8.x86_64                         
-    iscsi-initiator-utils-iscsiuio-6.2.1.4-4.git095f59c.el8.x86_64                
-    isns-utils-libs-0.99-1.el8.x86_64                                             
+    iscsi-initiator-utils-6.2.1.4-4.git095f59c.el8.x86_64
+    iscsi-initiator-utils-iscsiuio-6.2.1.4-4.git095f59c.el8.x86_64
+    isns-utils-libs-0.99-1.el8.x86_64
 
     iscsi install successfully
     ```
 
     ```bash
     Installed:
-    gssproxy-0.8.0-20.el8.x86_64              keyutils-1.5.10-9.el8.x86_64        
-    libverto-libevent-0.3.0-5.el8.x86_64      nfs-utils-1:2.3.3-51.el8.x86_64     
-    python3-pyyaml-3.12-12.el8.x86_64         quota-1:4.04-14.el8.x86_64          
-    quota-nls-1:4.04-14.el8.noarch            rpcbind-1.2.5-8.el8.x86_64          
+    gssproxy-0.8.0-20.el8.x86_64              keyutils-1.5.10-9.el8.x86_64
+    libverto-libevent-0.3.0-5.el8.x86_64      nfs-utils-1:2.3.3-51.el8.x86_64
+    python3-pyyaml-3.12-12.el8.x86_64         quota-1:4.04-14.el8.x86_64
+    quota-nls-1:4.04-14.el8.noarch            rpcbind-1.2.5-8.el8.x86_64
 
     nfs install successfully
     ```
@@ -520,6 +588,7 @@ On the login node:
     spec:
       addresses:
       - 192.168.1.240-192.168.1.250
+      - 2001:db8:1::1-2001:db8:1::ff
     ---
       apiVersion: metallb.io/v1beta1
       kind: L2Advertisement
@@ -531,7 +600,8 @@ On the login node:
       - rke-ip-pool
     ```
 
-    You shall replace the IP address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned in the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file.
+    You shall replace the IPv4 address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned in the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file.
+    Optionally, you can also replace the IPv6 address range ```2001:db8:1::1-2001:db8:1::ff``` with your IPv6 address range.
 
 3. Apply the newly created manifest ```metallb-configuration.yaml```:
 
@@ -563,18 +633,20 @@ On the login node:
    ```bash
    kubectl edit svc ingress-nginx-controller -n ingress-nginx
    ```
-   
-   Find ```type``` parameter under the ```spec``` and change its value from ```NodePort``` to ```LoadBalancer```. After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
-   
+
+   Under the ```spec```, find ```type``` parameter and change its value from ```NodePort``` to ```LoadBalancer```, find ```ipFamilyPolicy``` parameter and change its value from ```SingleStack``` to ```PreferDualStack```, and find ```ipFamilies``` parameter and add ```IPv6``` under the list.
+
+   After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
+
    ```bash
    kubectl get svc ingress-nginx-controller -n ingress-nginx
    ```
-   
+
    You should have output something like this:
-   
+
    ```bash
-   NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)                      AGE
-   ingress-nginx-controller   LoadBalancer   10.43.24.174   192.168.1.75   80:30590/TCP,443:31230/TCP   3m4s
+   NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP                   PORT(S)                      AGE
+   ingress-nginx-controller   LoadBalancer   10.43.219.103   192.168.1.240,2001:db8:1::1   80:30825/TCP,443:31719/TCP   19m
    ```
 
 ### Install Cert-Manager
@@ -630,7 +702,7 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
      options:
        - name: ndots
          value: "1"
-   ``` 
+   ```
 
 6. Create an ACME HTTP Validator manifest file (e.g. ```letsencrypt-http-validation.yaml```):
 
