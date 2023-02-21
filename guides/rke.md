@@ -601,7 +601,7 @@ On the login node:
     ```
 
     You shall replace the IPv4 address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned in the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file.
-    Optionally, you can also replace the IPv6 address range ```2001:db8:1::1-2001:db8:1::ff``` with your IPv6 address range.
+    Optionally, you can also replace the IPv6 address range ```2001:db8:1::1-2001:db8:1::ff``` with your IPv6 address range. If you do not have an public IPv6 address range, you can remove the IPv6 address range from the manifest.
 
 3. Apply the newly created manifest ```metallb-configuration.yaml```:
 
@@ -634,7 +634,9 @@ On the login node:
    kubectl edit svc ingress-nginx-controller -n ingress-nginx
    ```
 
-   Under the ```spec```, find ```type``` parameter and change its value from ```NodePort``` to ```LoadBalancer```, find ```ipFamilyPolicy``` parameter and change its value from ```SingleStack``` to ```PreferDualStack```, and find ```ipFamilies``` parameter and add ```IPv6``` under the list.
+   Under the ```spec```, find ```type``` parameter and change its value from ```NodePort``` to ```LoadBalancer```. If you would like to enable IPv6, find ```ipFamilyPolicy``` parameter and change its value from ```SingleStack``` to ```PreferDualStack```, and find ```ipFamilies``` parameter and add ```IPv6``` under the list. Please refer to [this Kubernetes Service Networking page](https://kubernetes.io/docs/concepts/services-networking/dual-stack/) for more information about IPv6 setting for Service in Kubernetes.
+
+   ```yaml
 
    After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
 
