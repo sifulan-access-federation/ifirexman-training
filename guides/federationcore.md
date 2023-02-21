@@ -4,7 +4,7 @@ This guide will walk you through setting up the core services for a federation. 
 
 - Federation short name: `iFIRExMAN`
 - Federation long name: `iFIRExMAN Federation`
-- Federation domain: `ifirexman.edu`
+- Federation domain fqdn: `ifirexman.edu`
 - Federation registration authority: `https://ifirexman.edu`
 - Jagger domain name: `fedmanager.ifirexman.edu`
 - MDQ domain name: `mdq.ifirexman.edu`
@@ -93,7 +93,7 @@ To create a Federation:
 1. Go to `Register` -> `Federation`.
 2. Fill the `Internal/system name` with a short name of your federation (e.g. `iFIRExMAN`).
 3. Fill the `Federation name` with the full name of your federation (e.g. `iFIRExMAN Federation`).
-4. Fill the `Name in metadata` with the following format: `urn:mace:<federation shortname in lower letter>:<federation name>` (e.g. `urn:mace:ifirexman:ifirexman`).
+4. Fill the `Name in metadata` with the following format: `urn:mace:<federation domain fqdn in lower letter>:metadata:<metadata feed name>` (e.g. `urn:mace:ifirexman.edu:metadata:ifirexman`).
 5. Fill the `Description` with some brief description of your federation.
 6. Click the `Register` button, then click the `1` icon at the top right to approve this federation registration. Click at `->` button, then click the `Accept request` button.
 
@@ -164,7 +164,7 @@ From the login node:
 
    Make sure that all the modulus values are the same.
 
-   You shall share the `cert.crt` file with your federation members so that they can validate the metadata feed released by your federation. The trust of your federation relies on the signing key being secure. Hence, you MUST keep the `cert.key` and `cert_unencrypted.key` files in a safe place/securely stored. Should you lost these files or compromised, you will need to immediately regenerate the certificate and private key, and inform your federation members to update their copy of the `cert.crt` file.  
+   You shall share the `cert.crt` file with your federation members so that they can validate the metadata feed released by your federation. The trust of your federation relies on the signing key being secure. Hence, you MUST keep the `cert.key` and `cert_unencrypted.key` files in a safe place/securely stored. Should you lost these files or compromised, you will need to immediately regenerate the certificate and private key, and inform your federation members to update their copy of the `cert.crt` file.
 
 3. Create a secret for the Metadata Signer.
 
@@ -184,14 +184,14 @@ From the login node:
    kubectl create cm metadata-signer-sign-sh --from-file=sign.sh -n central-svcs
    ```
 
-6. Edit the `edugain.fd` file and update the `ifirexman.edu` with your federation's registration authority name and `ifirexman` with your federation short name in lower letter set at Jagger. After that run the following command:
+6. Edit the `edugain.fd` file and update the `https://ifirexman.edu` with your federation's registration authority name and `ifirexman.edu` with your federation domain fqdn in lower letter set at Jagger. After that run the following command:
 
    ```bash
    kubectl create cm metadata-signer-edugain-fd --from-file=edugain.fd -n central-svcs
    kubectl create cm metadata-signer-edugain-ca --from-file=eduGAIN-signer-ca.pem -n central-svcs
    ```
 
-7. Edit the `full.fd` file and update the `iFIRExMAN` with your federation short name and `ifirexman` with your federation short name in lower letter set at Jagger. After that run the following command:
+7. Edit the `full.fd` file and update the `iFIRExMAN` with your federation short name and `ifirexman.edu` with your federation domain fqdn in lower letter set at Jagger. After that run the following command:
 
    ```bash
    kubectl create cm metadata-signer-full-fd --from-file=full.fd -n central-svcs
@@ -252,7 +252,7 @@ From the login node:
    cd ifirexman-training/manifest/mdq
    ```
 
-2. Edit the `mdq.fd` file and update the `ifirexman` with your federation short name in lower case. After that run the following command:
+2. Edit the `mdq.fd` file and update the `ifirexman.edu` with your federation domain fqdn in lower case. After that run the following command:
 
    ```bash
    kubectl create cm mdq-fd --from-file=mdq.fd -n central-svcs
@@ -264,7 +264,7 @@ From the login node:
    kubectl create cm mdq-xrd --from-file=mdq.xrd -n central-svcs
    ```
 
-4. Edit the `ingress.yaml` file and update the `ifirexman.edu` with your domain name. 
+4. Edit the `ingress.yaml` file and update the `ifirexman.edu` with your domain name.
 
 5. Deploy the Metadata Query.
 
@@ -286,12 +286,12 @@ From the login node:
 
 1. Open the `wayf` directory inside the `manifest` folder.
 
-2. Edit the `config.conf` file and replace the `ifirexman.edu` with your domain name, `iFIRExMAN` with your federation short name, and `$supportContactEmail` with your federation support email.
+2. Edit the `config.php` file and replace the `ifirexman.edu` with your domain name, `iFIRExMAN` with your federation short name, and `$supportContactEmail` with your federation support email.
 
 3. Run the following command to create a configmap of the `config.conf` file:
 
    ```bash
-   kubectl create cm wayf-config --from-file=config.conf -n central-svcs
+   kubectl create cm wayf-config --from-file=config.php -n central-svcs
    ```
 
 4. Edit the `ingress.yaml` file and replace the `ds.ifirexman.edu` with your WAYF service's domain name.

@@ -5,7 +5,7 @@
 - xslt:
     stylesheet: tidy.xsl
 - finalize:
-    Name: urn:mace:ifirexman:full-export
+    Name: urn:mace:ifirexman.edu:metadata:full-export
     ID: full-export
     cacheDuration: PT24H
     validUntil: P28D
