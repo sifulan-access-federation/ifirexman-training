@@ -634,7 +634,7 @@ On the login node:
    kubectl edit svc ingress-nginx-controller -n ingress-nginx
    ```
 
-   Under the ```spec```, find ```type``` parameter and change its value from ```NodePort``` to ```LoadBalancer```. If you would like to enable IPv6, find ```ipFamilyPolicy``` parameter and change its value from ```SingleStack``` to ```PreferDualStack```, and find ```ipFamilies``` parameter and add ```IPv6``` under the list. Please refer to [this Kubernetes Service Networking page](https://kubernetes.io/docs/concepts/services-networking/dual-stack/) for more information about IPv6 setting for Service in Kubernetes.
+   Under the ```spec```, find ```type``` parameter and change its value from ```NodePort``` to ```LoadBalancer```. If you would like to enable IPv6, find ```ipFamilyPolicy``` parameter and change its value from ```SingleStack``` to ```RequireDualStack```, and find ```ipFamilies``` parameter and add ```IPv6``` under the list. Please refer to [this Kubernetes Service Networking page](https://kubernetes.io/docs/concepts/services-networking/dual-stack/) for more information about IPv6 setting for Service in Kubernetes.
 
    ```yaml
 
