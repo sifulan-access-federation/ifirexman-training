@@ -58,15 +58,17 @@ From the login node:
   idp.persistentId.salt = /X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
   ```
 
-6. Edit the `values.yaml` file (see an example at the `idp` sub-folder inside the `manifest` folder). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
+6. If your IdP is using `Azure AD` as the backend authenticator, copy your Azure AD IdP metadata file (e.g. `azure.xml`) to the working folder.
 
-7. Add the `ifirexman` repository to Helm:
+7. Edit the `values.yaml` file (see an example at the `idp` sub-folder inside the `manifest` folder). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
+
+8. Add the `ifirexman` repository to Helm:
 
   ```bash
   helm repo add ifirexman https://sifulan-access-federation.github.io/ifirexman-charts
   ```
 
-8. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file):
+9. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file). If you are using `Azure AD` instead, uncomment the `--set-file idp.azure_ad.metadata=azure.xml` line:
 
   ```bash
   helm install ifirexman --namespace ifirexman --create-namespace \
@@ -78,10 +80,11 @@ From the login node:
   --set-file federation.signer_cert=fed-signer.crt \
   --set-file idp.sealer_kver=sealer.kver \
   --set-file idp.secrets_properties=secrets.properties \
+  # --set-file idp.azure_ad.metadata=azure.xml \
   -f values.yaml --wait ifirexman/ifirexman-shibboleth-idp
   ```
 
-9. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the federation manager/jagger.
+10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the Federation Manager (Jagger).
 
 ## Uninstalling the Chart
 
