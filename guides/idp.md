@@ -13,8 +13,8 @@ and this tutorial is meant for each organization.
 
 You need to have the following setup before you can proceed with this tutorial:
 
-- Setting up VIKINGS (Identity Management System) - [VIKINGS (Identity Management System)](guides/vikings.md).
 - Register a sub-domain for the idp. For example, `idp.ifirexman.edu`.
+- Setting up VIKINGS (Identity Management System) - [VIKINGS (Identity Management System)](vikings.md) if the IdP is using **VIKINGS** as the backend authenticator.
 
 ### Setting up Shibboleth IdP
 
