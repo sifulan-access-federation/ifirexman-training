@@ -14,7 +14,10 @@ and this tutorial is meant for each organization.
 You need to have the following setup before you can proceed with this tutorial:
 
 - Register a sub-domain for the idp. For example, `idp.ifirexman.edu`.
-- Setting up VIKINGS (Identity Management System) - [VIKINGS (Identity Management System)](vikings.md) if the IdP is using **VIKINGS** as the backend authenticator.
+
+- Setting up [VIKINGS (Identity Management System)](vikings.md) if the IdP is using **VIKINGS** as the backend authenticator.
+
+- [Azure AD Integration](azure.md) if the IdP is using **Azure AD** as the backend authenticator.
 
 ## Shibboleth IdP Installation and Configuration
 
