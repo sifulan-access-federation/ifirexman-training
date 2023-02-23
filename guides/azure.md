@@ -4,6 +4,8 @@
 
 This tutorial provides step-by-step instructions on how to integrate Azure AD with the Shibboleth IdP.
 
+You are only required to follow this tutorial if you intend on using Azure AD as the backend authenticator for an IdP.
+
 ## Prerequisites
 
 You need to have the following setup before you can proceed with this tutorial:
