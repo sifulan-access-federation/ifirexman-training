@@ -9,14 +9,14 @@ This is the base for the IdP-as-a-Service (IdPaaS) that you could offer to your 
 and this tutorial is meant for each organization.
 
 
-### Prerequisites
+## Prerequisites
 
 You need to have the following setup before you can proceed with this tutorial:
 
 - Register a sub-domain for the idp. For example, `idp.ifirexman.edu`.
 - Setting up VIKINGS (Identity Management System) - [VIKINGS (Identity Management System)](vikings.md) if the IdP is using **VIKINGS** as the backend authenticator.
 
-### Setting up Shibboleth IdP
+## Shibboleth IdP Installation and Configuration
 
 From the login node:
 
