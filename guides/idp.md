@@ -69,7 +69,16 @@ From the login node:
 8. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file):
 
   ```bash
-  helm install ifirexman --namespace ifirexman --create-namespace --values values.yaml --set-file idp.signing_cert=idp-signing.crt --set-file idp.signing_key=idp-signing.key --set-file idp.encryption_cert=idp-encryption.crt --set-file idp.encryption_key=idp-encryption.key --set-file federation.signer_cert=fed-signer.crt --set idp.sealer_jks="$(base64 sealer.jks)" --set-file idp.sealer_kver=sealer.kver --set-file idp.secrets_properties=secrets.properties --set idp.logo="$(base64 logo.png)" --wait ifirexman/ifirexman-shibboleth-idp
+  helm install ifirexman --namespace ifirexman --create-namespace \
+  --set idp.sealer_jks="$(base64 sealer.jks)" \
+  --set-file idp.signing_cert=idp-signing.crt \
+  --set-file idp.signing_key=idp-signing.key \
+  --set-file idp.encryption_cert=idp-encryption.crt \
+  --set-file idp.encryption_key=idp-encryption.key \
+  --set-file federation.signer_cert=fed-signer.crt \
+  --set-file idp.sealer_kver=sealer.kver \
+  --set-file idp.secrets_properties=secrets.properties \
+  -f values.yaml --wait ifirexman/ifirexman-shibboleth-idp
   ```
 
 9. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the federation manager/jagger.
