@@ -22,59 +22,59 @@ From the login node:
 
 1. Create a working folder (e.g. `ifirexman`) and generate signing and encryption algorithms for the IdP:
 
-  ```console
-  $ mkdir ifirexman
-  $ cd ifirexman
-  $ docker run -it --rm -v $PWD:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh IDP_DOMAIN IDP_SCOPE
+  ```bash
+  mkdir ifirexman
+  cd ifirexman
+  docker run -it --rm -v $PWD:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh IDP_DOMAIN IDP_SCOPE
   ```
 
   Replace `IDP_DOMAIN` with the sub-domain you registered for the IdP (e.g. `idp.ifirexman.edu`) and `IDP_SCOPE` with the domain scope of the IdP  (e.g. `ifirexman.edu`).
 
 2. Change the ownership of the files to the service user (e.g. `ifirexman`):
 
-  ```console
-  $ sudo chown ifirexman: idp-* sealer-* secrets.properties
+  ```bash
+  sudo chown ifirexman: idp-* sealer-* secrets.properties
   ```
 
 3. Copy your federation signer certificate (e.g. `fed-signer.crt`) and the IdP logo (e.g. `logo.png`) to the working folder.
 
 4. Generate a random string for the persistentId salt:
 
-    ```bash
-    openssl rand -base64 32
-    ```
+  ```bash
+  openssl rand -base64 32
+  ```
 
-    Copy the output and save it for later use.
+  Copy the output and save it for later use.
 
 5. Edit the `secrets.properties` file, and uncomment the `idp.persistentId.salt` option and replace its value from:
 
-    ```bash
-    idp.persistentId.salt = changethistosomethingrandom
-    ```
+  ```bash
+  idp.persistentId.salt = changethistosomethingrandom
+  ```
 
-    with the random string you generated in the previous step. Below is an example:
+  with the random string you generated in the previous step. Below is an example:
 
-    ```bash
-    idp.persistentId.salt=/X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
-    ```
+  ```bash
+  idp.persistentId.salt = /X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
+  ```
 
 6. Edit the `values.yaml` file (see an example at the `idp` sub-folder inside the `manifest` folder). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
 
 7. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file):
 
-```console
-$ helm repo add ifirexman https://sifulan-access-federation.github.io/ifirexman-charts
-$ helm install ifirexman --namespace ifirexman --create-namespace --values values.yaml --set-file idp.signing_cert=idp-signing.crt --set-file idp.signing_key=idp-signing.key --set-file idp.encryption_cert=idp-encryption.crt --set-file idp.encryption_key=idp-encryption.key --set-file federation.signer_cert=fed-signer.crt --set idp.sealer_jks="$(base64 sealer.jks)" --set-file idp.sealer_kver=sealer.kver --set-file idp.secrets_properties=secrets.properties --set idp.logo="$(base64 logo.png)" --wait ifirexman/ifirexman-shibboleth-idp
-```
+  ```bash
+  helm repo add ifirexman https://sifulan-access-federation.github.io/ifirexman-charts
+  helm install ifirexman --namespace ifirexman --create-namespace --values values.yaml --set-file idp.signing_cert=idp-signing.crt --set-file idp.signing_key=idp-signing.key --set-file idp.encryption_cert=idp-encryption.crt --set-file idp.encryption_key=idp-encryption.key --set-file federation.signer_cert=fed-signer.crt --set idp.sealer_jks="$(base64 sealer.jks)" --set-file idp.sealer_kver=sealer.kver --set-file idp.secrets_properties=secrets.properties --set idp.logo="$(base64 logo.png)" --wait ifirexman/ifirexman-shibboleth-idp
+  ```
   
-8. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (of course you need to replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the federation manager/jagger.
+8. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the federation manager/jagger.
 
 ## Uninstalling the Chart
 
 To uninstall/delete the `ifirexman` deployment:
 
-```console
-$ helm delete ifirexman --namespace ifirexman
-```
+  ```bash
+  helm delete ifirexman --namespace ifirexman
+  ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
