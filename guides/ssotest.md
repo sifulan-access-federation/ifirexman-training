@@ -140,4 +140,80 @@ Run helm uninstall to uninstall the `ifirexman-ssotest` release.
 
 ## Adding the SSO Test service to Federation Manager
 
-To be added.
+To enable the SSO Test service to be used as a test service for your federation, you must add it to Federation Manager. To do this, follow the steps below:
+
+1. Download the Shibboleth SP metadata from your SSO Test service (e.g. `ssotest.ifirexman.edu`).
+
+    ```bash
+    curl -Lo ssotest-metadata.xml https://ssotest.ifirexman.edu/Shibboleth.sso/Metadata
+    ```
+
+2. Log in to your Federation Manager (e.g. https://fedmanager.ifirexman.edu) as an Administrator.
+
+3. Click the **Register** tab from the top menu, then click **Service Provider**.
+
+4. Copy the contents of the `ssotest-metadata.xml` file into the **Metadata** field, then click the **Next** button.
+
+5. From the **General** tab within the **Service Provider registration form**, select your federation from the **Federation** dropdown menu.
+
+6. Click the **Organization** tab, and add your values to the following fields by clicking the **Add in new language** button:
+    
+        - Name of organization
+        - Displayname of organization
+        - URL to information about organization
+
+7. Click the **Contacts** tab, and click **Add contact**. Select the **Support** contact type from the **Type** dropdown menu, and add your values to the following fields:
+    
+        - Given name
+        - Surname
+        - Email
+
+8. Click the **UI Information** tab, and add your values to the following fields by clicking the **Add in new language** button:
+    
+        - Name of the Service
+        - Description of the Service
+        - URL to information about the Service
+
+9. To assign a logo:
+   
+   1.  In the **Logo of Service** section, fill in the **URL** field with the URL of your logo image, and click the **Get logo** button.
+   2.  Click the **unspecified** dropdown, and select the **English (en)** language.
+   3.  Finally, click the **Add** button under the **Get logo** button to register the service's logo.
+
+10. Click the **Required Attributes** tab, and remove the default attribute that has been automatically added (e.g. **transientId**) by clicking the **Remove** button next to the attribute.
+
+11. Now, add the following attributes by selecting them from the available dropdown menu, and clicking the **Add** button:
+    
+        - givenName
+        - surname
+        - eduPersonAffiliation
+        - mail
+        - eduPersonTargetedID
+        - eduPersonEntitlement
+        - eduPersonScopedAffiliation
+        - eduPersonPrincipalName
+        - displayName
+        - commonName
+        - uid
+        - schacHomeOrganization
+        - schacHomeOrganizationType
+        - schacCountryOfResidence
+        - schacPersonalPosition
+        - schacPersonalUniqueCode
+        - schacPersonalUniqueID
+
+12. The attributes that have been added should be set as **required** by default. For the following attributes, set them as optional by clicking its corresponding **required** dropdown menu, and select **desired**: 
+    
+        - commonName
+        - uid
+        - schacPersonalPosition
+        - schacPersonalUniqueCode
+        - schacPersonalUniqueID
+
+13. Click the **Register** button.
+
+14. Click the **Flag** or the numbered icon at the top right of the page.
+
+15. Click the **Rightward arrow** icon of the SP we have added.
+
+16. Scroll through the SP's registration form, and click the **Accept request** button at the bottom of the page to approve the SSO Test service registration.
