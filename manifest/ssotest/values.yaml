@@ -1,0 +1,128 @@
+# Default values for ssotest.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Number of replicas of SSO Test
+# Default: 1
+replicaCount: 1
+
+# Container image
+image:
+  # SSO Test
+  ssotest:
+    # SSO Test image registry
+    # Default: "ghcr.io"
+    registry: "ghcr.io"
+    # SSO Test image repository
+    # Default: "sifulan-access-federation/ifirexman-ssotest"
+    repository: "sifulan-access-federation/ifirexman-ssotest"
+    # SSO Test image version
+    # Default: Chart appVersion
+    tag: ""
+    # SSO Test image pull policy
+    # Default: "IfNotPresent"
+    pullPolicy: "IfNotPresent"
+  
+  # Shibd
+  shibd:
+    # Shibd image registry
+    # Default: "ghcr.io"
+    registry: "ghcr.io"
+    # Shibd image repository
+    # Default: "sifulan-access-federation/ifirexman-shibboleth-sp"
+    repository: "sifulan-access-federation/ifirexman-shibboleth-sp"
+    # Shibd image version
+    # Default: "0.1.0"
+    tag: "0.1.0"
+    # Shibd image pull policy
+    # Default: "IfNotPresent"
+    pullPolicy: "IfNotPresent"
+
+# SSO Test configuration
+ssotest:
+  # Portal domain
+  # Example:
+  # domain: "ssotest.ifirexman.edu"
+  domain: ""
+  # Shibboleth SP Entity ID
+  # Example:
+  # entity_id: "https://ssotest.ifirexman.edu/shibboleth"
+  entity_id: ""
+  # Federation Manager Metadata URL
+  # Example:
+  # fedmanager_metadata_url: "https://fedmanager.ifirexman.edu/metadata.xml"
+  fedmanager_metadata_url: ""
+  # Support email address
+  # Example:
+  # support: "support@ifirexman.edu"
+  support: ""
+  # Shibboleth SP signing certificate
+  # Refer to README on how to generate signing.crt file
+  signing_crt: ""
+  # Shibboleth SP signing key
+  # Refer to README on how to generate signing.key file
+  signing_key: ""
+  # Shibboleth SP encryption certificate
+  # Refer to README on how to generate encrypt.crt file
+  encryption_crt: ""
+  # Shibboleth SP encryption key
+  # Refer to README on how to generate encrypt.key file
+  encryption_key: ""
+  # Shibboleth SP federation signing certificate
+  # Refer to README on how to get fed-signer.crt file
+  federation_signer: ""
+  # Optional: shibboleth2.xml file
+  sp_config: ""
+  # Optional: attribute-map.xml file
+  attribute_map: ""
+  # Optional: servername.conf file
+  apache_config: ""
+
+# Ingress configuration
+ingress:
+  # Ingress cluster issuer
+  # Default: "letsencrypt-http-prod"
+  clusterIssuers: "letsencrypt-http-prod"
+
+# Container resources
+resources:
+  # SSO Test
+  ssotest:
+    requests:
+      # Minimum CPU allocation
+      # Example:
+      # cpu: "10m"
+      cpu: "0.5Gi"
+      # Minimum memory allocation
+      # Example:
+      # memory: "10Mi"
+      memory: "0.5"
+    limits:
+      # Maximum CPU allocation
+      # Example:
+      # cpu: "2"
+      cpu: "1Gi"
+      # Maximum memory allocation
+      # Example:
+      # memory: "2Gi"
+      memory: "1"
+  # Shibd
+  shibd:
+    requests:
+      # Minimum CPU allocation
+      # Example:
+      # cpu: "10m"
+      cpu: "1Gi"
+      # Minimum memory allocation
+      # Example:
+      # memory: "10Mi"
+      memory: "0.5"
+    limits:
+      # Maximum CPU allocation
+      # Example:
+      # cpu: "2"
+      cpu: "2Gi"
+      # Maximum memory allocation
+      # Example:
+      # memory: "2Gi"
+      memory: "1"

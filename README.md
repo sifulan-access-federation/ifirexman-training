@@ -10,6 +10,8 @@ This repository provides step-by-step guides on setting up Identity Federation c
 
 - [Federation core services](guides/federationcore.md).
 
+- [SSO Test Service](guides/ssotest.md).
+
 - [VIKINGS (Identity Management System)](guides/vikings.md).
 
 - [Azure AD Integration](guides/azure.md).
