@@ -184,7 +184,7 @@ To enable the SSO Test service to be used as a test service for your federation,
 
 10. Click the **Required Attributes** tab, and remove the default attribute that has been automatically added (e.g. **transientId**) by clicking the **Remove** button next to the attribute.
 
-11. Now, add the following attributes by selecting them from the available dropdown menu, and clicking the **Add** button:
+11. Now, add the following attributes (if available) by selecting them from the available dropdown menu, and clicking the **Add** button:
     
         - givenName
         - surname
