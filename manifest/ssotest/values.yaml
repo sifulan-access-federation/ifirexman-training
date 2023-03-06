@@ -48,10 +48,6 @@ ssotest:
   # Example:
   # entity_id: "https://ssotest.ifirexman.edu/shibboleth"
   entity_id: ""
-  # Federation Manager Metadata URL
-  # Example:
-  # fedmanager_metadata_url: "https://fedmanager.ifirexman.edu/metadata.xml"
-  fedmanager_metadata_url: ""
   # Support email address
   # Example:
   # support: "support@ifirexman.edu"
@@ -68,15 +64,30 @@ ssotest:
   # Shibboleth SP encryption key
   # Refer to README on how to generate encrypt.key file
   encryption_key: ""
-  # Shibboleth SP federation signing certificate
-  # Refer to README on how to get fed-signer.crt file
-  federation_signer: ""
   # Optional: shibboleth2.xml file
   sp_config: ""
   # Optional: attribute-map.xml file
   attribute_map: ""
   # Optional: servername.conf file
   apache_config: ""
+
+# Federation configuration
+federation:
+  # Federation full name
+  # Example:
+  # fullname: "iFIRExMAN Federation"
+  name: ""
+  # Federation support email address
+  # Example:
+  # support_email: "support@ifirexman.edu"
+  support: ""
+  # Federation Manager Metadata URL
+  # Example:
+  # metadata_url: "https://fedmanager.ifirexman.edu/metadata.xml"
+  metadata_url: ""
+  # Federation signing certificate
+  # Refer to README on how to get fed-signer.crt file
+  signer: ""
 
 # Ingress configuration
 ingress:
@@ -92,37 +103,37 @@ resources:
       # Minimum CPU allocation
       # Example:
       # cpu: "10m"
-      cpu: "0.5Gi"
+      cpu: "0.5"
       # Minimum memory allocation
       # Example:
       # memory: "10Mi"
-      memory: "0.5"
+      memory: "0.5Gi"
     limits:
       # Maximum CPU allocation
       # Example:
       # cpu: "2"
-      cpu: "1Gi"
+      cpu: "1"
       # Maximum memory allocation
       # Example:
       # memory: "2Gi"
-      memory: "1"
+      memory: "1Gi"
   # Shibd
   shibd:
     requests:
       # Minimum CPU allocation
       # Example:
       # cpu: "10m"
-      cpu: "1Gi"
+      cpu: "0.5"
       # Minimum memory allocation
       # Example:
       # memory: "10Mi"
-      memory: "0.5"
+      memory: "1Gi"
     limits:
       # Maximum CPU allocation
       # Example:
       # cpu: "2"
-      cpu: "2Gi"
+      cpu: "1"
       # Maximum memory allocation
       # Example:
       # memory: "2Gi"
-      memory: "1"
+      memory: "2Gi"
