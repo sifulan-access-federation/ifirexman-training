@@ -21,6 +21,57 @@ You need to have the following setup before you can proceed with this tutorial:
 
 ## Shibboleth IdP Installation and Configuration
 
+### Assisted Installation (Azure AD)
+
+At the moment, the assisted installation is only available for the **Azure AD** backend authenticator.
+
+From the login node:
+
+1. Install the [IdP installation script](../scripts/idp/install.sh) by linking it (e.g. `~/ifirexman-training/scripts/idp/install.sh`) to the `/usr/local/bin` folder:
+
+    ```bash
+    sudo ln -sf ~/ifirexman-training/scripts/idp/install.sh /usr/local/bin/idp-install
+    ```
+
+2. Create and get into the working folder (e.g. `ifirexman`):
+
+    ```bash
+    mkdir ifirexman
+    cd ifirexman
+    ```
+
+3. Add the following files to the working folder:
+
+    - `values.yaml` - Helm chart values file.
+    - `fed-signer.crt` - Federation signer certificate.
+    - `azure.xml` - Azure AD IdP metadata file.
+
+4. Edit the `values.yaml` file according to your IdP. Generally, you will only need to update the `Federation Configuration` section. A brief explanation and sample entries are provided in the file.
+
+5. Add the necessary variables with your IdP's values to your shell environment (optional):
+
+    ```bash
+    export LONG_ORG_NAME="iFIRExMAN Virtual Organization"
+    export SHORT_ORG_NAME="ifirexman"
+    export ORG_WEBSITE="https://ifirexman.edu"
+    export ORG_DOMAIN="ifirexman.edu"
+    export ORG_SCOPE="$ORG_DOMAIN"
+    export SHIBBOLETH_SUBDOMAIN="idp.$ORG_DOMAIN"
+    export STAFF_EMAIL_DOMAIN="ifirexman.edu"
+    export STUDENT_EMAIL_DOMAIN="student.ifirexman.edu"
+    export ORG_SUPPORT_EMAIL="support@ifirexman.edu"
+    ```
+
+6. Run the installation script:
+
+    ```bash
+    idp-install
+    ```
+
+7. Copy the IdP's shibboleth metadata at `ifirexman-shib-metadata.xml` (if the `SHORT_ORG_NAME` is set to `ifirexman`) and register it to the Federation Manager (Jagger).
+
+### Manual Installation
+
 From the login node:
 
 1. Create a working folder (e.g. `ifirexman`) and generate signing and encryption algorithms for the IdP:
