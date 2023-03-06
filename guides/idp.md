@@ -23,7 +23,7 @@ You need to have the following setup before you can proceed with this tutorial:
 
 ### Assisted Installation (Azure AD)
 
-At the moment, the assisted installation is only available for the **Azure AD** backend authenticator.
+At the moment, the assisted installation method is only available for the **Azure AD** backend authenticator.
 
 From the login node:
 
