@@ -4,16 +4,16 @@ replicaCount: 1
 # The image to use for the Shibboleth IdP.
 image:
   shibboleth:
-    registry: ghcr.io
-    repository: sifulan-access-federation/ifirexman-shibboleth-idp-base
-    tag: "0.1.7"
-    pullPolicy: IfNotPresent
+    registry: "ghcr.io"
+    repository: "sifulan-access-federation/ifirexman-shibboleth-idp-base"
+    tag: ""
+    pullPolicy: "IfNotPresent"
 
   httpd:
-    registry: ghcr.io
-    repository: sifulan-access-federation/shibboleth-idp-httpd
+    registry: "ghcr.io"
+    repository: "sifulan-access-federation/shibboleth-idp-httpd"
     tag: "master"
-    pullPolicy: IfNotPresent
+    pullPolicy: "IfNotPresent"
 
 # The name of the cluster issuers for ingress. By default is set to letsencrypt with http01 challenge.
 ingress:
@@ -21,85 +21,191 @@ ingress:
 
 # Set the minimum and maximum number of memory and cpu for the containers
 resources:
-  limits:
-    cpu: '1'
-    memory: 2Gi
-  requests:
-    cpu: '0.5'
-    memory: 1Gi
+  shibboleth:
+    limits:
+      cpu: "0.5"
+      memory: "2Gi"
+    requests:
+      cpu: "0.1"
+      memory: "1Gi"
+  httpd:
+    limits:
+      cpu: "0.5"
+      memory: "2Gi"
+    requests:
+      cpu: "0.1"
+      memory: "1Gi"
 
 # IdP Configuration
 idp:
   # The sub-domain name of the IdP.
-  domain: "idp.ifirexman.edu"
+  # Example:
+  # domain: "idp.ifirexman.edu"
+  domain: ""
   # The scope name of the IdP. Typically set to the domain name.
-  scope: "ifirexman.edu"
+  # Example:
+  # scope: "ifirexman.edu"
+  scope: ""
   # The full name of the organization where this IdP belongs to.
-  fullname: "iFIRExMAN Virtual Organization"
+  # Example:
+  # fullname: "iFIRExMAN Virtual Organization"
+  fullname: ""
   # The short name/acronym of the organization where this IdP belongs to.
-  shortname: "iFIRExMAN"
+  # Example:
+  # shortname: "iFIRExMAN"
+  shortname: ""
   # Brief description of the organization where this IdP belongs to.
-  description: "Research and Education Communities"
+  # Example:
+  # description: "Research and Education Communities"
+  description: ""
   # The website url of the organization where this IdP belongs to.
-  website: "https://ifirexman.edu"
+  # Example:
+  # website: "https://ifirexman.edu"
+  website: ""
   # The country code (in lower letter) of the organization where this IdP belongs to.
-  country: "my"
+  # Example:
+  # country: "my"
+  country: ""
   # The support email address of the organization where this IdP belongs to. Should be a role-based email instead of a personal email.
-  support_email: "support@ifirexman.edu"
-  # The width of the logo image of the organization where this IdP belongs to.
-  logo_width: 300
-  # The height of the logo image of the organization where this IdP belongs to.
-  logo_height: 51
-  # The logo image of the organization where this IdP belongs to (in base64 format).
-  logo:
-  # IdP Signing Certificate
-  signing_cert:
-  # IdP Signing Key
-  signing_key:
-  # IdP Encryption Certificate
-  encryption_cert:
-  # IdP Encryption Key
-  encryption_key:
-  # IdP Sealer JKS
-  sealer_jks:
-  # IdP Sealer kver
-  sealer_kver:
-  # IdP secrets.properties file
-  secrets_properties:
+  # Example:
+  # support_email: "support@ifirexman.edu"
+  support_email: ""
+  # Attribute Release Policy
+  # Example:
+  # attribute_release_policy:
+  # - name: "releaseEpSA"
+  #   entity_id:
+  #     - https://sp1.ifirexman.edu/shibboleth
+  #     - https://sp2.ifirexman.edu/shibboleth
+  #   attributes:
+  #     - eduPersonScopedAffiliation
+  #     - eduPersonEntitlement
+  #     - eduPersonTargetedID
+  attribute_release_policies: []
+  # Persistent Log
+  persistent_log:
+    # Enable log persistence.
+    enabled: false
+    # Set the storage class to use for the persistent log.
+    # Example:
+    # storage_class: "longhorn"
+    storage_class: "longhorn"
+    # Set the maximum size of the persistent log.
+    # Example:
+    # size: "1Gi"
+    size: "1Gi"
+  # Fticks
+  fticks:
+    # Enable fticks.
+    enabled: false
   # VIKINGS Specific Configuration
   vikings:
-    # Set to true if this IdP use VIKINGS as the backend authenticator.
+    # Set to true if this IdP uses VIKINGS as the backend authenticator.
     enabled: true
     # Set VIKINGS's database server host.
-    database_hostname: mariadb.central-svcs.svc.cluster.local
+    # Example:
+    # database_hostname: mariadb.central-svcs.svc.cluster.local
+    database_hostname: ""
     # Set VIKINGS's database name.
-    database_name: vikings
+    # Example:
+    # database_name: "vikings"
+    database_name: ""
     # Set VIKINGS's database username.
-    database_username: vikings
+    # Example:
+    # database_username: "vikings"
+    database_username: ""
     # Set VIKINGS's database password.
-    database_password: vikings
+    # Example:
+    # database_password: "vikings"
+    database_password: ""
   # Azure AD Specific Configuration
   azure_ad:
-    # Set to true if this IdP use Azure AD as the backend authenticator.
+    # Set to true if this IdP uses Azure AD as the backend authenticator.
     enabled: false
     # Set Azure AD's entity_id.
-    entity_id: "https://sts.windows.net/9f8177eb-5934-427f-9748-f38e86a0a475/"
-    # Set Azure AD's metadata.
-    metadata: 
-    
+    # Example:
+    # entity_id: "https://sts.windows.net/9f8177eb-5934-427f-9748-f38e86a0a475/"
+    entity_id: ""
+    # Azure AD eduPersonAffiliation Attribute Mapping
+    # Example:
+    # eduPersonAffiliationAttributeMap:
+    #   attribute: "mail"
+    #   valueMap:
+    #     - attributeReturn: "staff"
+    #       attributeValues:
+    #         - "@ifirexman.edu"
+    #     - attributeReturn: "student"
+    #       attributeValues:
+    #         - "@student.ifirexman.edu"
+    #     - attributeReturn: "member"
+    #       attributeValues:
+    #         - "@ifirexman.edu"
+    #         - "@student.ifirexman.edu"
+    eduPersonAffiliationAttributeMap:
+      attribute: ""
+      valueMap: []
+    # Azure AD eduPersonEntitlement Attribute Mapping
+    # Example:
+    # eduPersonEntitlementAttributeMap:
+    #   attribute: "eduPersonAffiliation"
+    #   valueMap:
+    #     - attributeReturn: "urn:mace:ifirexman.edu:staff"
+    #       attributeValues:
+    #         - "staff"
+    #     - attributeReturn: "urn:mace:ifirexman.edu:student"
+    #       attributeValues:
+    #         - "student"
+    #     - attributeReturn: "urn:mace:ifirexman.edu:member"
+    #       attributeValues:
+    #         - "member"
+    #     - attributeReturn: "urn:mace:dir:entitlement:common-lib-terms"
+    #       attributeValues:
+    #         - "member"
+    eduPersonEntitlementAttributeMap:
+      attribute: ""
+      valueMap: []
+    # Set Azure AD's metadata file.
+    metadata: ""
+  # IdP Signing Certificate file
+  signing_cert: ""
+  # IdP Signing Key file
+  signing_key: ""
+  # IdP Encryption Certificate file
+  encryption_cert: ""
+  # IdP Encryption Key file
+  encryption_key: ""
+  # IdP Sealer JKS file
+  sealer_jks: ""
+  # IdP Sealer kver file
+  sealer_kver: ""
+  # IdP secrets.properties file
+  secrets_properties: ""
+
 # Federation Configuration
 federation:
   # Federation Full Name
-  fullname: "iFIRExMAN Federation"
+  # Example:
+  # fullname: "iFIRExMAN Federation"
+  fullname: ""
   # Federation Short Name/Acronym
-  shortname: "iFIRExMAN"
+  # Example:
+  # shortname: "iFIRExMAN"
+  shortname: ""
   # Federation Registration Authority
-  registration_authority: "https://ifirexman.edu"
+  # Example:
+  # registration_authority: "https://ifirexman.edu"
+  registration_authority: ""
   # Federation MDQ Server URL
-  mdq_url: "https://mdq.ifirexman.edu"
+  # Example:
+  # mdq_url: "https://mdq.ifirexman.edu"
+  mdq_url: ""
   # Federation Support Email
-  support_email: "support@ifirexman.edu"
+  # Example:
+  # support_email: "support@ifirexman.edu"
+  support_email: ""
   # Federation Syslog Server
-  syslog_server: "syslog.ifirexman.edu"
-  # Federation Signer Certificate
-  signer_cert:
+  # Example:
+  # syslog_server: "syslog.ifirexman.edu"
+  syslog_server: ""
+  # Federation Signer Certificate file
+  signer_cert: ""

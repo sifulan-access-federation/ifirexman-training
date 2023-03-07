@@ -1,5 +1,11 @@
 # How to deploy VIKINGS
 
+## Overview
+
+This tutorial provides step-by-step instructions on how to setup VIKINGS as an IdP's Identity Management System (IDMS) solution.
+
+You are only required to follow this tutorial if you intend on using VIKINGS as the backend authenticator for an IdP.
+
 ## Pre-flight checklist
 Fulfill all these items before running the script:
 - [ ] Provision a Kubernetes cluster and log into your Login node.
