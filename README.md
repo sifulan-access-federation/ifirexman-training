@@ -12,10 +12,6 @@ This repository provides step-by-step guides on setting up Identity Federation c
 
 - [SSO Test Service](guides/ssotest.md).
 
-- [VIKINGS (Identity Management System)](guides/vikings.md).
-
-- [Azure AD Integration](guides/azure.md).
-
 - [Shibboleth Identity Provider (IdP)](guides/idp.md).
 
 ## Architecture
@@ -58,7 +54,7 @@ This repository provides step-by-step guides on setting up Identity Federation c
 - Access to ports 80 and 443 for both the public IP addresses are required.
 
 - Several sub-domain names are required and should be pointed to the first public and private IP addresses at your external and internal DNS servers. These sub-domain names are:
-  
+
   - `fedmanager.ifirexman.edu`
   - `ds.ifirexman.edu`
   - `mdq.ifirexman.edu`
