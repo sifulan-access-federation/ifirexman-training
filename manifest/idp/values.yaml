@@ -1,40 +1,87 @@
-# Number of replicas of this Shibboleth IdP.
-replicaCount: 1
-
-# The image to use for the Shibboleth IdP.
-image:
-  shibboleth:
-    registry: "ghcr.io"
-    repository: "sifulan-access-federation/ifirexman-shibboleth-idp-base"
-    tag: ""
-    pullPolicy: "IfNotPresent"
-
-  httpd:
-    registry: "ghcr.io"
-    repository: "sifulan-access-federation/shibboleth-idp-httpd"
-    tag: "master"
-    pullPolicy: "IfNotPresent"
-
-# The name of the cluster issuers for ingress. By default is set to letsencrypt with http01 challenge.
+# Ingress Configuration.
 ingress:
+  # The name of the cluster issuers for ingress. By default is set to letsencrypt with http01 challenge.
+  # Default: "letsencrypt-http-prod"
   clusterIssuers: "letsencrypt-http-prod"
 
-# Set the minimum and maximum number of memory and cpu for the containers
-resources:
+# Number of replicas of this Shibboleth IdP.
+# Default: 1
+replicaCount: 1
+
+# Container images used for the Shibboleth IdP.
+image:
+  # Shibboleth IdP.
   shibboleth:
-    limits:
-      cpu: "0.5"
-      memory: "2Gi"
-    requests:
-      cpu: "0.1"
-      memory: "1Gi"
+    # Shibboleth IdP image registry.
+    # Default: "ghcr.io"
+    registry: "ghcr.io"
+    # Shibboleth IdP image repository.
+    # Default: "sifulan-access-federation/ifirexman-shibboleth-idp-base"
+    repository: "sifulan-access-federation/ifirexman-shibboleth-idp-base"
+    # Shibboleth IdP image version.
+    # Default: Chart appVersion
+    tag: ""
+    # Shibboleth IdP image pull policy.
+    # Default: "IfNotPresent"
+    pullPolicy: "IfNotPresent"
+
+  # HTTPD.
   httpd:
-    limits:
-      cpu: "0.5"
-      memory: "2Gi"
+    # HTTPD image registry.
+    # Default: "ghcr.io"
+    registry: "ghcr.io"
+    # HTTPD image repository.
+    # Default: "sifulan-access-federation/shibboleth-idp-httpd"
+    repository: "sifulan-access-federation/shibboleth-idp-httpd"
+    # HTTPD image version.
+    # Default: "master"
+    tag: ""
+    # HTTPD image pull policy.
+    # Default: "IfNotPresent"
+    pullPolicy: "IfNotPresent"
+
+# Set the minimum and maximum number of memory and cpu for the containers.
+resources:
+  # Shibboleth IdP resources.
+  shibboleth:
     requests:
+      # Minimum CPU allocation.
+      # Example:
+      # cpu: "10m"
       cpu: "0.1"
+      # Minimum memory allocation.
+      # Example:
+      # memory: "10Mi"
       memory: "1Gi"
+    limits:
+      # Maximum CPU allocation.
+      # Example:
+      # cpu: "2"
+      cpu: "0.5"
+      # Maximum memory allocation.
+      # Example:
+      # memory: "2Gi"
+      memory: "2Gi"
+  # HTTPD resources.
+  httpd:
+    requests:
+      # Minimum CPU allocation.
+      # Example:
+      # cpu: "10m"
+      cpu: "0.1"
+      # Minimum memory allocation.
+      # Example:
+      # memory: "10Mi"
+      memory: "1Gi"
+    limits:
+      # Maximum CPU allocation.
+      # Example:
+      # cpu: "2"
+      cpu: "0.5"
+      # Maximum memory allocation.
+      # Example:
+      # memory: "2Gi"
+      memory: "2Gi"
 
 # IdP Configuration
 idp:
@@ -46,30 +93,35 @@ idp:
   # Example:
   # scope: "ifirexman.edu"
   scope: ""
-  # The full name of the organization where this IdP belongs to.
+  # The full name of the organisation where this IdP belongs to.
   # Example:
-  # fullname: "iFIRExMAN Virtual Organization"
+  # fullname: "iFIRExMAN Virtual Organisation"
   fullname: ""
-  # The short name/acronym of the organization where this IdP belongs to.
+  # The short name/acronym of the organisation where this IdP belongs to.
   # Example:
   # shortname: "iFIRExMAN"
   shortname: ""
-  # Brief description of the organization where this IdP belongs to.
+  # Brief description of the organisation where this IdP belongs to.
   # Example:
   # description: "Research and Education Communities"
-  description: ""
-  # The website url of the organization where this IdP belongs to.
+  description: "Research and Education Communities"
+  # The website url of the organisation where this IdP belongs to.
   # Example:
   # website: "https://ifirexman.edu"
   website: ""
-  # The country code (in lower letter) of the organization where this IdP belongs to.
+  # The country code (in lower letter) of the organisation where this IdP belongs to.
   # Example:
   # country: "my"
   country: ""
-  # The support email address of the organization where this IdP belongs to. Should be a role-based email instead of a personal email.
+  # The support email address of the organisation where this IdP belongs to. Should be a role-based email instead of a personal email.
   # Example:
   # support_email: "support@ifirexman.edu"
   support_email: ""
+  # The password reset url of the organisation where this IdP belongs to.
+  # Default: "#"
+  # Example:
+  # password_reset_url: "https://ifirexman.edu/password-reset"
+  password_reset_url: ""
   # Attribute Release Policy
   # Example:
   # attribute_release_policy:
@@ -82,7 +134,7 @@ idp:
   #     - eduPersonEntitlement
   #     - eduPersonTargetedID
   attribute_release_policies: []
-  # Persistent Log
+  # Log Persistence Configuration.
   persistent_log:
     # Enable log persistence.
     enabled: false
@@ -94,17 +146,21 @@ idp:
     # Example:
     # size: "1Gi"
     size: "1Gi"
-  # Fticks
+  # Fticks Configuration.
   fticks:
-    # Enable fticks.
+    # Enable fticks support.
+    # Example:
+    # enabled: false
     enabled: false
   # VIKINGS Specific Configuration
   vikings:
     # Set to true if this IdP uses VIKINGS as the backend authenticator.
-    enabled: true
+    # Example:
+    # enabled: true
+    enabled: false
     # Set VIKINGS's database server host.
     # Example:
-    # database_hostname: mariadb.central-svcs.svc.cluster.local
+    # database_hostname: "mariadb.central-svcs.svc.cluster.local"
     database_hostname: ""
     # Set VIKINGS's database name.
     # Example:
@@ -118,15 +174,17 @@ idp:
     # Example:
     # database_password: "vikings"
     database_password: ""
-  # Azure AD Specific Configuration
+  # Azure AD Specific Configuration.
   azure_ad:
     # Set to true if this IdP uses Azure AD as the backend authenticator.
+    # Example:
+    # enabled: true
     enabled: false
     # Set Azure AD's entity_id.
     # Example:
     # entity_id: "https://sts.windows.net/9f8177eb-5934-427f-9748-f38e86a0a475/"
     entity_id: ""
-    # Azure AD eduPersonAffiliation Attribute Mapping
+    # Azure AD eduPersonAffiliation Attribute Mapping.
     # Example:
     # eduPersonAffiliationAttributeMap:
     #   attribute: "mail"
@@ -144,7 +202,7 @@ idp:
     eduPersonAffiliationAttributeMap:
       attribute: ""
       valueMap: []
-    # Azure AD eduPersonEntitlement Attribute Mapping
+    # Azure AD eduPersonEntitlement Attribute Mapping.
     # Example:
     # eduPersonEntitlementAttributeMap:
     #   attribute: "eduPersonAffiliation"
@@ -164,48 +222,48 @@ idp:
     eduPersonEntitlementAttributeMap:
       attribute: ""
       valueMap: []
-    # Set Azure AD's metadata file.
+    # Azure AD IdP metadata file.
     metadata: ""
-  # IdP Signing Certificate file
+  # IdP Signing Certificate file.
   signing_cert: ""
-  # IdP Signing Key file
+  # IdP Signing Key file.
   signing_key: ""
-  # IdP Encryption Certificate file
+  # IdP Encryption Certificate file.
   encryption_cert: ""
-  # IdP Encryption Key file
+  # IdP Encryption Key file.
   encryption_key: ""
-  # IdP Sealer JKS file
+  # IdP Sealer JKS file.
   sealer_jks: ""
-  # IdP Sealer kver file
+  # IdP Sealer kver file.
   sealer_kver: ""
-  # IdP secrets.properties file
+  # IdP secrets.properties file.
   secrets_properties: ""
 
-# Federation Configuration
+# Federation Configuration.
 federation:
-  # Federation Full Name
+  # Federation Full Name.
   # Example:
   # fullname: "iFIRExMAN Federation"
   fullname: ""
-  # Federation Short Name/Acronym
+  # Federation Short Name/Acronym.
   # Example:
   # shortname: "iFIRExMAN"
   shortname: ""
-  # Federation Registration Authority
+  # Federation Registration Authority.
   # Example:
   # registration_authority: "https://ifirexman.edu"
   registration_authority: ""
-  # Federation MDQ Server URL
+  # Federation MDQ Server URL.
   # Example:
   # mdq_url: "https://mdq.ifirexman.edu"
   mdq_url: ""
-  # Federation Support Email
+  # Federation Support Email.
   # Example:
   # support_email: "support@ifirexman.edu"
   support_email: ""
-  # Federation Syslog Server
+  # Federation Syslog Server.
   # Example:
   # syslog_server: "syslog.ifirexman.edu"
   syslog_server: ""
-  # Federation Signer Certificate file
+  # Federation Signer Certificate file.
   signer_cert: ""
