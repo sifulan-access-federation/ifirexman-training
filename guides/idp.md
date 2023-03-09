@@ -145,7 +145,7 @@ From the login node:
 To uninstall/delete the `ifirexman` deployment:
 
   ```bash
-  helm delete ifirexman --namespace ifirexman
+  helm uninstall ifirexman --namespace ifirexman
   ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
