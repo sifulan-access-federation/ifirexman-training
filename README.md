@@ -14,6 +14,8 @@ This repository provides step-by-step guides on setting up Identity Federation c
 
 - [Shibboleth Identity Provider (IdP)](guides/idp.md).
 
+- [eduroam Identity Provider (IdP) as a Service](guides/eduroam.md).
+
 ## Architecture
 
 ![iFIRExMAN Architecture](attachments/ifirexman-arch.png)
