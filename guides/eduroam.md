@@ -14,6 +14,7 @@ You need to have the following setup before you can proceed with this tutorial:
 - Register a sub-domain for the idp. For example, `radius.ifirexman.edu`.
 - Have a working Shibboleth IdP and MDQ server.
 - Allow connection to port 1812/udp for the RADIUS server.
+- Secret to access the eduroam NRO.
 
 ## Letswifi Portal Installation and Configuration
 
@@ -174,7 +175,7 @@ You need to have the following setup before you can proceed with this tutorial:
 6. Deploy the chart
 
    ```bash
-   helm install letswifi --create-namespace --namespace letswifi-ifirexman -f values.yaml ifirexman/ifirexman-lets-wifi-portal
+   helm install letswifi --create-namespace --namespace letswifi-ifirexman -f values.yaml --wait ifirexman/ifirexman-lets-wifi-portal
    ```
 
    If the installation is successful, you should see the output something like this:
@@ -271,3 +272,193 @@ You need to have the following setup before you can proceed with this tutorial:
    Please take note all the outputs from the above commands. We will need them later to setup the RADIUS server.
 
 10. To check whether the Letswifi Portal generates the correct credential, you can visit the Letswifi Portal url (e.g. https://letswifi.ifirexman.edu), click at the ```Apps``` link on the left side, unhide the "Options for other platforms and professional users", and click at the "Generate a certificate for manual use". You will be asked to perform authentication at the Shibboleth IdP. After the authentication, you will be able to download the credential in three formats: mobileconfig (for iOS/MacOS), eap-config (for Android), and PCKS12. The latter one doesn't contains the network configuration for eduroam. Merely a user credential in PKCS12 format. Should you need to use the credential in PKCS12 format, the import password is ```pkcs12```.
+
+## RADIUS Server Installation and Configuration
+
+The RADIUS server is used to provide authentication and also proxy service to the eduroam network. This eduroam IdP-as-a-service set up use EAP-TLS as the authentication method. If the organization already has a working eduroam RADIUS server and would like to use the Letswifi portal to onboard the users, they could just take the server key pairs and signing CA's public key from the Letswifi Portal and install them in their eduroam RADIUS server and reconfigure their RADIUS server to use EAP-TLS. If this is the case, you can skip this section.
+
+If the organization does not have a working eduroam RADIUS server yet, then you can follow the steps below to install and configure the RADIUS server:
+
+1. Generate Diffie-Hellman file:
+
+   ```bash
+   openssl dhparam -check -text -5 2048 -out dh
+   ```
+
+2. Generate a secret has key for CUI:
+
+   ```bash
+   LC_CTYPE=C tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
+   ```
+
+   Take note the output. We will need it later.
+
+3. Create a `values.yaml` file. Below is an example:
+
+   ```yaml
+   # Number of replicas of this eduroam IdP.
+   # Default: 1
+   replicaCount: 1
+
+   # Container images used for the eduroam IdP.
+   image:
+     # eduroam IdP.
+     eduroam:
+       # eduroam IdP image registry.
+       # Default: "ghcr.io"
+       registry: "ghcr.io"
+       # eduroam IdP image repository.
+       # Default: "sifulan-access-federation/ifirexman-eduroam-idp"
+       repository: "sifulan-access-federation/ifirexman-eduroam-idp"
+       # eduroam IdP image version.
+       # Default: Chart appVersion
+       tag: ""
+       # eduroam IdP image pull policy.
+       # Default: "IfNotPresent"
+       pullPolicy: "IfNotPresent"
+     # The image pull secret used to pull images from a private registry.
+     pullSecret: ""
+
+   # Set the minimum and maximum number of memory and cpu for the containers.
+   resources:
+     requests:
+       # Minimum CPU allocation.
+       # Example:
+       # cpu: "10m"
+       cpu: "0.1"
+       # Minimum memory allocation.
+       # Example:
+       # memory: "10Mi"
+       memory: "1Gi"
+     limits:
+       # Maximum CPU allocation.
+       # Example:
+       # cpu: "2"
+       cpu: "0.5"
+       # Maximum memory allocation.
+       # Example:
+       # memory: "2Gi"
+       memory: "2Gi"
+
+   # Freeradius configuration.
+   freeradius:
+     # A secret hash key used by Freeradius when it needs to generate a secure hash for cui. You can use the command below to generate one.
+     # LC_CTYPE=C tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
+     cui_hash_key: ""
+     # Diffie-Hellman file used by Freeradius. You can use the command below to generate one.
+     # openssl dhparam -check -text -5 2048 -out dh
+     # Example:
+     # dh: |-
+     #   PKCS#3 DH Parameters: (2048 bit)
+     #          prime:
+     #              00:9e:cd:bc:5d:5a:a7:0c:e8:c5:72:ae:b8:d5:32:
+     #              b8:a4:a7:79:41:bb:34:9c:82:9b:d1:69:c1:4c:09:
+     #              68:5b:23:bb:46:90:1c:00:61:ae:99:fa:04:ef:a9:
+     #              f6:9f:83:00:d6:b4:5b:1f:6f:51:db:7a:92:00:ac:
+     #              d9:6c:ba:e2:5f:3b:7d:68:de:1c:df:a9:23:52:bc:
+     #              71:2a:2e:89:1a:0a:0b:61:83:39:bd:4c:fd:d3:65:
+     #              23:59:30:ef:17:59:21:83:a1:35:92:b2:3d:f6:10:
+     #              38:09:87:61:1f:ab:f6:cd:e5:f4:65:5f:26:d6:13:
+     #              dc:ae:60:29:58:44:f0:ad:cc:a0:f4:ed:0b:78:df:
+     #              dc:bf:3d:55:f8:eb:53:d9:3e:ae:d5:5d:87:79:1c:
+     #              8d:b9:82:9f:80:d0:2c:e0:3e:dd:a6:3b:36:a9:cf:
+     #              d3:66:8c:59:40:66:90:c4:80:97:32:46:55:64:50:
+     #              31:ca:79:76:00:f1:49:57:01:4f:d1:48:ae:44:69:
+     #              1c:cc:7e:f3:55:22:f3:60:96:75:92:69:c2:b3:be:
+     #              db:61:cd:44:be:91:27:fa:9b:12:33:84:f9:b4:ab:
+     #              3e:9e:34:3d:a7:46:49:fa:64:9a:e4:3a:1b:64:23:
+     #              e5:fa:b2:ee:a7:c3:f9:09:16:7e:a0:54:1c:80:98:
+     #              b1:5b
+     #          generator: 5 (0x5)
+     #   ----BEGIN DH PARAMETERS-----
+     #   IIBCAKCAQEAns28XVqnDOjFcq641TK4pKd5Qbs0nIKb0WnBTAloWyO7RpAcAGGu
+     #   foE76n2n4MA1rRbH29R23qSAKzZbLriXzt9aN4c36kjUrxxKi6JGgoLYYM5vUz9
+     #   2UjWTDvF1khg6E1krI99hA4CYdhH6v2zeX0ZV8m1hPcrmApWETwrcyg9O0LeN/c
+     #   z1V+OtT2T6u1V2HeRyNuYKfgNAs4D7dpjs2qc/TZoxZQGaQxICXMkZVZFAxynl2
+     #   PFJVwFP0UiuRGkczH7zVSLzYJZ1kmnCs77bYc1EvpEn+psSM4T5tKs+njQ9p0ZJ
+     #   mSa5DobZCPl+rLup8P5CRZ+oFQcgJixWwIBBQ==
+     #   ----END DH PARAMETERS-----
+     dh:
+     # eduroam realm
+     # Example: ifirexman.edu
+     realm: ""
+     # List of eduroam NRO servers
+     # Example:
+     # nro:
+     #   - name: nro1
+     #     ip: "1.2.3.4"
+     #     secret: secret123
+     #   - name: nro2
+     #     ip: "2.3.4.5"
+     #     secret: secret456
+     nro: {}
+     # Public key of the radius server
+     # Example:
+     # cert_public_key: |-
+     #   -----BEGIN CERTIFICATE-----
+     #   MIIDZTCCAk2gAwIBAgIJAJZQZ2Z0Z0ZmMA0GCSqGSIb3DQEBCwUAMIGUMQswCQYD
+     #   VQQGEwJDTjELMAkGA1UECAwCQ0ExCzAJBgNVBAcMAkNBMRMwEQYDVQQKDApJZmly
+     #   .....
+     #   -----END CERTIFICATE-----
+     cert_public_key: ""
+     # Private key of the radius server
+     # Example:
+     # cert_private_key: |-
+     #   -----BEGIN EC PRIVATE KEY-----
+     #   MIIEpAIBAAKCAQEAwZ0Z0ZmMA0GCSqGSIb3DQEBCwUAMIGUMQswCQYDVQQGEwJD
+     #   TjELMAkGA1UECAwCQ0ExCzAJBgNVBAcMAkNBMRMwEQYDVQQKDApJZmlyQQGEwJD
+     #   .....
+     #   -----END EC PRIVATE KEY-----
+     cert_private_key: ""
+     # CA certificate of the radius server
+     # Example:
+     # cert_ca_key: |-
+     #   -----BEGIN CERTIFICATE-----
+     #   MIIDZTCCAk2gAwIBAgIJAJZQZ2Z0Z0ZmMA0GCSqGSIb3DQEBCwUAMIGUMQswCQYD
+     #   VQQGEwJDTjELMAkGA1UECAwCQ0ExCzAJBgNVBAcMAkNBMRMwEQYDVQQKDApJZmly
+     #   .....
+     #   -----END CERTIFICATE-----
+     cert_ca_key: ""
+     # List of eduroam IdP clients (e.g. wifi access points)
+     # Example:
+     # clients:
+     #   - name: main-controller
+     #     ip: "1.2.3.4"
+     #     secret: secret123
+     #   - name: distribute-access-point
+     #     ip: "2.3.4.5/16"
+     #     secret: secret456
+     clients: {}
+    ```
+
+    You should use the key pairs and signing CA's public key generated by the Letswifi Portal to fill in the `cert_public_key`, `cert_private_key` and `cert_ca_key` fields. You would need to get the IP address and secret from your eduroam NRO operator (You can refer to to [eduroam Monitoring](https://monitor.eduroam.org) to find the NRO operator of your country) to fill the `nro` option. The `clients` option is the list of eduroam IdP clients (e.g. wifi access points or wifi access point controller) that you want them to broadcast the eduroam SSID. You can set the secret for the client on as you like. However, you should make sure that the secret is hard enough to be guessed by others.
+
+4. Deploy the helm chart:
+
+   ```bash
+   helm install eduroam-idp --create-namespace --namespace eduroam-idp-ifirexman -f values.yaml --wait ifirexman/ifirexman-eduroam-idp
+   ```
+
+   If the installation is successful, you should see the output something like this:
+
+   ```bash
+    NAME: eduroam-idp
+    LAST DEPLOYED: Tue Jun  8 15:59:20 2021
+    NAMESPACE: eduroam-idp-ifirexman
+    STATUS: deployed
+    REVISION: 1
+    TEST SUITE: None
+    NOTES:
+    The eduroam IdP for realm ifirexman.edu is now installed and configured.
+    ```
+
+5. Get the ip address for the RADIUS server:
+
+   ```bash
+   kubectl get svc 0 -n eduroam-idp-ifirexman
+
+   NAME                                TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)          AGE
+   eduroam-idp-ifirexman-eduroam-idp   LoadBalancer   10.43.57.219   192.168.20.76   1812:30012/UDP   26h
+   ```
+
+   From the output, you can see that the RADIUS server is listening on port `1812`, the protocol is `udp`, and the ip address is `192.168.29.76`. The actual IP address is depend on your Kubernetes Load Balancer's address pool. You can use this ip address and port number to configure the eduroam IdP clients (e.g. wifi access points or wifi access point controller). Once you have configured the eduroam IdP clients, you can use the credential generated by the Letswifi portal to test it. If it works, the users should be able to use the eduroam globally.
