@@ -407,7 +407,7 @@ For each __worker__ node:
    /dev/sdb                /var/lib/longhorn       ext4    defaults        0 0
    ```
 
-4. Install NFSv4 client and open-iscsi
+4. From the the Login Node, install NFSv4 client and open-iscsi
 
    ```bash
    kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/prerequisite/longhorn-iscsi-installation.yaml
