@@ -73,7 +73,7 @@ You need to have the following setup before you can proceed with this tutorial:
     # --set-file ssotest.sp_config="shibboleth2.xml" \
     # --set-file ssotest.attribute_map="attribute-map.xml" \
     # --set-file ssotest.apache_config="servername.conf" \
-    -f values.yaml --wait ifirexman/ssotest
+    -f values.yaml --wait ifirexman/ifirexman-ssotest
     ```
 
 ## Uninstallation
@@ -203,6 +203,8 @@ To enable the SSO Test service to be used as a test service for your federation,
         - schacPersonalPosition
         - schacPersonalUniqueCode
         - schacPersonalUniqueID
+        - samlSubjectID
+        - samlPairwiseID
 
 12. The attributes that have been added should be set as **required** by default. For the following attributes, set them as optional by clicking its corresponding **required** dropdown menu, and select **desired**: 
     
