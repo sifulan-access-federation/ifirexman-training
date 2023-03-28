@@ -175,7 +175,7 @@ You need to have the following setup before you can proceed with this tutorial:
 6. Deploy the chart
 
    ```bash
-   helm install letswifi --create-namespace --namespace letswifi-ifirexman -f values.yaml --wait ifirexman/ifirexman-lets-wifi-portal
+   helm install letswifi --create-namespace --namespace letswifi-ifirexman -f values.yaml --wait ifirexman/ifirexman-letswifi-portal
    ```
 
    If the installation is successful, you should see the output something like this:

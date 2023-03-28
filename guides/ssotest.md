@@ -100,7 +100,7 @@ Run helm uninstall to uninstall the `ifirexman-ssotest` release.
     # --set-file ssotest.sp_config="shibboleth2.xml" \
     # --set-file ssotest.attribute_map="attribute-map.xml" \
     # --set-file ssotest.apache_config="servername.conf" \
-    -f values.yaml --wait ifirexman/ssotest
+    -f values.yaml --wait ifirexman/ifirexman-ssotest
     ```
 
 ## Parameters
