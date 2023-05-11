@@ -20,7 +20,7 @@ Below are the steps to integrate Azure AD with the IdP and acquire the `azure.xm
 
 2. Visit the [Azure Portal](https://portal.azure.com) and login with your Azure AD account.
 
-3. At the Azure Portal Dashboard, click the **Enterprise applications** button under the **Azure services** menu.
+3. At the **Azure Portal Dashboard**, click the **Enterprise applications** button under the **Azure services** menu.
 
 4. At the **Enterprise applications** page, click the **New application** button.
 
@@ -35,9 +35,9 @@ Below are the steps to integrate Azure AD with the IdP and acquire the `azure.xm
 9. Click the **Edit** link in the **Basic SAML Configuration** section.
 
 10. Here, you need to set the following values:
-    
+
     - **Identifier (Entity ID)**. Example: `https://idp.ifirexman.edu/idp/shibboleth`
-    
+
     - **Reply URL (Assertion Consumer Service URL)**. Example: `https://idp.ifirexman.edu/idp/profile/Authn/SAML2/POST/SSO`
 
 11. Delete the sample Entity ID value by clicking the trash icon next to the entry. Then, click the **Save** button at the top.

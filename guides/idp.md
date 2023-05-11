@@ -15,9 +15,11 @@ You need to have the following setup before you can proceed with this tutorial:
 
 - Register a sub-domain for the idp. For example, `idp.ifirexman.edu`.
 
-- [VIKINGS (Identity Management System)](vikings.md) if the IdP is using **VIKINGS** as the backend authenticator.
+- [VIKINGS (Identity Management System)](vikings.md) if the IdP will be using **VIKINGS** as the backend authenticator.
 
-- [Azure AD Integration](azure.md) if the IdP is using **Azure AD** as the backend authenticator.
+- [Azure AD Integration](azure.md) if the IdP will be using **Azure AD** as the backend authenticator.
+
+- [Google Directory](google.md) if the IdP will be using **Google Directory** as the backend authenticator.
 
 ## Shibboleth IdP Installation and Configuration
 
@@ -112,7 +114,7 @@ From the login node:
     idp.persistentId.salt = /X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
     ```
 
-6. If your IdP is using `Azure AD` as the backend authenticator, copy your Azure AD IdP metadata file (e.g. `azure.xml`) to the working folder.
+6. If your IdP will be using `Azure AD` as the backend authenticator, copy your Azure AD IdP metadata file (i.e. `azure.xml`) to the working folder. If your IdP will be using `Google Directory` as the backend authenticator, copy your Google Directory IdP metadata file (i.e. `GoogleIDPMetadata.xml`) to the working folder.
 
 7. Edit the `values.yaml` file (see an example at the `idp` sub-folder inside the `manifest` folder). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
 
@@ -122,7 +124,7 @@ From the login node:
     helm repo add ifirexman https://sifulan-access-federation.github.io/ifirexman-charts
     ```
 
-9. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file). If you are using `Azure AD` instead, uncomment the `--set-file idp.azure_ad.metadata=azure.xml` line:
+9. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file). If you are using `Azure AD` instead, uncomment the `--set-file idp.azure_ad.metadata=azure.xml` line. If you are using `Google Directory` instead, uncomment the `--set-file idp.google.metadata=GoogleIDPMetadata.xml` line:
 
     ```bash
     helm install ifirexman --namespace ifirexman --create-namespace \
@@ -135,6 +137,7 @@ From the login node:
     --set-file idp.sealer_kver=sealer.kver \
     --set-file idp.secrets_properties=secrets.properties \
     # --set-file idp.azure_ad.metadata=azure.xml \
+    # --set-file idp.google.metadata=GoogleIDPMetadata.xml \
     -f values.yaml --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
