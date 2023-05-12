@@ -224,6 +224,56 @@ idp:
       valueMap: []
     # Azure AD IdP metadata file.
     metadata: ""
+  # Google Workspace Specific Configuration.
+  google:
+    # Set to true if this IdP uses Google Workspace as the backend authenticator.
+    # Example:
+    # enabled: true
+    enabled: false
+    # Set Google Workspace's entity_id.
+    # Example:
+    # entity_id: "https://accounts.google.com/o/saml2?idpid=LqF825zMf"
+    entity_id: ""
+    # Google eduPersonAffiliation Attribute Mapping.
+    # Example:
+    # eduPersonAffiliationAttributeMap:
+    #   attribute: "mail"
+    #   valueMap:
+    #     - attributeReturn: "staff"
+    #       attributeValues:
+    #         - "@ifirexman.edu"
+    #     - attributeReturn: "student"
+    #       attributeValues:
+    #         - "@student.ifirexman.edu"
+    #     - attributeReturn: "member"
+    #       attributeValues:
+    #         - "@ifirexman.edu"
+    #         - "@student.ifirexman.edu"
+    eduPersonAffiliationAttributeMap:
+      attribute: ""
+      valueMap: []
+    # Google eduPersonEntitlement Attribute Mapping.
+    # Example:
+    # eduPersonEntitlementAttributeMap:
+    #   attribute: "eduPersonAffiliation"
+    #   valueMap:
+    #     - attributeReturn: "urn:mace:ifirexman.edu:staff"
+    #       attributeValues:
+    #         - "staff"
+    #     - attributeReturn: "urn:mace:ifirexman.edu:student"
+    #       attributeValues:
+    #         - "student"
+    #     - attributeReturn: "urn:mace:ifirexman.edu:member"
+    #       attributeValues:
+    #         - "member"
+    #     - attributeReturn: "urn:mace:dir:entitlement:common-lib-terms"
+    #       attributeValues:
+    #         - "member"
+    eduPersonEntitlementAttributeMap:
+      attribute: ""
+      valueMap: []
+    # Google Workspace IdP metadata file.
+    metadata: ""
   # IdP Signing Certificate file.
   signing_cert: ""
   # IdP Signing Key file.
