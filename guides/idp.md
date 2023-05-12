@@ -124,10 +124,13 @@ From the login node:
     helm repo add ifirexman https://sifulan-access-federation.github.io/ifirexman-charts
     ```
 
-9. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file). If you are using `Azure AD` instead, uncomment the `--set-file idp.azure_ad.metadata=azure.xml` line. If you are using `Google Directory` instead, uncomment the `--set-file idp.google.metadata=GoogleIDPMetadata.xml` line:
+9. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file):
 
     ```bash
-    helm install ifirexman --namespace ifirexman --create-namespace \
+    helm install ifirexman \
+    --namespace ifirexman \
+    --create-namespace \
+    --values values.yaml \
     --set idp.sealer_jks="$(base64 sealer.jks)" \
     --set-file idp.signing_cert=idp-signing.crt \
     --set-file idp.signing_key=idp-signing.key \
@@ -136,9 +139,45 @@ From the login node:
     --set-file federation.signer_cert=fed-signer.crt \
     --set-file idp.sealer_kver=sealer.kver \
     --set-file idp.secrets_properties=secrets.properties \
-    # --set-file idp.azure_ad.metadata=azure.xml \
-    # --set-file idp.google.metadata=GoogleIDPMetadata.xml \
-    -f values.yaml --wait ifirexman/ifirexman-shibboleth-idp
+    --wait ifirexman/ifirexman-shibboleth-idp
+    ```
+
+    Below is an example to install the chart with the release name `ifirexman` with `Azure AD` as the backend authenticator (set at the `values.yaml` file):
+
+    ```bash
+    helm install ifirexman \
+    --namespace ifirexman \
+    --create-namespace \
+    --values values.yaml \
+    --set idp.sealer_jks="$(base64 sealer.jks)" \
+    --set-file idp.signing_cert=idp-signing.crt \
+    --set-file idp.signing_key=idp-signing.key \
+    --set-file idp.encryption_cert=idp-encryption.crt \
+    --set-file idp.encryption_key=idp-encryption.key \
+    --set-file federation.signer_cert=fed-signer.crt \
+    --set-file idp.sealer_kver=sealer.kver \
+    --set-file idp.secrets_properties=secrets.properties \
+    --set-file idp.azure_ad.metadata=azure.xml \
+    --wait ifirexman/ifirexman-shibboleth-idp
+    ```
+
+    And below is an example to install the chart with the release name `ifirexman` with `Google Directory` as the backend authenticator (set at the `values.yaml` file):
+
+    ```bash
+    helm install ifirexman \
+    --namespace ifirexman \
+    --create-namespace \
+    --values values.yaml \
+    --set idp.sealer_jks="$(base64 sealer.jks)" \
+    --set-file idp.signing_cert=idp-signing.crt \
+    --set-file idp.signing_key=idp-signing.key \
+    --set-file idp.encryption_cert=idp-encryption.crt \
+    --set-file idp.encryption_key=idp-encryption.key \
+    --set-file federation.signer_cert=fed-signer.crt \
+    --set-file idp.sealer_kver=sealer.kver \
+    --set-file idp.secrets_properties=secrets.properties \
+    --set-file idp.google.metadata=GoogleIDPMetadata.xml \
+    --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
 10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the Federation Manager (Jagger).
