@@ -206,123 +206,82 @@ else
     CHART_OPERATION="install"
 fi
 
-# run helm install
-echo "Running helm $CHART_OPERATION for the organisation ($SHORT_ORG_NAME)"
+# prepare helm command
+echo "Preparing helm command ($CHART_OPERATION)"
+helm_command="helm $CHART_OPERATION $SHORT_ORG_NAME-idp $CHART \
+--namespace $SHORT_ORG_NAME \
+--create-namespace \
+--values $VALUES_FILE \
+--set idp.domain=\"$SHIBBOLETH_SUBDOMAIN\" \
+--set idp.scope=\"$ORG_SCOPE\" \
+--set idp.fullname=\"$LONG_ORG_NAME\" \
+--set idp.shortname=\"$SHORT_ORG_NAME\" \
+--set idp.website=\"$ORG_WEBSITE\" \
+--set idp.support_email=\"$ORG_SUPPORT_EMAIL\" \
+--set idp.vikings.enabled=false \
+--set idp.sealer_jks=\"$(base64 sealer.jks)\" \
+--set-file idp.signing_cert=idp-signing.crt \
+--set-file idp.signing_key=idp-signing.key \
+--set-file idp.encryption_cert=idp-encryption.crt \
+--set-file idp.encryption_key=idp-encryption.key \
+--set-file idp.sealer_kver=sealer.kver \
+--set-file idp.secrets_properties=secrets.properties \
+--set idp.azure_ad.enabled=true \
+--set idp.azure_ad.entity_id=\"$ENTITY_ID\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.attribute=\"mail\" \
+--set-file idp.azure_ad.metadata=$AZURE_METADATA_FILE \
+--set-file federation.signer_cert=$FED_SIGNER_FILE"
+
 # sharing staff and student email domain
 if [ "$STAFF_EMAIL_DOMAIN" == "$STUDENT_EMAIL_DOMAIN" ]; then
-    helm $CHART_OPERATION $SHORT_ORG_NAME-idp \
-    --namespace $SHORT_ORG_NAME \
-    --create-namespace \
-    --values $VALUES_FILE \
-    --set idp.domain="$SHIBBOLETH_SUBDOMAIN" \
-    --set idp.scope="$ORG_SCOPE" \
-    --set idp.fullname="$LONG_ORG_NAME" \
-    --set idp.shortname="$SHORT_ORG_NAME" \
-    --set idp.website="$ORG_WEBSITE" \
-    --set idp.support_email="$ORG_SUPPORT_EMAIL" \
-    --set idp.vikings.enabled=false \
-    --set idp.sealer_jks="$(base64 sealer.jks)" \
-    --set-file idp.signing_cert=idp-signing.crt \
-    --set-file idp.signing_key=idp-signing.key \
-    --set-file idp.encryption_cert=idp-encryption.crt \
-    --set-file idp.encryption_key=idp-encryption.key \
-    --set-file idp.sealer_kver=sealer.kver \
-    --set-file idp.secrets_properties=secrets.properties \
-    --set idp.azure_ad.enabled=true \
-    --set idp.azure_ad.entity_id="$ENTITY_ID" \
-    --set idp.azure_ad.eduPersonAffiliationAttributeMap.attribute="mail" \
-    --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn="member" \
-    --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]="@$STAFF_EMAIL_DOMAIN" \
-    --set idp.azure_ad.eduPersonEntitlementAttributeMap.attribute="eduPersonAffiliation" \
-    --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn="urn:mace:$ORG_DOMAIN:member" \
-    --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]="member" \
-    --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn="urn:mace:dir:entitlement:common-lib-terms" \
-    --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]="member" \
-    --set-file idp.azure_ad.metadata=$AZURE_METADATA_FILE \
-    --set-file federation.signer_cert=$FED_SIGNER_FILE \
-    --wait $CHART
+    helm_command="$helm_command \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"member\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"member\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\""
 else
     # separate student and staff email domains
     if [ "$STUDENT_EMAIL_DOMAIN" != "-" ]; then
-        helm $CHART_OPERATION $SHORT_ORG_NAME-idp \
-        --namespace $SHORT_ORG_NAME \
-        --create-namespace \
-        --values $VALUES_FILE \
-        --set idp.domain="$SHIBBOLETH_SUBDOMAIN" \
-        --set idp.scope="$ORG_SCOPE" \
-        --set idp.fullname="$LONG_ORG_NAME" \
-        --set idp.shortname="$SHORT_ORG_NAME" \
-        --set idp.website="$ORG_WEBSITE" \
-        --set idp.support_email="$ORG_SUPPORT_EMAIL" \
-        --set idp.vikings.enabled=false \
-        --set idp.sealer_jks="$(base64 sealer.jks)" \
-        --set-file idp.signing_cert=idp-signing.crt \
-        --set-file idp.signing_key=idp-signing.key \
-        --set-file idp.encryption_cert=idp-encryption.crt \
-        --set-file idp.encryption_key=idp-encryption.key \
-        --set-file idp.sealer_kver=sealer.kver \
-        --set-file idp.secrets_properties=secrets.properties \
-        --set idp.azure_ad.enabled=true \
-        --set idp.azure_ad.entity_id="$ENTITY_ID" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.attribute="mail" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn="staff" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]="@$STAFF_EMAIL_DOMAIN" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn="student" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]="@$STUDENT_EMAIL_DOMAIN" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeReturn="member" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[0\]="@$STAFF_EMAIL_DOMAIN" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[1\]="@$STUDENT_EMAIL_DOMAIN" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.attribute="eduPersonAffiliation" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn="urn:mace:$ORG_DOMAIN:staff" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]="staff" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn="urn:mace:$ORG_DOMAIN:student" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]="student" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn="urn:mace:$ORG_DOMAIN:member" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]="member" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeReturn="urn:mace:dir:entitlement:common-lib-terms" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeValues\[0\]="member" \
-        --set-file idp.azure_ad.metadata=$AZURE_METADATA_FILE \
-        --set-file federation.signer_cert=$FED_SIGNER_FILE \
-        --wait $CHART
+        helm_command="$helm_command \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"student\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@$STUDENT_EMAIL_DOMAIN\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeReturn=\"member\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[1\]=\"@$STUDENT_EMAIL_DOMAIN\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:staff\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:$ORG_DOMAIN:student\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"student\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeValues\[0\]=\"member\""
     # single staff email domain with no student email domain
     else
-        helm $CHART_OPERATION $SHORT_ORG_NAME-idp \
-        --namespace $SHORT_ORG_NAME \
-        --create-namespace \
-        --values $VALUES_FILE \
-        --set idp.domain="$SHIBBOLETH_SUBDOMAIN" \
-        --set idp.scope="$ORG_SCOPE" \
-        --set idp.fullname="$LONG_ORG_NAME" \
-        --set idp.shortname="$SHORT_ORG_NAME" \
-        --set idp.website="$ORG_WEBSITE" \
-        --set idp.support_email="$ORG_SUPPORT_EMAIL" \
-        --set idp.vikings.enabled=false \
-        --set idp.sealer_jks="$(base64 sealer.jks)" \
-        --set-file idp.signing_cert=idp-signing.crt \
-        --set-file idp.signing_key=idp-signing.key \
-        --set-file idp.encryption_cert=idp-encryption.crt \
-        --set-file idp.encryption_key=idp-encryption.key \
-        --set-file idp.sealer_kver=sealer.kver \
-        --set-file idp.secrets_properties=secrets.properties \
-        --set idp.azure_ad.enabled=true \
-        --set idp.azure_ad.entity_id="$ENTITY_ID" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.attribute="mail" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn="staff" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]="@$STAFF_EMAIL_DOMAIN" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn="member" \
-        --set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]="@$STAFF_EMAIL_DOMAIN" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.attribute="eduPersonAffiliation" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn="urn:mace:$ORG_DOMAIN:staff" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]="staff" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn="urn:mace:$ORG_DOMAIN:member" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]="member" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn="urn:mace:dir:entitlement:common-lib-terms" \
-        --set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]="member" \
-        --set-file idp.azure_ad.metadata=$AZURE_METADATA_FILE \
-        --set-file federation.signer_cert=$FED_SIGNER_FILE \
-        --wait $CHART
+        helm_command="$helm_command \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"member\" \
+--set idp.azure_ad.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:staff\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.azure_ad.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\""
     fi
 fi
+
+# run helm install or upgrade
+echo "Running helm $CHART_OPERATION for the organisation ($SHORT_ORG_NAME)"
+eval $helm_command --wait
 
 # download shibboleth metadata post-installation
 if [ "$CHART_OPERATION" == "install" ]; then
