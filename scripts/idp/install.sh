@@ -139,8 +139,8 @@ fi
 
 # check if required files exist
 check_local_file_exists $VALUES_FILE \
-&& check_local_file_exists $AZURE_METADATA_FILE \
-&& check_local_file_exists $FED_SIGNER_FILE
+&& check_local_file_exists $FED_SIGNER_FILE \
+&& check_local_file_exists $AZURE_METADATA_FILE $GOOGLE_METADATA_FILE
 
 # check if the following files exist, if any of them is missing, create the files:
 # - idp-signing.crt
