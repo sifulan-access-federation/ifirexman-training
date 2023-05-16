@@ -112,6 +112,7 @@ set_default SHIBBOLETH_SUBDOMAIN "sso.$ORG_DOMAIN" \
 && set_default ORG_SCOPE "$ORG_DOMAIN" \
 && set_default VALUES_FILE "values.yaml" \
 && set_default AZURE_METADATA_FILE "azure.xml" \
+&& set_default GOOGLE_METADATA_FILE "google.xml" \
 && set_default FED_SIGNER_FILE "fed-signer.crt" \
 && set_default SHIB_METADATA_FILE "$SHORT_ORG_NAME-shib-metadata.xml" \
 && set_default SHIB_METADATA_URL "https://$SHIBBOLETH_SUBDOMAIN/idp/shibboleth"
