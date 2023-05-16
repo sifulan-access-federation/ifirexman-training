@@ -37,14 +37,25 @@ function set_default() {
 
 # function to check if local file exists
 function check_local_file_exists() {
-    # check the current directory for the file
-    if [ -f "$1" ]; then
-        echo "Required file is available ($1)"
-    # exit with error if file is not found
+    local found_file=""
+
+    # look for files and stop when found
+    for file in "$@"; do
+        if [ -f "$file" ]; then
+            found_file="$file"
+            break
+        fi
+    done
+
+    # check if a single file is found
+    if [ -n "$found_file" ]; then
+        echo "Required file is available ($found_file)"
     else
-        echo "Required file is NOT FOUND ($1)"
+        echo "NONE of the specified files were found ($*)"
         exit 1
     fi
+
+    return 0
 }
 
 # function to download file when ready
