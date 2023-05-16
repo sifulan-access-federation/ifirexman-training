@@ -142,6 +142,16 @@ check_local_file_exists $VALUES_FILE \
 && check_local_file_exists $FED_SIGNER_FILE \
 && check_local_file_exists $AZURE_METADATA_FILE $GOOGLE_METADATA_FILE
 
+# determine authenticator backend
+if [ -f "$AZURE_METADATA_FILE" ]; then
+    AUTH_BACKEND="azure"
+elif [ -f "$GOOGLE_METADATA_FILE" ]; then
+    AUTH_BACKEND="google"
+else
+    echo "No supported authenticator backend found!"
+    exit 1
+fi
+
 # check if the following files exist, if any of them is missing, create the files:
 # - idp-signing.crt
 # - idp-signing.key
