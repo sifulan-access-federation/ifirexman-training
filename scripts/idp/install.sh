@@ -145,8 +145,10 @@ check_local_file_exists $VALUES_FILE \
 # determine authenticator backend
 if [ -f "$AZURE_METADATA_FILE" ]; then
     AUTH_BACKEND="azure"
+    IDP_METADATA_FILE="$AZURE_METADATA_FILE"
 elif [ -f "$GOOGLE_METADATA_FILE" ]; then
     AUTH_BACKEND="google"
+    IDP_METADATA_FILE="$GOOGLE_METADATA_FILE"
 else
     echo "No supported authenticator backend found!"
     exit 1
@@ -192,9 +194,9 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
     fi
 done
 
-# extract the entity ID from the azure metadata file
-echo "Extracting the entity ID from the azure metadata file ($AZURE_METADATA_FILE)"
-ENTITY_ID=`xmllint --pretty 1 $AZURE_METADATA_FILE | grep wsa | grep sts | sed 's/        <wsa:Address>//' | sed 's/<\/wsa:Address>//'`
+# extract the entity ID from the idp metadata file
+echo "Extracting the entity ID from the idp metadata file ($IDP_METADATA_FILE)"
+ENTITY_ID=`xmllint --pretty 1 $IDP_METADATA_FILE | grep wsa | grep sts | sed 's/        <wsa:Address>//' | sed 's/<\/wsa:Address>//'`
 
 # determine if chart is to be installed or upgraded
 echo "Checking if release exists in the namespace ($SHORT_ORG_NAME)"
