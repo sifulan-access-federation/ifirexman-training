@@ -218,7 +218,6 @@ helm_command="helm $CHART_OPERATION $SHORT_ORG_NAME-idp $CHART \
 --set idp.shortname=\"$SHORT_ORG_NAME\" \
 --set idp.website=\"$ORG_WEBSITE\" \
 --set idp.support_email=\"$ORG_SUPPORT_EMAIL\" \
---set idp.vikings.enabled=false \
 --set idp.sealer_jks=\"$(base64 sealer.jks)\" \
 --set-file idp.signing_cert=idp-signing.crt \
 --set-file idp.signing_key=idp-signing.key \
