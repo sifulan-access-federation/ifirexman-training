@@ -212,7 +212,7 @@ done
 
 # extract the entity ID from the idp metadata file
 echo "Extracting the entity ID from the idp metadata file ($IDP_METADATA_FILE)"
-ENTITY_ID=`xmllint --pretty 1 $IDP_METADATA_FILE | grep wsa | grep sts | sed 's/        <wsa:Address>//' | sed 's/<\/wsa:Address>//'`
+ENTITY_ID=`xmllint --pretty 1 $IDP_METADATA_FILE | grep entityID | sed 's/.*entityID="\([^"]*\)".*/\1/'`
 
 # determine if chart is to be installed or upgraded
 echo "Checking if release exists in the namespace ($SHORT_ORG_NAME)"
