@@ -178,7 +178,7 @@ From the login node:
     --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
-10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual sub-domain for the IdP). Copy/download the metadata and register it at the Federation Manager (Jagger).
+10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual subdomain for the IdP). Copy/download the metadata and register it at the Federation Manager (Jagger).
 
 ## Uninstalling the Chart
 
