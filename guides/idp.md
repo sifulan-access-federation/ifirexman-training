@@ -4,9 +4,7 @@
 
 This tutorial provides step-by-step instructions on how to set up a Shibboleth IdP using the Helm chart developed by [SIFULAN Malaysian Access Federation](https://sifulan.my/).
 
-This is the base for the IdP-as-a-Service (IdPaaS) that you could offer to your potential Federation members. This IdP will be unique per organization, hence you may need to deploy multiple IdPs for your Federation members
-
-and this tutorial is meant for each organization.
+This is the base for the IdP-as-a-Service (IdPaaS) that you could offer to your potential Federation members. This IdP will be unique per organisation, hence you may need to deploy multiple IdPs for your Federation members and this tutorial is meant for each organisation.
 
 
 ## Prerequisites
