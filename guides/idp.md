@@ -114,7 +114,7 @@ From the login node:
     idp.persistentId.salt = /X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
     ```
 
-6. If your IdP will be using `Azure AD` as the backend authenticator, copy your Azure AD IdP metadata file (i.e. `azure.xml`) to the working folder. If your IdP will be using `Google Directory` as the backend authenticator, copy your Google Directory IdP metadata file (i.e. `GoogleIDPMetadata.xml`) to the working folder.
+6. If your IdP will be using `Azure AD` as the backend authenticator, copy your Azure AD IdP metadata file (i.e. `azure.xml`) to the working folder. If your IdP will be using `Google Directory` as the backend authenticator, copy your Google Directory IdP metadata file (i.e. `google.xml`) to the working folder.
 
 7. Edit the `values.yaml` file (see an example at the `idp` sub-folder inside the `manifest` folder). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
 
@@ -176,7 +176,7 @@ From the login node:
     --set-file federation.signer_cert=fed-signer.crt \
     --set-file idp.sealer_kver=sealer.kver \
     --set-file idp.secrets_properties=secrets.properties \
-    --set-file idp.google.metadata=GoogleIDPMetadata.xml \
+    --set-file idp.google.metadata=google.xml \
     --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
