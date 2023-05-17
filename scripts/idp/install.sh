@@ -131,11 +131,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 # check if all environment variables are set
-check_env LONG_ORG_NAME SHORT_ORG_NAME ORG_DOMAIN ORG_WEBSITE ORG_SUPPORT_EMAIL STAFF_EMAIL_DOMAIN STUDENT_EMAIL_DOMAIN
+check_env LONG_ORG_NAME SHORT_ORG_NAME ORG_DOMAIN ORG_WEBSITE ORG_SUPPORT_EMAIL STAFF_EMAIL_DOMAIN
 
 # set ENV variables default values if not set
 set_default SHIBBOLETH_SUBDOMAIN "idp.$ORG_DOMAIN" \
 && set_default ORG_SCOPE "$ORG_DOMAIN" \
+&& set_default STUDENT_EMAIL_DOMAIN "-" \
 && set_default VALUES_FILE "values.yaml" \
 && set_default FED_SIGNER_FILE "fed-signer.crt" \
 && set_default AZURE_METADATA_FILE "azure.xml" \
