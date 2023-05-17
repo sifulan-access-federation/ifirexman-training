@@ -97,6 +97,7 @@ function print_help() {
     echo "Usage: $0 [options]"; echo
     echo "OPTIONS:"
     echo "  -c, --chart <chart>          Specify a custom installation chart"
+    echo "  -d, --dry-run                Perform a dry run of helm install/upgrade"
     echo "  -h, --help                   Print help message"
 }
 
@@ -113,6 +114,9 @@ while [[ $# -gt 0 ]]; do
             fi
             CHART="$2"
             shift
+            ;;
+        -d|--dry-run)
+            DRY_RUN=1
             ;;
         -h|--help)
             print_help
@@ -289,11 +293,18 @@ else
     fi
 fi
 
+# perform helm command or a dry run
+if [ "$DRY_RUN" = "1" ]; then
+    helm_command="$helm_command --debug --dry-run"
+else
+    helm_command="$helm_command --wait"
+fi
+
 # run helm install or upgrade
 echo "Running helm $CHART_OPERATION for the organisation ($SHORT_ORG_NAME)"
-eval $helm_command --wait
+eval $helm_command
 
 # download shibboleth metadata post-installation
-if [ "$CHART_OPERATION" == "install" ]; then
+if [ "$CHART_OPERATION" == "install" ] && [ "$DRY_RUN" != "1" ]; then
     download_when_ready $SHIB_METADATA_FILE $SHIB_METADATA_URL "shibboleth metadata"
 fi
