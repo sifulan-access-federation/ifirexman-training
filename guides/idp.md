@@ -114,7 +114,7 @@ From the login node:
 
 6. If your IdP will be using `Azure AD` as the backend authenticator, copy your Azure AD IdP metadata file (i.e. `azure.xml`) to the working folder. If your IdP will be using `Google Directory` as the backend authenticator, copy your Google Directory IdP metadata file (i.e. `google.xml`) to the working folder.
 
-7. Edit the `values.yaml` file (see an example at the `idp` sub-folder inside the `manifest` folder). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
+7. Edit the `values.yaml` file (see an example [here](../manifest/idp/values.yaml)). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
 
 8. Add the `ifirexman` repository to Helm:
 
