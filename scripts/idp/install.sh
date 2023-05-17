@@ -92,6 +92,13 @@ function add_helm_repo() {
     helm repo update "$1"
 }
 
+# function to print help message
+function print_help() {
+    echo "Usage: $0 [options]"; echo
+    echo "OPTIONS:"
+    echo "  -c, --chart <chart>          Specify a custom installation chart"
+    echo "  -h, --help                   Print help message"
+}
 
 # ================= DO NOT EDIT BEYOND THIS LINE =================
 
@@ -106,6 +113,10 @@ while [[ $# -gt 0 ]]; do
             fi
             CHART="$2"
             shift
+            ;;
+        -h|--help)
+            print_help
+            exit 0
             ;;
         *)
             echo "Invalid argument: $1"
