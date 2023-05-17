@@ -137,9 +137,9 @@ check_env LONG_ORG_NAME SHORT_ORG_NAME ORG_DOMAIN ORG_WEBSITE ORG_SUPPORT_EMAIL 
 set_default SHIBBOLETH_SUBDOMAIN "idp.$ORG_DOMAIN" \
 && set_default ORG_SCOPE "$ORG_DOMAIN" \
 && set_default VALUES_FILE "values.yaml" \
+&& set_default FED_SIGNER_FILE "fed-signer.crt" \
 && set_default AZURE_METADATA_FILE "azure.xml" \
 && set_default GOOGLE_METADATA_FILE "google.xml" \
-&& set_default FED_SIGNER_FILE "fed-signer.crt" \
 && set_default SHIB_METADATA_FILE "$SHORT_ORG_NAME-shib-metadata.xml" \
 && set_default SHIB_METADATA_URL "https://$SHIBBOLETH_SUBDOMAIN/idp/shibboleth"
 
