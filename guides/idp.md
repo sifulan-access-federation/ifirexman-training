@@ -21,9 +21,9 @@ You need to have the following setup before you can proceed with this tutorial:
 
 ## Shibboleth IdP Installation and Configuration
 
-### Assisted Installation (Azure AD)
+### Assisted Installation
 
-At the moment, the assisted installation method is only available for the **Azure AD** backend authenticator.
+At the moment, the assisted installation method only supports the **Azure AD** and **Google Directory** backend authenticators.
 
 From the login node:
 
@@ -44,7 +44,8 @@ From the login node:
 
     - `values.yaml` - Helm chart values file.
     - `fed-signer.crt` - Federation signer certificate.
-    - `azure.xml` - Azure AD IdP metadata file.
+    - `azure.xml` - Azure AD IdP metadata file if **Azure AD** is the backend authenticator.
+    - `google.xml` - Google Directory IdP metadata file if **Google Directory** is the backend authenticator.
 
 4. Edit the `values.yaml` file according to your IdP. Generally, you will only need to update the `Federation Configuration` section. A brief explanation and sample entries are provided in the file.
 
