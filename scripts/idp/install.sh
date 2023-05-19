@@ -144,19 +144,6 @@ set_default SHIBBOLETH_SUBDOMAIN "idp.$ORG_DOMAIN" \
 && set_default SHIB_METADATA_FILE "$SHORT_ORG_NAME-shib-metadata.xml" \
 && set_default SHIB_METADATA_URL "https://$SHIBBOLETH_SUBDOMAIN/idp/shibboleth"
 
-# set installation chart
-if [ -z "$CHART" ]; then
-    echo "Adding/updating helm repo (ifirexman)"
-    # add sifulan helm repo if haven't and update
-    add_helm_repo "ifirexman" "https://raw.githubusercontent.com/sifulan-access-federation/ifirexman-charts/master"
-    # set chart to default
-    CHART="ifirexman/ifirexman-shibboleth-idp"
-fi
-
-# check if required files exist
-check_local_file_exists $VALUES_FILE \
-&& check_local_file_exists $FED_SIGNER_FILE
-
 # determine authenticator backend
 if [ -f "$AZURE_METADATA_FILE" ]; then
     AUTH_BACKEND="azure_ad"
@@ -169,6 +156,19 @@ else
     exit 1
 fi
 echo "Authenticator backend for the IdP has been set ($AUTH_BACKEND)"
+
+# set installation chart
+if [ -z "$CHART" ]; then
+    echo "Adding/updating helm repo (ifirexman)"
+    # add sifulan helm repo if haven't and update
+    add_helm_repo "ifirexman" "https://raw.githubusercontent.com/sifulan-access-federation/ifirexman-charts/master"
+    # set chart to default
+    CHART="ifirexman/ifirexman-shibboleth-idp"
+fi
+
+# check if required files exist
+check_local_file_exists $VALUES_FILE \
+&& check_local_file_exists $FED_SIGNER_FILE
 
 # check if the following files exist, if any of them is missing, create the files:
 # - idp-signing.crt
