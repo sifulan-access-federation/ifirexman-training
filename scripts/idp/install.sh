@@ -152,14 +152,15 @@ elif [ -f "$GOOGLE_METADATA_FILE" ]; then
     BACKEND_AUTH="google"
     IDP_METADATA_FILE="$GOOGLE_METADATA_FILE"
 else
-    echo "No supported backend authenticator found!"
-    exit 1
+    BACKEND_AUTH="vikings"
 fi
 echo "Backend authenticator for the IdP has been set ($BACKEND_AUTH)"
 
 # backend authenticator specific requirements
 if [ "$BACKEND_AUTH" == "azure_ad" ] || [ "$BACKEND_AUTH" == "google" ]; then
     check_env STAFF_EMAIL_DOMAIN
+else
+    check_env DB_HOSTNAME DB_NAME DB_USER DB_PASSWORD
 fi
 
 # set installation chart
@@ -304,6 +305,13 @@ if [ "$BACKEND_AUTH" == "azure_ad" ] || [ "$BACKEND_AUTH" == "google" ]; then
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\""
         fi
     fi
+# configurations specific to vikings backend authenticator
+else
+    helm_command="$helm_command \
+--set idp.$BACKEND_AUTH.database_hostname=\"$DB_HOSTNAME\" \
+--set idp.$BACKEND_AUTH.database_name=\"$DB_NAME\" \
+--set idp.$BACKEND_AUTH.database_username=\"$DB_USER\" \
+--set idp.$BACKEND_AUTH.database_password=\"$DB_PASSWORD\""
 fi
 
 # perform helm command or a dry run
