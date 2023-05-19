@@ -144,21 +144,21 @@ set_default SHIBBOLETH_SUBDOMAIN "idp.$ORG_DOMAIN" \
 && set_default SHIB_METADATA_FILE "$SHORT_ORG_NAME-shib-metadata.xml" \
 && set_default SHIB_METADATA_URL "https://$SHIBBOLETH_SUBDOMAIN/idp/shibboleth"
 
-# determine authenticator backend
+# determine backend authenticator
 if [ -f "$AZURE_METADATA_FILE" ]; then
-    AUTH_BACKEND="azure_ad"
+    BACKEND_AUTH="azure_ad"
     IDP_METADATA_FILE="$AZURE_METADATA_FILE"
 elif [ -f "$GOOGLE_METADATA_FILE" ]; then
-    AUTH_BACKEND="google"
+    BACKEND_AUTH="google"
     IDP_METADATA_FILE="$GOOGLE_METADATA_FILE"
 else
-    echo "No supported authenticator backend found!"
+    echo "No supported backend authenticator found!"
     exit 1
 fi
-echo "Authenticator backend for the IdP has been set ($AUTH_BACKEND)"
+echo "Backend authenticator for the IdP has been set ($BACKEND_AUTH)"
 
-# authenticator backend specific requirements
-if [ "$AUTH_BACKEND" == "azure_ad" ] || [ "$AUTH_BACKEND" == "google" ]; then
+# backend authenticator specific requirements
+if [ "$BACKEND_AUTH" == "azure_ad" ] || [ "$BACKEND_AUTH" == "google" ]; then
     check_env STAFF_EMAIL_DOMAIN
 fi
 
@@ -246,56 +246,56 @@ helm_command="helm $CHART_OPERATION $SHORT_ORG_NAME-idp $CHART \
 --set-file idp.encryption_key=idp-encryption.key \
 --set-file idp.sealer_kver=sealer.kver \
 --set-file idp.secrets_properties=secrets.properties \
---set idp.$AUTH_BACKEND.enabled=true \
---set idp.$AUTH_BACKEND.entity_id=\"$ENTITY_ID\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.attribute=\"mail\" \
---set-file idp.$AUTH_BACKEND.metadata=$IDP_METADATA_FILE \
+--set idp.$BACKEND_AUTH.enabled=true \
+--set idp.$BACKEND_AUTH.entity_id=\"$ENTITY_ID\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.attribute=\"mail\" \
+--set-file idp.$BACKEND_AUTH.metadata=$IDP_METADATA_FILE \
 --set-file federation.signer_cert=$FED_SIGNER_FILE"
 
 # sharing staff and student email domain
 if [ "$STAFF_EMAIL_DOMAIN" == "$STUDENT_EMAIL_DOMAIN" ]; then
     helm_command="$helm_command \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"member\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"member\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\""
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"member\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"member\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\""
 else
     # separate student and staff email domains
     if [ "$STUDENT_EMAIL_DOMAIN" != "-" ]; then
         helm_command="$helm_command \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"student\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@$STUDENT_EMAIL_DOMAIN\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeReturn=\"member\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[1\]=\"@$STUDENT_EMAIL_DOMAIN\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:staff\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:$ORG_DOMAIN:student\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"student\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeValues\[0\]=\"member\""
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"student\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@$STUDENT_EMAIL_DOMAIN\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeReturn=\"member\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[1\]=\"@$STUDENT_EMAIL_DOMAIN\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:staff\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:$ORG_DOMAIN:student\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"student\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeValues\[0\]=\"member\""
     # single staff email domain with no student email domain
     else
         helm_command="$helm_command \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"member\" \
---set idp.$AUTH_BACKEND.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:staff\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
---set idp.$AUTH_BACKEND.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\""
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"member\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:staff\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\""
     fi
 fi
 
