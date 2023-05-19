@@ -215,9 +215,11 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
     fi
 done
 
-# extract the entity ID from the idp metadata file
-echo "Extracting the entity ID from the idp metadata file ($IDP_METADATA_FILE)"
-ENTITY_ID=`xmllint --pretty 1 $IDP_METADATA_FILE | grep entityID | sed 's/.*entityID="\([^"]*\)".*/\1/'`
+# extract the entity ID from the idp metadata file if applicable
+if [ -f "$IDP_METADATA_FILE" ]; then
+    echo "Extracting the entity ID from the idp metadata file ($IDP_METADATA_FILE)"
+    ENTITY_ID=`xmllint --pretty 1 $IDP_METADATA_FILE | grep entityID | sed 's/.*entityID="\([^"]*\)".*/\1/'`
+fi
 
 # determine if chart is to be installed or upgraded
 echo "Checking if release exists in the namespace ($SHORT_ORG_NAME)"
