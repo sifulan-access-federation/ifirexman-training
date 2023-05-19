@@ -249,14 +249,18 @@ helm_command="helm $CHART_OPERATION $SHORT_ORG_NAME-idp $CHART \
 --set-file idp.sealer_kver=sealer.kver \
 --set-file idp.secrets_properties=secrets.properties \
 --set idp.$BACKEND_AUTH.enabled=true \
---set idp.$BACKEND_AUTH.entity_id=\"$ENTITY_ID\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.attribute=\"mail\" \
---set-file idp.$BACKEND_AUTH.metadata=$IDP_METADATA_FILE \
 --set-file federation.signer_cert=$FED_SIGNER_FILE"
 
-# sharing staff and student email domain
-if [ "$STAFF_EMAIL_DOMAIN" == "$STUDENT_EMAIL_DOMAIN" ]; then
+# configurations specific to azure_ad and google backend authenticators
+if [ "$BACKEND_AUTH" == "azure_ad" ] || [ "$BACKEND_AUTH" == "google" ]; then
     helm_command="$helm_command \
+--set idp.$BACKEND_AUTH.entity_id=\"$ENTITY_ID\" \
+--set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.attribute=\"mail\" \
+--set-file idp.$BACKEND_AUTH.metadata=$IDP_METADATA_FILE"
+
+    # sharing staff and student email domain
+    if [ "$STAFF_EMAIL_DOMAIN" == "$STUDENT_EMAIL_DOMAIN" ]; then
+        helm_command="$helm_command \
 --set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"member\" \
 --set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
@@ -264,10 +268,10 @@ if [ "$STAFF_EMAIL_DOMAIN" == "$STUDENT_EMAIL_DOMAIN" ]; then
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"member\" \
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\""
-else
-    # separate student and staff email domains
-    if [ "$STUDENT_EMAIL_DOMAIN" != "-" ]; then
-        helm_command="$helm_command \
+    else
+        # separate student and staff email domains
+        if [ "$STUDENT_EMAIL_DOMAIN" != "-" ]; then
+            helm_command="$helm_command \
 --set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
 --set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
 --set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"student\" \
@@ -284,9 +288,9 @@ else
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\" \
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeValues\[0\]=\"member\""
-    # single staff email domain with no student email domain
-    else
-        helm_command="$helm_command \
+        # single staff email domain with no student email domain
+        else
+            helm_command="$helm_command \
 --set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
 --set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
 --set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"member\" \
@@ -298,6 +302,7 @@ else
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\" \
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
 --set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\""
+        fi
     fi
 fi
 
