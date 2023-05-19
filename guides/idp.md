@@ -57,8 +57,8 @@ From the login node:
     | SHORT_ORG_NAME | The short name/acronym of the organisation where this IdP belongs to. | "ifirexman" | - | True |
     | ORG_WEBSITE | The website url of the organisation where this IdP belongs to. | "https://ifirexman.edu" | - | True |
     | ORG_DOMAIN | The domain name of the IdP. | "ifirexman.edu" | - | True |
-    | STAFF_EMAIL_DOMAIN | The IdP's staff email domain. | "ifirexman.edu" | - | True |
     | ORG_SUPPORT_EMAIL | The support email address of the organisation where this IdP belongs to. Should be a role-based email instead of a personal email. | "support@ifirexman.edu" | - | True |
+    | STAFF_EMAIL_DOMAIN | The IdP's staff email domain. | "ifirexman.edu" | - | True **if** using **Azure AD** or **Google Directory** as the backend authenticator |
     | SHIBBOLETH_SUBDOMAIN | The subdomain name of the IdP. | "idp.ifirexman.edu" | "idp.$ORG_DOMAIN" | False |
     | ORG_SCOPE | The scope name of the IdP. Typically set to the domain name. | "ifirexman.edu" | "$ORG_DOMAIN" | False |
     | STUDENT_EMAIL_DOMAIN | The IdP's student email domain. | "student.ifirexman.edu" | "-" | False |

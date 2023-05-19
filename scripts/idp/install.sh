@@ -131,7 +131,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # check if all environment variables are set
-check_env LONG_ORG_NAME SHORT_ORG_NAME ORG_DOMAIN ORG_WEBSITE ORG_SUPPORT_EMAIL STAFF_EMAIL_DOMAIN
+check_env LONG_ORG_NAME SHORT_ORG_NAME ORG_DOMAIN ORG_WEBSITE ORG_SUPPORT_EMAIL
 
 # set ENV variables default values if not set
 set_default SHIBBOLETH_SUBDOMAIN "idp.$ORG_DOMAIN" \
@@ -156,6 +156,11 @@ else
     exit 1
 fi
 echo "Authenticator backend for the IdP has been set ($AUTH_BACKEND)"
+
+# authenticator backend specific requirements
+if [ "$AUTH_BACKEND" == "azure_ad" ] || [ "$AUTH_BACKEND" == "google" ]; then
+    check_env STAFF_EMAIL_DOMAIN
+fi
 
 # set installation chart
 if [ -z "$CHART" ]; then
