@@ -169,6 +169,7 @@ else
     echo "No supported authenticator backend found!"
     exit 1
 fi
+echo "Authenticator backend for the IdP has been set ($AUTH_BACKEND)"
 
 # check if the following files exist, if any of them is missing, create the files:
 # - idp-signing.crt
