@@ -206,7 +206,7 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
 
         # change ownership of the certificates
         echo "Changing ownership of the certificates to the user ($USER)"
-        echo $SUDO_PASS | sudo -S chown -R $USER: .
+        sudo chown -R $USER: .
 
         # set random salt for persistent ID
         echo "Setting random salt for persistent ID (secrets.properties)"
