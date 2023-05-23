@@ -670,7 +670,7 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
 3. Install Cert-Manager:
 
    ```bash
-   helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.9.1   --set installCRDs=true
+   helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.11.0 --set installCRDs=true
    ```
 
 4. Check Installation:
