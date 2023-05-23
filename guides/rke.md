@@ -636,8 +636,6 @@ On the login node:
 
    Under the ```spec```, find ```type``` parameter and change its value from ```NodePort``` to ```LoadBalancer```. If you would like to enable IPv6, find ```ipFamilyPolicy``` parameter and change its value from ```SingleStack``` to ```RequireDualStack```, and find ```ipFamilies``` parameter and add ```IPv6``` under the list. Please refer to [this Kubernetes Service Networking page](https://kubernetes.io/docs/concepts/services-networking/dual-stack/) for more information about IPv6 setting for Service in Kubernetes.
 
-   ```yaml
-
    After that you can save the manifest and check whether the MetalLB has assigned an IP address from the ```rke-ip-pool``` by using the following command:
 
    ```bash
