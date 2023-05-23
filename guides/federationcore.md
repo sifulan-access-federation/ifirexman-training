@@ -22,7 +22,7 @@ For more detail about Jagger, you can watch the [Jagger video](https://www.youtu
 
 From the login node:
 
-1. Create a database for Jagger at MariaDB. You can refer at [MariaDB](guides/mariadb.md) guide for more information. Take note of the database name, username and password which will be used in the next step.
+1. Create a database for Jagger at MariaDB. You can refer at [MariaDB](mariadb.md) guide for more information. Take note of the database name, username and password which will be used in the next step.
 2. Clone the [ifirexman-training](https://github.com/sifulan-access-federation/ifirexman-training) repository.
 
    ```bash
