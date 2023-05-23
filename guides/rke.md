@@ -718,6 +718,8 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
        server: https://acme-staging-v02.api.letsencrypt.org/directory
        # Email address used for ACME registration
        email: user@example.com
+       # Set ISRG X1 as the preferred chain
+       preferredChain: ISRG Root X1
        # Name of a secret used to store the ACME account private key
        privateKeySecretRef:
          name: letsencrypt-http-staging
@@ -741,6 +743,8 @@ Below are the steps to install Cert-Manager and use it to obtain a certificate f
        server: https://acme-v02.api.letsencrypt.org/directory
        # Email address used for ACME registration
        email: user@example.com
+       # Set ISRG X1 as the preferred chain
+       preferredChain: ISRG Root X1
        # Name of a secret used to store the ACME account private key
        privateKeySecretRef:
          name: letsencrypt-http-prod
