@@ -141,7 +141,7 @@ To install ```k9s``` on the login node:
 
 ```bash
 curl -Lo k9s_Linux_x86_64.tar.gz "https://github.com/derailed/k9s/releases/download/v0.27.3/k9s_Linux_amd64.tar.gz"
-tar -C /usr/local/bin -zxf k9s_Linux_amd64.tar.gz k9s
+tar -C /usr/local/bin -zxf k9s_Linux_x86_64.tar.gz k9s
 ```
 
 #### ```helm```
@@ -410,8 +410,8 @@ For each __worker__ node:
 4. From the the Login Node, install NFSv4 client and open-iscsi
 
    ```bash
-   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/prerequisite/longhorn-iscsi-installation.yaml
-   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/prerequisite/longhorn-nfs-installation.yaml
+   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.1/deploy/prerequisite/longhorn-iscsi-installation.yaml
+   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.1/deploy/prerequisite/longhorn-nfs-installation.yaml
    ```
 
 5. After the deployment, run the following command to check pods’ status of the installer:
@@ -469,7 +469,7 @@ For each __worker__ node:
 6. Run the following command to ensure that the nodes have all the necessary to install longhorn:
 
    ```bash
-   curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/scripts/environment_check.sh | bash
+   curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.4.1/scripts/environment_check.sh | bash
    ```
 
    The output should be similar to the following:
@@ -496,7 +496,7 @@ On the login node:
 1. Install Longhorn on the Kubernetes cluster using this command:
 
    ```bash
-   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/deploy/longhorn.yaml
+   kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.1/deploy/longhorn.yaml
    ```
 
    You can use the ```k9s``` tool or ```kubectl get pods -n longhorn-system``` to monitor the status. A successfully deployed Longhorn looks something like this:
