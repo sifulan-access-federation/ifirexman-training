@@ -233,7 +233,7 @@ INSTALL_RKE2_CHANNEL=stable;INSTALL_RKE2_TYPE="server" ./install.sh
 
 ### Create the config file
 
-Create ```/etc/rancher/rke2/config.yaml`` file, and insert the following values:
+Create ```/etc/rancher/rke2/config.yaml``` file, and insert the following values:
 
 ```yaml
 server: https://<node 1 fqdn>:9345
