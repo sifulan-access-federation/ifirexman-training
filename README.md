@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository provides step-by-step guides on setting up Identity Federation core services and IdP-as-a-Service:
+This repository provides step-by-step guides on setting up Identity Federation core services, Shibboleth IdP-as-a-Service, and eduroam IdP-as-a-Service:
 
 - [Kubernetes cluster](guides/rke.md).
 
@@ -10,11 +10,11 @@ This repository provides step-by-step guides on setting up Identity Federation c
 
 - [Federation core services](guides/federationcore.md).
 
-- [SSO Test Service](guides/ssotest.md).
+- [SSO/Attribute Release Test Service](guides/ssotest.md).
 
-- [Shibboleth Identity Provider (IdP)](guides/idp.md).
+- [Shibboleth Identity Provider (IdP)-as-a-Service](guides/idp.md).
 
-- [eduroam Identity Provider (IdP) as a Service](guides/eduroam.md).
+- [eduroam Identity Provider (IdP)-as-a-Service](guides/eduroam.md).
 
 ## Architecture
 
@@ -24,7 +24,7 @@ This repository provides step-by-step guides on setting up Identity Federation c
 
 - The infrastructure is based on a typical Kubernetes cluster setup where you need to prepare several master and worker nodes.
 
-- Optionally, you can also prepare a node that serves as a management (or login) node used to setup and manage your Kubernetes cluster and IdP-as-a-Service.
+- Optionally, you can also prepare a node that serves as a management (or login) node used to setup and manage your Kubernetes cluster and IdP-as-a-Services.
 
 - These nodes do not necessarily need a public IP address. Instead, a private IP address is sufficient.
 
@@ -37,9 +37,9 @@ This repository provides step-by-step guides on setting up Identity Federation c
   - **RKE-MASTER (Master Node)**
     - 3 VM (4 vCPUs, 8GB RAM, 25GB Storage, Rocky Linux 8.6)
   - **RKE-WORKER (Worker Node)**
-    - 3 VM (>=8 vCPUs, >=16GB RAM, 50GB Storage, 100GB Data, Rocky Linux 8.6)
+    - 3 VM (>=8 vCPUs, >=16GB RAM, 50GB Storage, 100GB Data (separate virtual disk), Rocky Linux 8.6)
 
-- Rocky Linux should be installed minimally (without GUI) on all nodes.
+- The Rocky Linux should be installed minimally (without GUI) on all nodes.
 
 - The storage for the OS and Data (in the case of RKE-WORKER) should be on separate virtual disks.
 
@@ -60,7 +60,8 @@ This repository provides step-by-step guides on setting up Identity Federation c
   - `fedmanager.ifirexman.edu`
   - `ds.ifirexman.edu`
   - `mdq.ifirexman.edu`
+  - `ssotest.ifirexman.edu`
 
 - Replace `ifirexman.edu` with your own domain name.
 
-- If you are currently already operating an Identity Federation, you may skip creating sub-domain names for `fedmanager` and `ds` and use the existing ones. However, you will still need to setup the `mdq` sub-domain name.
+- If you are currently already operating an Identity Federation, you may skip creating sub-domain names for `fedmanager` and `ds` as you shall use the existing ones. However, you will still need to setup the `mdq` and `ssotest` sub-domain name.
