@@ -12,36 +12,7 @@ You need to have the following setup before you can proceed with this tutorial:
 
 - Complete the [Federation core services](federationcore.md) tutorial.
 
-- Generate the signing and encryption keypairs.
-
-    Prepare `ssl.cnf`. Replace `$fqdn` and `$entityid` with your SSO Test (SP) hostname and entityID respectively.
-
-    ```conf
-    # OpenSSL configuration file for creating keypair
-    [req]
-    prompt=no
-    default_bits=3072
-    encrypt_key=no
-    default_md=sha256
-    distinguished_name=dn
-    # PrintableStrings only
-    string_mask=MASK:0002
-    x509_extensions=ext
-    [dn]
-    CN=$fqdn
-    [ext]
-    subjectAltName=DNS:$entityid,URI:$entityid
-    subjectKeyIdentifier=hash
-    ```
-
-    Generate keypairs for signing and encryption.
-
-    ```bash
-    openssl req -new -x509 -nodes -days 3652 -config ssl.cnf -out signing.crt -keyout signing.key
-    openssl req -new -x509 -nodes -days 3652 -config ssl.cnf -out encrypt.crt -keyout encrypt.key
-    ```
-
-- Add your federation signer certificate, as a `fed-signer.crt` file, to your working folder.
+- Add/copy your federation signer certificate, as a `fed-signer.crt` file, to your working folder.
 
 - Add the `ifirexman` repository to Helm.
 
@@ -59,12 +30,19 @@ You need to have the following setup before you can proceed with this tutorial:
 
 ## Installation
 
-1. Edit the `values.yaml` file (see an example at the `ssotest` sub-folder inside the `manifest` folder). A brief explanation and sample entries are provided in the file and in the [Parameters](#parameters) section.
-
-2. Install the `ssotest` chart as `ifirexman-ssotest` to the `ifirexman` namespace. Only include and uncomment the commented lines if you require custom configurations and have them in your working folder.
+1. Generate the signing and encryption keypairs.
 
     ```bash
-    helm install ifirexman-ssotest -n ifirexman \
+    openssl req -newkey rsa:3072 -new -x509 -days 3652 -nodes -out signing.crt -keyout signing.pem
+    openssl req -newkey rsa:3072 -new -x509 -days 3652 -nodes -out encrypt.crt -keyout encrypt.pem
+    ```
+    
+2. Edit the `values.yaml` file (see [the example](../manifest/ssotest/values.yaml) at the `ssotest` sub-folder inside the `manifest` folder). A brief explanation and sample entries are provided in the file and in the [Parameters](#parameters) section.
+
+3. Install the `ssotest` chart as `ifirexman-ssotest` to the `central-svcs` namespace. Only include and uncomment the commented lines if you require custom configurations and have them in your working folder.
+
+    ```bash
+    helm install ifirexman-ssotest -n central-svcs \
     --set-file ssotest.signing_crt="signing.crt" \
     --set-file ssotest.signing_key="signing.key" \
     --set-file ssotest.encryption_crt="encrypt.crt" \
@@ -81,7 +59,7 @@ You need to have the following setup before you can proceed with this tutorial:
 Run helm uninstall to uninstall the `ifirexman-ssotest` release.
 
     ```bash
-    helm uninstall ifirexman-ssotest -n ifirexman
+    helm uninstall ifirexman-ssotest -n central-svcs
     ```
 
 ## Upgrade
@@ -91,7 +69,7 @@ Run helm uninstall to uninstall the `ifirexman-ssotest` release.
 2. Run helm upgrade to update the `ifirexman-ssotest` release. Only include and uncomment the commented lines if you require custom configurations and have them in your working folder.
 
     ```bash
-    helm upgrade ifirexman-ssotest -n ifirexman \
+    helm upgrade ifirexman-ssotest -n central-svcs \
     --set-file ssotest.signing_crt="signing.crt" \
     --set-file ssotest.signing_key="signing.key" \
     --set-file ssotest.encryption_crt="encrypt.crt" \
@@ -103,7 +81,7 @@ Run helm uninstall to uninstall the `ifirexman-ssotest` release.
     -f values.yaml --wait ifirexman/ifirexman-ssotest
     ```
 
-## Parameters
+## Helm Charts Parameters
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -140,11 +118,11 @@ Run helm uninstall to uninstall the `ifirexman-ssotest` release.
 | ssotest.sp_config | file | `""` | **Optional:** Custom Shibboleth SP config, `shibboleth2.xml`. |
 | ssotest.support | string | `""` | Support email address. |
 
-## Adding the SSO Test service to Federation Manager
+## Adding the SSO/Attribute Release Test service to Federation Manager
 
-To enable the SSO Test service to be used as a test service for your federation, you must add it to Federation Manager. To do this, follow the steps below:
+To enable the SSO/Attribute Release Test service to be used as a test service for your federation, you must add it to Federation Manager. To do this, follow the steps below:
 
-1. Download the Shibboleth SP metadata from your SSO Test service (e.g. `ssotest.ifirexman.edu`).
+1. Download the Shibboleth SP metadata from your SSO Test/Attribute Release service (e.g. `ssotest.ifirexman.edu`).
 
     ```bash
     curl -Lo ssotest-metadata.xml https://ssotest.ifirexman.edu/Shibboleth.sso/Metadata
@@ -214,7 +192,7 @@ To enable the SSO Test service to be used as a test service for your federation,
         - schacPersonalUniqueCode
         - schacPersonalUniqueID
 
-13. Click the **Register** button.
+13. Click the **Register** button and approve the registration request.
 
 14. Click the **Flag** or the numbered icon at the top right of the page.
 
