@@ -22,7 +22,7 @@ image:
     # SSO Test image pull policy
     # Default: "IfNotPresent"
     pullPolicy: "IfNotPresent"
-  
+
   # Shibd
   shibd:
     # Shibd image registry
@@ -37,6 +37,55 @@ image:
     # Shibd image pull policy
     # Default: "IfNotPresent"
     pullPolicy: "IfNotPresent"
+
+# Ingress configuration
+ingress:
+  # Ingress cluster issuer
+  # Default: "letsencrypt-http-prod"
+  clusterIssuers: "letsencrypt-http-prod"
+
+# Container resources
+resources:
+  # SSO Test
+  ssotest:
+    requests:
+      # Minimum CPU allocation
+      # Example:
+      # cpu: "10m"
+      cpu: "0.5"
+      # Minimum memory allocation
+      # Example:
+      # memory: "10Mi"
+      memory: "0.5Gi"
+    limits:
+      # Maximum CPU allocation
+      # Example:
+      # cpu: "2"
+      cpu: "1"
+      # Maximum memory allocation
+      # Example:
+      # memory: "2Gi"
+      memory: "1Gi"
+  # Shibd
+  shibd:
+    requests:
+      # Minimum CPU allocation
+      # Example:
+      # cpu: "10m"
+      cpu: "0.5"
+      # Minimum memory allocation
+      # Example:
+      # memory: "10Mi"
+      memory: "0.5Gi"
+    limits:
+      # Maximum CPU allocation
+      # Example:
+      # cpu: "2"
+      cpu: "1"
+      # Maximum memory allocation
+      # Example:
+      # memory: "2Gi"
+      memory: "2Gi"
 
 # SSO Test configuration
 ssotest:
@@ -88,52 +137,3 @@ federation:
   # Federation signing certificate
   # Refer to README on how to get fed-signer.crt file
   signer: ""
-
-# Ingress configuration
-ingress:
-  # Ingress cluster issuer
-  # Default: "letsencrypt-http-prod"
-  clusterIssuers: "letsencrypt-http-prod"
-
-# Container resources
-resources:
-  # SSO Test
-  ssotest:
-    requests:
-      # Minimum CPU allocation
-      # Example:
-      # cpu: "10m"
-      cpu: "0.5"
-      # Minimum memory allocation
-      # Example:
-      # memory: "10Mi"
-      memory: "0.5Gi"
-    limits:
-      # Maximum CPU allocation
-      # Example:
-      # cpu: "2"
-      cpu: "1"
-      # Maximum memory allocation
-      # Example:
-      # memory: "2Gi"
-      memory: "1Gi"
-  # Shibd
-  shibd:
-    requests:
-      # Minimum CPU allocation
-      # Example:
-      # cpu: "10m"
-      cpu: "0.5"
-      # Minimum memory allocation
-      # Example:
-      # memory: "10Mi"
-      memory: "1Gi"
-    limits:
-      # Maximum CPU allocation
-      # Example:
-      # cpu: "2"
-      cpu: "1"
-      # Maximum memory allocation
-      # Example:
-      # memory: "2Gi"
-      memory: "2Gi"
