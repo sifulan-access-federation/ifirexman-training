@@ -1,6 +1,6 @@
 # Setting Up MariaDB
 
-For this system, we will be using MariaDB as the database for the federation core services and vikings. We will deploy the MariaDB database in the Kubernetes cluster that we just created.
+For this system, we will be using MariaDB as the database for the federation core services and VIKINGS. We are going to deploy the MariaDB database service in the Kubernetes cluster that we have just created.
 
 
 ## Install MariaDB
