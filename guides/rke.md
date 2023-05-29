@@ -28,7 +28,7 @@ Please refer to the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC
 
 ## Nodes preparation
 
-On each Kubernetes node, you need to install Docker Engine from Docker. Before you perform the steps below, you need to perform these steps as user ```root``` or as a user with ```sudo``` permission. If you choose the latter, you need to add ```sudo``` at the start of each command.
+The steps below are meant for __each Kubernetes node__. You need to perform these steps as user ```root``` or as a user with ```sudo``` permission. If you choose the latter, you need to add ```sudo``` at the start of each command.
 
 ### Network Config
 
@@ -140,13 +140,13 @@ K9s is a terminal-based UI to interact with your Kubernetes clusters. K9s contin
 To install ```k9s``` on the login node:
 
 ```bash
-curl -Lo k9s_Linux_x86_64.tar.gz "https://github.com/derailed/k9s/releases/download/v0.27.3/k9s_Linux_amd64.tar.gz"
+curl -Lo k9s_Linux_x86_64.tar.gz "https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz"
 tar -C /usr/local/bin -zxf k9s_Linux_x86_64.tar.gz k9s
 ```
 
 #### ```helm```
 
-Helm helps you manage Kubernetes applications — Helm Charts help you define, install, and upgrade even the most complex Kubernetes application.
+Helm helps you manage Kubernetes applications. Helm manages Kubernetes applications by helping you define, install, and upgrade even the most complex Kubernetes application.
 
 To install ```helm``` on the login node:
 
@@ -184,6 +184,21 @@ node-taint:
   - "CriticalAddonsOnly=true:NoExecute"
 disable: rke2-ingress-nginx
 write-kubeconfig-mode: 644
+cluster-cidr: 10.42.0.0/16
+service-cidr: 10.43.0.0/16
+```
+
+If you would like to enable IPv6 natively on your Kubernetes cluster, you can use the following configuration instead:
+
+```yaml
+tls-san:
+  - <node 1 fqdn>
+  - <node 2 fqdn>
+  - <node 3 fqdn>
+node-taint:
+  - "CriticalAddonsOnly=true:NoExecute"
+disable: rke2-ingress-nginx
+write-kubeconfig-mode: 644
 cluster-cidr: 10.42.0.0/16,fd42:1:1::/56
 service-cidr: 10.43.0.0/16,fd43:1:1::/112
 ```
@@ -208,7 +223,6 @@ cat /var/lib/rancher/rke2/server/node-token
 
 Take note of the pre-shared secret key. You will need it to join the other nodes to the cluster.
 
-Replace ```<token>``` with the pre-shared secret key you copied in the previous step. Replace ```<node 1 fqdn>```, ```<node 2 fqdn>```, and ```<node 3 fqdn>``` with the fully qualified domain names of the node 1,2, and 3.
 
 ### Restart the rke2-server service:
 
@@ -248,7 +262,8 @@ node-taint:
 disable: rke2-ingress-nginx
 ```
 
-Replace ```<node 1 fqdn>```, ```<node 2 fqdn>```, and ```<node 3 fqdn>``` with the fully qualified domain names of the node 1,2, and 3. Replace ```<token>``` with the pre-shared secret key you copied in the previous step.
+- Replace ```<node 1 fqdn>```, ```<node 2 fqdn>```, and ```<node 3 fqdn>``` with the fully qualified domain names of node 1,2, and 3.
+- Replace ```<token>``` with the pre-shared secret key you copied in the previous step.
 
 ### Enable the rke2-server service
 
@@ -401,7 +416,7 @@ For each __worker__ node:
    mount /dev/sdb /var/lib/longhorn
    ```
 
-   In the above example, it is assumed that the drive letter for the dedicated disk for data storage is ```sdb```. You can use the ```fdisk -l``` command to find the actual drive letter for your system. To make the operating system automatically mount the disk upon booting, you can add the following entry at the last line of the ```/etc/fstab``` file:
+   In the above example, it is assumed that the drive letter for the dedicated disk for data storage is ```/dev/sdb```. You can use the ```fdisk -l``` command to find the actual drive letter for your system. To make the operating system automatically mount the disk upon booting, you can add the following entry at the last line of the ```/etc/fstab``` file:
 
    ```bash
    /dev/sdb                /var/lib/longhorn       ext4    defaults        0 0
@@ -564,7 +579,7 @@ On the login node:
 1. Run the following command to install MetalLB:
 
    ```bash
-   kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.5/config/manifests/metallb-native.yaml
+   kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
    ```
 
    You can use the ```k9s``` tool or ```kubectl get pods -n metallb-system``` to monitor the status. A successfully installed MetalLB looks something like this:
@@ -600,7 +615,7 @@ On the login node:
       - rke-ip-pool
     ```
 
-    You shall replace the IPv4 address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned in the [iFIRExMAN_APNIC54_Training_Preparation.pdf](iFIRExMAN_APNIC54_Training_Preparation.pdf) file.
+    You shall replace the IPv4 address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned earlier.
     Optionally, you can also replace the IPv6 address range ```2001:db8:1::1-2001:db8:1::ff``` with your IPv6 address range. If you do not have an public IPv6 address range, you can remove the IPv6 address range from the manifest.
 
 3. Apply the newly created manifest ```metallb-configuration.yaml```:
@@ -616,7 +631,7 @@ On the login node:
 1. Run the following command to install NGINX Ingress:
 
    ```bash
-   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.1/deploy/static/provider/baremetal/deploy.yaml
+   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.1/deploy/static/provider/baremetal/deploy.yaml
    ```
 
    You can use the ```k9s``` tool or ```kubectl get pods -n ingress-nginx``` to monitor the status. A successfully installed NGINX Ingress looks something like this:
