@@ -17,13 +17,15 @@ You need to have the following setup before you can proceed with this tutorial:
 
 - [Azure AD Integration](azure.md) if the IdP will be using **Azure AD** as the backend authenticator.
 
-- [Google Directory](google.md) if the IdP will be using **Google Directory** as the backend authenticator.
+- [Google Directory Integration](google.md) if the IdP will be using **Google Directory** as the backend authenticator.
 
 ## Shibboleth IdP Installation and Configuration
 
+This deployment is meant for each organization that would like to use your Shibboleth IdP-as-a-Service service. It is highly recommended to create a dedicated working folder and Kubernetes namespace for each deployment to avoid confusion and also for easy management.
+
 ### Assisted Installation
 
-The assisted installation method supports the **Azure AD**, **Google Directory**, and **VIKINGS** backend authenticators.
+The assisted installation method supports the **Azure AD**, **Google Directory**, and **VIKINGS** backend authenticators. However, you **SHOULD** only choose one backend authenticator as this Shibboleth IdPaaS does not support multiple backend authenticators.
 
 From the login node:
 
@@ -33,19 +35,19 @@ From the login node:
     sudo ln -sf ~/ifirexman-training/scripts/idp/install.sh /usr/local/bin/idp-install
     ```
 
-2. Create and get into the working folder (e.g. `ifirexman`):
+2. Create and get into the working folder (e.g. `ifirexman-organization`):
 
     ```bash
-    mkdir ifirexman
-    cd ifirexman
+    mkdir ifirexman-organization
+    cd ifirexman-organization
     ```
 
-3. Add the following files to the working folder:
+3. Add/copy the following files to the working folder:
 
-    - `values.yaml` - Helm chart values file.
+    - [`values.yaml`](../manifest/idp/values.yaml) - Helm chart values file.
     - `fed-signer.crt` - Federation signer certificate.
-    - `azure.xml` - Azure AD IdP metadata file if **Azure AD** is the backend authenticator.
-    - `google.xml` - Google Directory IdP metadata file if **Google Directory** is the backend authenticator.
+    - `azure.xml` - Azure AD IdP metadata file **if** Azure AD is the backend authenticator.
+    - `GoogleIDPMetadata.xml` - Google Directory IdP metadata file **if** Google Directory is the backend authenticator.
 
 4. Edit the `values.yaml` file according to your IdP. Generally, you will only need to update the `Federation Configuration` section. A brief explanation and sample entries are provided in the file.
 
@@ -90,11 +92,11 @@ From the login node:
 
 From the login node:
 
-1. Create a working folder (e.g. `ifirexman`) and generate signing and encryption algorithms for the IdP:
+1. Create a working folder (e.g. `ifirexman-organization`) and generate signing and encryption algorithms for the IdP:
 
     ```bash
-    mkdir ifirexman
-    cd ifirexman
+    mkdir ifirexman-organization
+    cd ifirexman-organization
     docker run -it --rm -v $PWD:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh IDP_DOMAIN IDP_SCOPE
     ```
 
@@ -106,9 +108,7 @@ From the login node:
     sudo chown ifirexman: idp-* sealer-* secrets.properties
     ```
 
-3. Copy your federation signer certificate (e.g. `fed-signer.crt`) and the IdP logo (e.g. `logo.png`) to the working folder.
-
-4. Generate a random string for the persistentId salt:
+3. Generate a random string for the persistentId salt:
 
     ```bash
     openssl rand -base64 32
@@ -116,7 +116,7 @@ From the login node:
 
     Copy the output and save it for later use.
 
-5. Edit the `secrets.properties` file, and uncomment the `idp.persistentId.salt` option and replace its value from:
+4. Edit the `secrets.properties` file, and uncomment the `idp.persistentId.salt` option and replace its value from:
 
     ```bash
     idp.persistentId.salt = changethistosomethingrandom
@@ -128,21 +128,21 @@ From the login node:
     idp.persistentId.salt = /X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
     ```
 
-6. If your IdP will be using `Azure AD` as the backend authenticator, copy your Azure AD IdP metadata file (i.e. `azure.xml`) to the working folder. If your IdP will be using `Google Directory` as the backend authenticator, copy your Google Directory IdP metadata file (i.e. `google.xml`) to the working folder.
+5. If your IdP will be using `Azure AD` as the backend authenticator, copy your Azure AD IdP metadata file (i.e. `azure.xml`) to the working folder. If your IdP will be using `Google Directory` as the backend authenticator, copy your Google Directory IdP metadata file (i.e. `GoogleIDPMetadata.xml`) to the working folder.
 
-7. Edit the `values.yaml` file (see an example [here](../manifest/idp/values.yaml)). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
+6. Edit the `values.yaml` file (see an example [here](../manifest/idp/values.yaml)). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
 
-8. Add the `ifirexman` repository to Helm:
+7. Add the `ifirexman` repository to Helm:
 
     ```bash
     helm repo add ifirexman https://sifulan-access-federation.github.io/ifirexman-charts
     ```
 
-9. Below is an example to install the chart with the release name `ifirexman` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file):
+8. Below is an example to install the chart with the release name `ifirexman-organization` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file):
 
     ```bash
-    helm install ifirexman \
-    --namespace ifirexman \
+    helm install ifirexman-organization \
+    --namespace ifirexman-organization \
     --create-namespace \
     --values values.yaml \
     --set idp.sealer_jks="$(base64 sealer.jks)" \
@@ -156,11 +156,11 @@ From the login node:
     --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
-    Below is an example to install the chart with the release name `ifirexman` with `Azure AD` as the backend authenticator (set at the `values.yaml` file):
+    Below is an example to install the chart with the release name `ifirexman-organization` with `Azure AD` as the backend authenticator (set at the `values.yaml` file):
 
     ```bash
-    helm install ifirexman \
-    --namespace ifirexman \
+    helm install ifirexman-organization \
+    --namespace ifirexman-organization \
     --create-namespace \
     --values values.yaml \
     --set idp.sealer_jks="$(base64 sealer.jks)" \
@@ -175,11 +175,11 @@ From the login node:
     --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
-    And below is an example to install the chart with the release name `ifirexman` with `Google Directory` as the backend authenticator (set at the `values.yaml` file):
+    And below is an example to install the chart with the release name `ifirexman-organization` with `Google Directory` as the backend authenticator (set at the `values.yaml` file):
 
     ```bash
-    helm install ifirexman \
-    --namespace ifirexman \
+    helm install ifirexman-organization \
+    --namespace ifirexman-organization \
     --create-namespace \
     --values values.yaml \
     --set idp.sealer_jks="$(base64 sealer.jks)" \
@@ -190,7 +190,7 @@ From the login node:
     --set-file federation.signer_cert=fed-signer.crt \
     --set-file idp.sealer_kver=sealer.kver \
     --set-file idp.secrets_properties=secrets.properties \
-    --set-file idp.google.metadata=google.xml \
+    --set-file idp.google.metadata=GoogleIDPMetadata.xml \
     --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
@@ -198,10 +198,10 @@ From the login node:
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `ifirexman` deployment:
+To uninstall/delete the `ifirexman-organization` deployment:
 
   ```bash
-  helm uninstall ifirexman --namespace ifirexman
+  helm uninstall ifirexman-organization --namespace ifirexman-organization
   ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
