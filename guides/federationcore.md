@@ -1,6 +1,6 @@
 # Setting Up Federation Core Services
 
-This guide will walk you through setting up the core services for a federation. It is assume that your federation have the following information:
+This guide will walk you through setting up the core services for a federation. It is assumed that your federation have the following information:
 
 - Federation short name: `iFIRExMAN`
 - Federation long name: `iFIRExMAN Federation`
