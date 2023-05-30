@@ -39,7 +39,7 @@ spec:
               - mountPath: "/cert/eduGAIN-signer-ca.pem"
                 name: metadata-signer-edugain-ca
                 subPath: eduGAIN-signer-ca.pem
-                readOnly: true 
+                readOnly: true
               - mountPath: "/www"
                 name: signer-www
               - mountPath: sign.sh
@@ -62,14 +62,14 @@ spec:
               secret:
                 secretName: metadata-signer-key
                 items:
-                  - key: cert.crt
+                  - key: fed_signer.crt
                     path: cert.crt
-                  - key: cert.key
+                  - key: fed_signer.key
                     path: cert.key
-                  - key: cert_unencrypted.key
+                  - key: fed_signer_unencrypted.key
                     path: cert_unencrypted.key
             - name: metadata-signer-sign-sh
-              configMap: 
+              configMap:
                 name: metadata-signer-sign-sh
                 items:
                   - key: sign.sh

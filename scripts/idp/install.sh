@@ -64,16 +64,16 @@ function download_when_ready() {
     echo "Waiting for the $3 file to be ready ($2)"
 
     sleep 30
-    
+
     for i in {1..5}; do
         if curl -s -m 10 -o /dev/null -w "%{http_code}" "$2" | grep -q "200"; then
             curl -s -o "$1" "$2"
             break
-        
+
         elif curl --insecure -s -m 10 -o /dev/null -w "%{http_code}" "$2" | grep -q "200"; then
             curl --insecure -s -o "$1" "$2"
             break
-        
+
         else
             sleep 10
         fi
@@ -138,9 +138,9 @@ set_default SHIBBOLETH_SUBDOMAIN "idp.$ORG_DOMAIN" \
 && set_default ORG_SCOPE "$ORG_DOMAIN" \
 && set_default STUDENT_EMAIL_DOMAIN "-" \
 && set_default VALUES_FILE "values.yaml" \
-&& set_default FED_SIGNER_FILE "fed-signer.crt" \
+&& set_default FED_SIGNER_FILE "fed_signer.crt" \
 && set_default AZURE_METADATA_FILE "azure.xml" \
-&& set_default GOOGLE_METADATA_FILE "google.xml" \
+&& set_default GOOGLE_METADATA_FILE "GoogleIDPMetadata.xml" \
 && set_default SHIB_METADATA_FILE "$SHORT_ORG_NAME-shib-metadata.xml" \
 && set_default SHIB_METADATA_URL "https://$SHIBBOLETH_SUBDOMAIN/idp/shibboleth"
 
@@ -199,7 +199,7 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
             echo "You must have a supporting container runtime installed"
             exit 1
         fi
-        
+
         # create shibboleth certificates
         echo "Creating shibboleth certificates"
         $CONTAINER_RUNTIME run -it --rm -v $PWD:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh $SHIBBOLETH_SUBDOMAIN $ORG_DOMAIN

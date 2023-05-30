@@ -118,7 +118,7 @@ From the login node:
 2. Generate a self-signed certificate and private key for the Metadata Signer. You can use the following command:
 
    ```bash
-   openssl req -x509 -newkey rsa:4096 -keyout cert_unencrypted.key -out cert.crt -days 3650 -nodes
+   openssl req -x509 -newkey rsa:4096 -keyout fed_key_unencrypted.key -out fed_signing.crt -days 3650 -nodes
    ```
 
    When running this command, openssl may ask you to enter some information. Below is an example of the information that you need to enter:
@@ -143,13 +143,13 @@ From the login node:
    OpenSSL will then generate a certificate and private key. You can use the following command to verify the certificate:
 
    ```bash
-   openssl x509 -in cert.crt -text -noout
+   openssl x509 -in fed_signing.crt -text -noout
    ```
 
    You need to create a copy of the private key that we just created and set it with a passphrase. You can use the following command:
 
    ```bash
-   openssl rsa -aes256 -in cert_unencrypted.key -out cert.key
+   openssl rsa -aes256 -in fed_key_unencrypted.key -out fed_signing.key
    ```
 
    When running this command, openssl will ask you to enter a passphrase. You can enter any passphrase that you want. You will need to enter the passphrase when you configure the Metadata Signer.
@@ -157,19 +157,19 @@ From the login node:
    Now, let's validate all the keys that we just created:
 
    ```bash
-   openssl rsa -in cert.key -modulus -noout
-   openssl rsa -in cert_unencrypted.key -modulus -noout
-   openssl x509 -in cert.crt -modulus -noout
+   openssl rsa -in fed_signing.key -modulus -noout
+   openssl rsa -in fed_key_unencrypted.key -modulus -noout
+   openssl x509 -in fed_signing.crt -modulus -noout
    ```
 
    Make sure that all the modulus values are the same.
 
-   You shall share the `cert.crt` file with your federation members so that they can validate the metadata feed released by your federation. The trust of your federation relies on the signing key being secure. Hence, you MUST keep the `cert.key` and `cert_unencrypted.key` files in a safe place/securely stored. Should you lost these files or compromised, you will need to immediately regenerate the certificate and private key, and inform your federation members to update their copy of the `cert.crt` file.
+   You shall share the `fed_signing.crt` file with your federation members so that they can validate the metadata feed released by your federation. The trust of your federation relies on the signing key being secure. Hence, you MUST keep the `fed_signing.key` and `fed_unencrypted.key` files in a safe place/securely stored. Should you lost these files or compromised, you will need to immediately regenerate the certificate and private key, and inform your federation members to update their copy of the `fed_signing.crt` file.
 
 3. Create a secret for the Metadata Signer.
 
    ```bash
-   kubectl create secret generic metadata-signer-key --from-file=cert.crt --from-file=cert_unencrypted.key --from-file=cert.key -n central-svcs
+   kubectl create secret generic metadata-signer-key --from-file=fed_signing.crt --from-file=fed_key_unencrypted.key --from-file=fed_signing.key -n central-svcs
    kubectl create secret generic metadata-signer-keypassword --from-literal=password=YOUR_PRIVATE_KEY_PASSPHRASE -n central-svcs
    ```
 

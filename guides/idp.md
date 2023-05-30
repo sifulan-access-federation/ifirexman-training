@@ -45,9 +45,9 @@ From the login node:
 3. Add/copy the following files to the working folder:
 
     - [`values.yaml`](../manifest/idp/values.yaml) - Helm chart values file.
-    - `fed-signer.crt` - Federation signer certificate.
-    - `azure.xml` - Azure AD IdP metadata file **if** Azure AD is the backend authenticator.
-    - `GoogleIDPMetadata.xml` - Google Directory IdP metadata file **if** Google Directory is the backend authenticator.
+    - `fed_signer.crt` - Federation signer certificate.
+    - `azure.xml` - Azure AD IdP metadata file **if** Azure AD is the backend authenticator. You can refer to [this guide](azure.md) on how to setup your Azure AD and obtain the metadata file.
+    - `GoogleIDPMetadata.xml` - Google Directory IdP metadata file **if** Google Directory is the backend authenticator. You can refer to [this guide](google.md) on how to setup your Google Directory and obtain the metadata file.
 
 4. Edit the `values.yaml` file according to your IdP. Generally, you will only need to update the `Federation Configuration` section. A brief explanation and sample entries are provided in the file.
 
@@ -69,9 +69,9 @@ From the login node:
     | ORG_SCOPE | The scope name of the IdP. Typically set to the domain name. | "ifirexman.edu" | "$ORG_DOMAIN" | False |
     | STUDENT_EMAIL_DOMAIN | The IdP's student email domain. | "student.ifirexman.edu" | "-" | False |
     | VALUES_FILE | The `values.yaml` file containing the IdP's values required by `ifirexman-shibboleth-idp`. | "custom-values.yaml" | "values.yaml" | False |
-    | FED_SIGNER_FILE | The Identity Federation signer certificate. | "custom-signer.crt" | "fed-signer.crt" | False |
-    | AZURE_METADATA_FILE | Azure AD IdP metadata file. | "azure-idp-metadata.xml" | "azure.xml" | False |
-    | GOOGLE_METADATA_FILE | Google Directory IdP metadata file. | "google-idp-metadata.xml" | "google.xml" | False |
+    | FED_SIGNER_FILE | The Identity Federation signer certificate. | "fed_signer.crt" | "fed_signer.crt" | False |
+    | AZURE_METADATA_FILE | Azure AD IdP metadata file. | "azure.xml" | "azure.xml" | False |
+    | GOOGLE_METADATA_FILE | Google Directory IdP metadata file. | "GoogleIDPMetadata.xml.xml" | "GoogleIDPMetadata.xml" | False |
 
     Use `export` to add these variables to your shell environment. For example:
 
@@ -150,7 +150,7 @@ From the login node:
     --set-file idp.signing_key=idp-signing.key \
     --set-file idp.encryption_cert=idp-encryption.crt \
     --set-file idp.encryption_key=idp-encryption.key \
-    --set-file federation.signer_cert=fed-signer.crt \
+    --set-file federation.signer_cert=fed_signer.crt \
     --set-file idp.sealer_kver=sealer.kver \
     --set-file idp.secrets_properties=secrets.properties \
     --wait ifirexman/ifirexman-shibboleth-idp
@@ -168,7 +168,7 @@ From the login node:
     --set-file idp.signing_key=idp-signing.key \
     --set-file idp.encryption_cert=idp-encryption.crt \
     --set-file idp.encryption_key=idp-encryption.key \
-    --set-file federation.signer_cert=fed-signer.crt \
+    --set-file federation.signer_cert=fed_signer.crt \
     --set-file idp.sealer_kver=sealer.kver \
     --set-file idp.secrets_properties=secrets.properties \
     --set-file idp.azure_ad.metadata=azure.xml \
@@ -187,14 +187,14 @@ From the login node:
     --set-file idp.signing_key=idp-signing.key \
     --set-file idp.encryption_cert=idp-encryption.crt \
     --set-file idp.encryption_key=idp-encryption.key \
-    --set-file federation.signer_cert=fed-signer.crt \
+    --set-file federation.signer_cert=fed_signer.crt \
     --set-file idp.sealer_kver=sealer.kver \
     --set-file idp.secrets_properties=secrets.properties \
     --set-file idp.google.metadata=GoogleIDPMetadata.xml \
     --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
-10. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual subdomain for the IdP). Copy/download the metadata and register it at the Federation Manager (Jagger).
+9. When the IdP is ready, you can access the IdP's metadata at `https://idp.ifirexman.edu/idp/shibboleth` (replace `idp.ifirexman.edu` with the actual subdomain for the IdP). Copy/download the metadata and register it at the Federation Manager (Jagger).
 
 ## Uninstalling the Chart
 
