@@ -12,7 +12,7 @@ You need to have the following setup before you can proceed with this tutorial:
 
 - Complete the [Federation core services](federationcore.md) tutorial.
 
-- Add/copy your federation signer certificate, as a `fed-signer.crt` file, to your working folder.
+- Add/copy your federation signer certificate, as a `fed_signer.crt` file, to your working folder.
 
 - Add the `ifirexman` repository to Helm.
 
@@ -47,12 +47,14 @@ You need to have the following setup before you can proceed with this tutorial:
     --set-file ssotest.signing_key="signing.key" \
     --set-file ssotest.encryption_crt="encrypt.crt" \
     --set-file ssotest.encryption_key="encrypt.key" \
-    --set-file federation.signer="fed-signer.crt" \
+    --set-file federation.signer="fed_signer.crt" \
     # --set-file ssotest.sp_config="shibboleth2.xml" \
     # --set-file ssotest.attribute_map="attribute-map.xml" \
     # --set-file ssotest.apache_config="servername.conf" \
     -f values.yaml --wait ifirexman/ifirexman-ssotest
     ```
+    
+    Please refer [here](#helm-charts-parameters) for Helm Chart parameters.
 
 ## Uninstallation
 
@@ -74,13 +76,12 @@ Run helm uninstall to uninstall the `ifirexman-ssotest` release.
     --set-file ssotest.signing_key="signing.key" \
     --set-file ssotest.encryption_crt="encrypt.crt" \
     --set-file ssotest.encryption_key="encrypt.key" \
-    --set-file federation.signer="fed-signer.crt" \
+    --set-file federation.signer="fed_signer.crt" \
     # --set-file ssotest.sp_config="shibboleth2.xml" \
     # --set-file ssotest.attribute_map="attribute-map.xml" \
     # --set-file ssotest.apache_config="servername.conf" \
     -f values.yaml --wait ifirexman/ifirexman-ssotest
     ```
-Please refer [here](#helm-charts-parameters) for Helm Chart parameters.
 
 ## Adding the SSO/Attribute Release Test service to Federation Manager
 
@@ -170,7 +171,7 @@ To enable the SSO/Attribute Release Test service to be used as a test service fo
 |-----|------|---------|-------------|
 | federation.metadata_url | string | `""` | Federation Manager Metadata URL. |
 | federation.name | string | `""` | Federation full name. |
-| federation.signer | file | `""` | Federation signing certificate, `fed-signer.crt`. |
+| federation.signer | file | `""` | Federation signing certificate, `fed_signer.crt`. |
 | federation.support | string | `""` | Federation support email address. |
 | image.shibd.pullPolicy | string | `"IfNotPresent"` | Shibd container image pull policy. Defaults to `"IfNotPresent"`. |
 | image.shibd.registry | string | `"ghcr.io"` | Shibd container image registry. Defaults to `"ghcr.io"`. |
