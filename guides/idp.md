@@ -71,7 +71,7 @@ From the login node:
     | VALUES_FILE | The `values.yaml` file containing the IdP's values required by `ifirexman-shibboleth-idp`. | "custom-values.yaml" | "values.yaml" | False |
     | FED_SIGNER_FILE | The Identity Federation signer certificate. | "fed_signer.crt" | "fed_signer.crt" | False |
     | AZURE_METADATA_FILE | Azure AD IdP metadata file. | "azure.xml" | "azure.xml" | False |
-    | GOOGLE_METADATA_FILE | Google Directory IdP metadata file. | "GoogleIDPMetadata.xml.xml" | "GoogleIDPMetadata.xml" | False |
+    | GOOGLE_METADATA_FILE | Google Directory IdP metadata file. | "GoogleIDPMetadata.xml" | "GoogleIDPMetadata.xml" | False |
 
     Use `export` to add these variables to your shell environment. For example:
 
