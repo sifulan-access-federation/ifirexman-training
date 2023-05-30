@@ -49,7 +49,7 @@ From the login node:
     - `azure.xml` - Azure AD IdP metadata file **if** Azure AD is the backend authenticator. You can refer to [this guide](azure.md) on how to setup your Azure AD and obtain the metadata file.
     - `GoogleIDPMetadata.xml` - Google Directory IdP metadata file **if** Google Directory is the backend authenticator. You can refer to [this guide](google.md) on how to setup your Google Directory and obtain the metadata file.
 
-4. Edit the `values.yaml` file according to your IdP. Generally, you will only need to update the `Federation Configuration` section. A brief explanation and sample entries are provided in the file.
+4. Edit the `values.yaml` file according to your IdP. Generally, you will **ONLY** need to update the `Federation Configuration` section. A brief explanation and sample entries are provided in the file.
 
 5. Add all of the required variables and others that you wish to override to your shell environment:
 
