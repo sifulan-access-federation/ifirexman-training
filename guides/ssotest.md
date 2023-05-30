@@ -80,43 +80,7 @@ Run helm uninstall to uninstall the `ifirexman-ssotest` release.
     # --set-file ssotest.apache_config="servername.conf" \
     -f values.yaml --wait ifirexman/ifirexman-ssotest
     ```
-
-## Helm Charts Parameters
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| federation.metadata_url | string | `""` | Federation Manager Metadata URL. |
-| federation.name | string | `""` | Federation full name. |
-| federation.signer | file | `""` | Federation signing certificate, `fed-signer.crt`. |
-| federation.support | string | `""` | Federation support email address. |
-| image.shibd.pullPolicy | string | `"IfNotPresent"` | Shibd container image pull policy. Defaults to `"IfNotPresent"`. |
-| image.shibd.registry | string | `"ghcr.io"` | Shibd container image registry. Defaults to `"ghcr.io"`. |
-| image.shibd.repository | string | `"sifulan-access-federation/ifirexman-shibboleth-sp"` | Shibd container image repository. Defaults to `"sifulan-access-federation/ifirexman-shibboleth-sp"`. |
-| image.shibd.tag | string | `"0.1.0"` | Shibd container image version. Defaults to `"0.1.0"`. |
-| image.ssotest.pullPolicy | string | `"IfNotPresent"` | SSO Test container image pull policy. Defaults to `"IfNotPresent"`. |
-| image.ssotest.registry | string | `"ghcr.io"` | SSO Test container image registry. Defaults to `"ghcr.io"`. |
-| image.ssotest.repository | string | `"sifulan-access-federation/ifirexman-ssotest"` | SSO Test container image repository. Defaults to `"sifulan-access-federation/ifirexman-ssotest"`. |
-| image.ssotest.tag | string | `""` | SSO Test container image version. Defaults to Chart `appVersion`. |
-| ingress.clusterIssuers | string | `"letsencrypt-http-prod"` | Ingress cluster issuer. Defaults to `"letsencrypt-http-prod"`. |
-| replicaCount | int | `1` | Number of replicas of the SSO Test Portal. Defaults to `1`. |
-| resources.shibd.limits.cpu | string | `"1"` | Shibd container maximum CPU allocation. |
-| resources.shibd.limits.memory | string | `"2Gi"` | Shibd container maximum memory allocation. |
-| resources.shibd.requests.cpu | string | `"0.5"` | Shibd container minimum CPU allocation. |
-| resources.shibd.requests.memory | string | `"1Gi"` | Shibd container minimum memory allocation. |
-| resources.ssotest.limits.cpu | string | `"1"` | SSO Test container maximum CPU allocation. |
-| resources.ssotest.limits.memory | string | `"1Gi"` | SSO Test container maximum memory allocation. |
-| resources.ssotest.requests.cpu | string | `"0.5"` | SSO Test container minimum CPU allocation. |
-| resources.ssotest.requests.memory | string | `"0.5Gi"` | SSO Test container minimum memory allocation. |
-| ssotest.apache_config | file | `""` | **Optional:** Custom Apache config, `servername.conf`. |
-| ssotest.attribute_map | file | `""` | **Optional:** Custom Shibboleth attribute mapping, `attribute-map.xml`. |
-| ssotest.domain | string | `""` | SSO Test portal domain. |
-| ssotest.encryption_crt | file | `""` | Shibboleth SP encryption certificate, `encrypt.crt`. |
-| ssotest.encryption_key | file | `""` | Shibboleth SP encryption key, `encrypt.key`. |
-| ssotest.entity_id | string | `""` | SSO Test Shibboleth Entity ID. |
-| ssotest.signing_crt | file | `""` | Shibboleth SP signing certificate, `signing.crt`. |
-| ssotest.signing_key | file | `""` | Shibboleth SP signing key, `signing.key`. |
-| ssotest.sp_config | file | `""` | **Optional:** Custom Shibboleth SP config, `shibboleth2.xml`. |
-| ssotest.support | string | `""` | Support email address. |
+Please refer [here](#helm-charts-parameters) for Helm Chart parameters.
 
 ## Adding the SSO/Attribute Release Test service to Federation Manager
 
@@ -199,3 +163,41 @@ To enable the SSO/Attribute Release Test service to be used as a test service fo
 15. Click the **Rightward arrow** icon of the SP we have added.
 
 16. Scroll through the SP's registration form, and click the **Accept request** button at the bottom of the page to approve the SSO Test service registration.
+
+## Helm Charts Parameters
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| federation.metadata_url | string | `""` | Federation Manager Metadata URL. |
+| federation.name | string | `""` | Federation full name. |
+| federation.signer | file | `""` | Federation signing certificate, `fed-signer.crt`. |
+| federation.support | string | `""` | Federation support email address. |
+| image.shibd.pullPolicy | string | `"IfNotPresent"` | Shibd container image pull policy. Defaults to `"IfNotPresent"`. |
+| image.shibd.registry | string | `"ghcr.io"` | Shibd container image registry. Defaults to `"ghcr.io"`. |
+| image.shibd.repository | string | `"sifulan-access-federation/ifirexman-shibboleth-sp"` | Shibd container image repository. Defaults to `"sifulan-access-federation/ifirexman-shibboleth-sp"`. |
+| image.shibd.tag | string | `"0.1.0"` | Shibd container image version. Defaults to `"0.1.0"`. |
+| image.ssotest.pullPolicy | string | `"IfNotPresent"` | SSO Test container image pull policy. Defaults to `"IfNotPresent"`. |
+| image.ssotest.registry | string | `"ghcr.io"` | SSO Test container image registry. Defaults to `"ghcr.io"`. |
+| image.ssotest.repository | string | `"sifulan-access-federation/ifirexman-ssotest"` | SSO Test container image repository. Defaults to `"sifulan-access-federation/ifirexman-ssotest"`. |
+| image.ssotest.tag | string | `""` | SSO Test container image version. Defaults to Chart `appVersion`. |
+| ingress.clusterIssuers | string | `"letsencrypt-http-prod"` | Ingress cluster issuer. Defaults to `"letsencrypt-http-prod"`. |
+| replicaCount | int | `1` | Number of replicas of the SSO Test Portal. Defaults to `1`. |
+| resources.shibd.limits.cpu | string | `"1"` | Shibd container maximum CPU allocation. |
+| resources.shibd.limits.memory | string | `"2Gi"` | Shibd container maximum memory allocation. |
+| resources.shibd.requests.cpu | string | `"0.5"` | Shibd container minimum CPU allocation. |
+| resources.shibd.requests.memory | string | `"1Gi"` | Shibd container minimum memory allocation. |
+| resources.ssotest.limits.cpu | string | `"1"` | SSO Test container maximum CPU allocation. |
+| resources.ssotest.limits.memory | string | `"1Gi"` | SSO Test container maximum memory allocation. |
+| resources.ssotest.requests.cpu | string | `"0.5"` | SSO Test container minimum CPU allocation. |
+| resources.ssotest.requests.memory | string | `"0.5Gi"` | SSO Test container minimum memory allocation. |
+| ssotest.apache_config | file | `""` | **Optional:** Custom Apache config, `servername.conf`. |
+| ssotest.attribute_map | file | `""` | **Optional:** Custom Shibboleth attribute mapping, `attribute-map.xml`. |
+| ssotest.domain | string | `""` | SSO Test portal domain. |
+| ssotest.encryption_crt | file | `""` | Shibboleth SP encryption certificate, `encrypt.crt`. |
+| ssotest.encryption_key | file | `""` | Shibboleth SP encryption key, `encrypt.key`. |
+| ssotest.entity_id | string | `""` | SSO Test Shibboleth Entity ID. |
+| ssotest.signing_crt | file | `""` | Shibboleth SP signing certificate, `signing.crt`. |
+| ssotest.signing_key | file | `""` | Shibboleth SP signing key, `signing.key`. |
+| ssotest.sp_config | file | `""` | **Optional:** Custom Shibboleth SP config, `shibboleth2.xml`. |
+| ssotest.support | string | `""` | Support email address. |
+
