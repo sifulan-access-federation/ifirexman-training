@@ -149,37 +149,59 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
+# get backend authenticator
+get_user_input "BACKEND_AUTH=vikings"
+echo "Backend authenticator for the IdP has been set (${BACKEND_AUTH})"
+
+# set required variables
+required_variables=(
+    "LONG_ORG_NAME="
+    "SHORT_ORG_NAME="
+    "ORG_WEBSITE="
+    "ORG_SUPPORT_EMAIL="
+    "ORG_DOMAIN="
+    "ORG_SCOPE=\${ORG_DOMAIN}"
+    "SHIBBOLETH_SUBDOMAIN=idp.\${ORG_DOMAIN}"
+)
+
+if [ "${BACKEND_AUTH}" == "azure_ad" ] || [ "${BACKEND_AUTH}" == "google" ]; then
+    required_variables+=(
+        "STAFF_EMAIL_DOMAIN="
+        "STUDENT_EMAIL_DOMAIN=-"
+    )
+else
+    required_variables+=(
+        "DB_HOSTNAME="
+        "DB_NAME="
+        "DB_USER="
+        "DB_PASSWORD="
+    )
+fi
+
+# get required variables
+get_user_input "${required_variables[@]}"
+
 # check if all environment variables are set
-check_env LONG_ORG_NAME SHORT_ORG_NAME ORG_DOMAIN ORG_WEBSITE ORG_SUPPORT_EMAIL
+check_env "${required_variables[@]}"
 
 # set ENV variables default values if not set
-set_default SHIBBOLETH_SUBDOMAIN "idp.$ORG_DOMAIN" \
-&& set_default ORG_SCOPE "$ORG_DOMAIN" \
-&& set_default STUDENT_EMAIL_DOMAIN "-" \
-&& set_default VALUES_FILE "values.yaml" \
+set_default VALUES_FILE "values.yaml" \
 && set_default FED_SIGNER_FILE "fed_signer.crt" \
 && set_default AZURE_METADATA_FILE "azure.xml" \
 && set_default GOOGLE_METADATA_FILE "GoogleIDPMetadata.xml" \
-&& set_default SHIB_METADATA_FILE "$SHORT_ORG_NAME-shib-metadata.xml" \
-&& set_default SHIB_METADATA_URL "https://$SHIBBOLETH_SUBDOMAIN/idp/shibboleth"
+&& set_default SHIB_METADATA_FILE "${SHORT_ORG_NAME}-shib-metadata.xml" \
+&& set_default SHIB_METADATA_URL "https://${SHIBBOLETH_SUBDOMAIN}/idp/shibboleth"
 
-# determine backend authenticator
-if [ -f "$AZURE_METADATA_FILE" ]; then
-    BACKEND_AUTH="azure_ad"
-    IDP_METADATA_FILE="$AZURE_METADATA_FILE"
-elif [ -f "$GOOGLE_METADATA_FILE" ]; then
-    BACKEND_AUTH="google"
-    IDP_METADATA_FILE="$GOOGLE_METADATA_FILE"
-else
-    BACKEND_AUTH="vikings"
-fi
-echo "Backend authenticator for the IdP has been set ($BACKEND_AUTH)"
+# check for required files
+check_local_file_exists ${VALUES_FILE} \
+&& check_local_file_exists ${FED_SIGNER_FILE}
 
-# backend authenticator specific requirements
-if [ "$BACKEND_AUTH" == "azure_ad" ] || [ "$BACKEND_AUTH" == "google" ]; then
-    check_env STAFF_EMAIL_DOMAIN
-else
-    check_env DB_HOSTNAME DB_NAME DB_USER DB_PASSWORD
+if [ "${BACKEND_AUTH}" == "azure_ad" ]; then
+    check_local_file_exists "${AZURE_METADATA_FILE}"
+    IDP_METADATA_FILE="${AZURE_METADATA_FILE}"
+elif [ "${BACKEND_AUTH}" == "google" ]; then
+    check_local_file_exists "${GOOGLE_METADATA_FILE}"
+    IDP_METADATA_FILE="${GOOGLE_METADATA_FILE}"
 fi
 
 # set installation chart
@@ -190,10 +212,6 @@ if [ -z "$CHART" ]; then
     # set chart to default
     CHART="ifirexman/ifirexman-shibboleth-idp"
 fi
-
-# check if required files exist
-check_local_file_exists $VALUES_FILE \
-&& check_local_file_exists $FED_SIGNER_FILE
 
 # check if the following files exist, if any of them is missing, create the files:
 # - idp-signing.crt
