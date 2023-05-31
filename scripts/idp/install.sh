@@ -60,15 +60,15 @@ function check_local_file_exists() {
 
     # look for files and stop when found
     for file in "$@"; do
-        if [ -f "$file" ]; then
-            found_file="$file"
+        if [ -f "${file}" ]; then
+            found_file="${file}"
             break
         fi
     done
 
     # check if a single file is found
-    if [ -n "$found_file" ]; then
-        echo "Required file is available ($found_file)"
+    if [ -n "${found_file}" ]; then
+        echo "Required file is available (${found_file})"
     else
         echo "NONE of the specified files were found ($*)"
         exit 1
@@ -205,7 +205,7 @@ elif [ "${BACKEND_AUTH}" == "google" ]; then
 fi
 
 # set installation chart
-if [ -z "$CHART" ]; then
+if [ -z "${CHART}" ]; then
     echo "Adding/updating helm repo (ifirexman)"
     # add sifulan helm repo if haven't and update
     add_helm_repo "ifirexman" "https://raw.githubusercontent.com/sifulan-access-federation/ifirexman-charts/master"
@@ -224,7 +224,7 @@ fi
 # - sealer.kver
 # - secrets.properties
 for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.key idp-backchannel.crt idp-backchannel.p12 sealer.jks sealer.kver secrets.properties; do
-    if [ ! -f "$file" ]; then
+    if [ ! -f "${file}" ]; then
         # determine container runtime
         if [ -x "$(command -v docker)" ]; then
             CONTAINER_RUNTIME="docker"
@@ -239,46 +239,46 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
 
         # create shibboleth certificates
         echo "Creating shibboleth certificates"
-        $CONTAINER_RUNTIME run -it --rm -v $PWD:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh $SHIBBOLETH_SUBDOMAIN $ORG_DOMAIN
+        ${CONTAINER_RUNTIME} run -it --rm -v ${PWD}:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh ${SHIBBOLETH_SUBDOMAIN} ${ORG_DOMAIN}
 
         # change ownership of the certificates
-        echo "Changing ownership of the certificates to the user ($USER)"
-        sudo chown -R $USER: .
+        echo "Changing ownership of the certificates to the user (${USER})"
+        sudo chown -R ${USER}: .
 
         # set random salt for persistent ID
         echo "Setting random salt for persistent ID (secrets.properties)"
-        salt=`openssl rand -hex 32` && sed "s/\#idp.persistentId.salt = changethistosomethingrandom/idp.persistentId.salt = `echo $salt`/" secrets.properties > secrets.properties.tmp && mv secrets.properties.tmp secrets.properties
+        salt=`openssl rand -hex 32` && sed "s/\#idp.persistentId.salt = changethistosomethingrandom/idp.persistentId.salt = `echo ${salt}`/" secrets.properties > secrets.properties.tmp && mv secrets.properties.tmp secrets.properties
 
         break
     fi
 done
 
 # extract the entity ID from the idp metadata file if applicable
-if [ -f "$IDP_METADATA_FILE" ]; then
-    echo "Extracting the entity ID from the idp metadata file ($IDP_METADATA_FILE)"
-    ENTITY_ID=`xmllint --pretty 1 $IDP_METADATA_FILE | grep entityID | sed 's/.*entityID="\([^"]*\)".*/\1/'`
+if [ -f "${IDP_METADATA_FILE}" ]; then
+    echo "Extracting the entity ID from the idp metadata file (${IDP_METADATA_FILE})"
+    ENTITY_ID=`xmllint --pretty 1 ${IDP_METADATA_FILE} | grep entityID | sed 's/.*entityID="\([^"]*\)".*/\1/'`
 fi
 
 # determine if chart is to be installed or upgraded
-echo "Checking if release exists in the namespace ($SHORT_ORG_NAME)"
-if helm ls -n $SHORT_ORG_NAME | grep "$SHORT_ORG_NAME-idp" > /dev/null; then
+echo "Checking if release exists in the namespace (${SHORT_ORG_NAME})"
+if helm ls -n ${SHORT_ORG_NAME} | grep "${SHORT_ORG_NAME}-idp" > /dev/null; then
     CHART_OPERATION="upgrade"
 else
     CHART_OPERATION="install"
 fi
 
 # prepare helm command
-echo "Preparing helm command ($CHART_OPERATION)"
-helm_command="helm $CHART_OPERATION $SHORT_ORG_NAME-idp $CHART \
---namespace $SHORT_ORG_NAME \
+echo "Preparing helm command (${CHART_OPERATION})"
+helm_command="helm ${CHART_OPERATION} ${SHORT_ORG_NAME}-idp ${CHART} \
+--namespace ${SHORT_ORG_NAME} \
 --create-namespace \
---values $VALUES_FILE \
---set idp.domain=\"$SHIBBOLETH_SUBDOMAIN\" \
---set idp.scope=\"$ORG_SCOPE\" \
---set idp.fullname=\"$LONG_ORG_NAME\" \
---set idp.shortname=\"$SHORT_ORG_NAME\" \
---set idp.website=\"$ORG_WEBSITE\" \
---set idp.support_email=\"$ORG_SUPPORT_EMAIL\" \
+--values ${VALUES_FILE} \
+--set idp.domain=\"${SHIBBOLETH_SUBDOMAIN}\" \
+--set idp.scope=\"${ORG_SCOPE}\" \
+--set idp.fullname=\"${LONG_ORG_NAME}\" \
+--set idp.shortname=\"${SHORT_ORG_NAME}\" \
+--set idp.website=\"${ORG_WEBSITE}\" \
+--set idp.support_email=\"${ORG_SUPPORT_EMAIL}\" \
 --set idp.sealer_jks=\"$(base64 sealer.jks)\" \
 --set-file idp.signing_cert=idp-signing.crt \
 --set-file idp.signing_key=idp-signing.key \
@@ -286,83 +286,83 @@ helm_command="helm $CHART_OPERATION $SHORT_ORG_NAME-idp $CHART \
 --set-file idp.encryption_key=idp-encryption.key \
 --set-file idp.sealer_kver=sealer.kver \
 --set-file idp.secrets_properties=secrets.properties \
---set idp.$BACKEND_AUTH.enabled=true \
---set-file federation.signer_cert=$FED_SIGNER_FILE"
+--set idp.${BACKEND_AUTH}.enabled=true \
+--set-file federation.signer_cert=${FED_SIGNER_FILE}"
 
 # configurations specific to azure_ad and google backend authenticators
-if [ "$BACKEND_AUTH" == "azure_ad" ] || [ "$BACKEND_AUTH" == "google" ]; then
-    helm_command="$helm_command \
---set idp.$BACKEND_AUTH.entity_id=\"$ENTITY_ID\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.attribute=\"mail\" \
---set-file idp.$BACKEND_AUTH.metadata=$IDP_METADATA_FILE"
+if [ "${BACKEND_AUTH}" == "azure_ad" ] || [ "${BACKEND_AUTH}" == "google" ]; then
+    helm_command="${helm_command} \
+--set idp.${BACKEND_AUTH}.entity_id=\"${ENTITY_ID}\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.attribute=\"mail\" \
+--set-file idp.${BACKEND_AUTH}.metadata=${IDP_METADATA_FILE}"
 
     # sharing staff and student email domain
-    if [ "$STAFF_EMAIL_DOMAIN" == "$STUDENT_EMAIL_DOMAIN" ]; then
-        helm_command="$helm_command \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"member\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"member\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\""
+    if [ "${STAFF_EMAIL_DOMAIN}" == "${STUDENT_EMAIL_DOMAIN}" ]; then
+        helm_command="${helm_command} \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"member\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@${STAFF_EMAIL_DOMAIN}\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:${ORG_DOMAIN}:member\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"member\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\""
     else
         # separate student and staff email domains
-        if [ "$STUDENT_EMAIL_DOMAIN" != "-" ]; then
-            helm_command="$helm_command \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"student\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@$STUDENT_EMAIL_DOMAIN\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeReturn=\"member\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[1\]=\"@$STUDENT_EMAIL_DOMAIN\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:staff\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:$ORG_DOMAIN:student\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"student\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeValues\[0\]=\"member\""
+        if [ "${STUDENT_EMAIL_DOMAIN}" != "-" ]; then
+            helm_command="${helm_command} \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@${STAFF_EMAIL_DOMAIN}\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"student\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@${STUDENT_EMAIL_DOMAIN}\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeReturn=\"member\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[0\]=\"@${STAFF_EMAIL_DOMAIN}\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[2\].attributeValues\[1\]=\"@${STUDENT_EMAIL_DOMAIN}\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:${ORG_DOMAIN}:staff\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:${ORG_DOMAIN}:student\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"student\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:${ORG_DOMAIN}:member\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[3\].attributeValues\[0\]=\"member\""
         # single staff email domain with no student email domain
         else
-            helm_command="$helm_command \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"member\" \
---set idp.$BACKEND_AUTH.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@$STAFF_EMAIL_DOMAIN\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:$ORG_DOMAIN:staff\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:$ORG_DOMAIN:member\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
---set idp.$BACKEND_AUTH.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\""
+            helm_command="${helm_command} \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeReturn=\"staff\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[0\].attributeValues\[0\]=\"@${STAFF_EMAIL_DOMAIN}\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeReturn=\"member\" \
+--set idp.${BACKEND_AUTH}.eduPersonAffiliationAttributeMap.valueMap\[1\].attributeValues\[0\]=\"@${STAFF_EMAIL_DOMAIN}\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.attribute=\"eduPersonAffiliation\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeReturn=\"urn:mace:${ORG_DOMAIN}:staff\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[0\].attributeValues\[0\]=\"staff\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeReturn=\"urn:mace:${ORG_DOMAIN}:member\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[1\].attributeValues\[0\]=\"member\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeReturn=\"urn:mace:dir:entitlement:common-lib-terms\" \
+--set idp.${BACKEND_AUTH}.eduPersonEntitlementAttributeMap.valueMap\[2\].attributeValues\[0\]=\"member\""
         fi
     fi
 # configurations specific to vikings backend authenticator
 else
-    helm_command="$helm_command \
---set idp.$BACKEND_AUTH.database_hostname=\"$DB_HOSTNAME\" \
---set idp.$BACKEND_AUTH.database_name=\"$DB_NAME\" \
---set idp.$BACKEND_AUTH.database_username=\"$DB_USER\" \
---set idp.$BACKEND_AUTH.database_password=\"$DB_PASSWORD\""
+    helm_command="${helm_command} \
+--set idp.${BACKEND_AUTH}.database_hostname=\"${DB_HOSTNAME}\" \
+--set idp.${BACKEND_AUTH}.database_name=\"${DB_NAME}\" \
+--set idp.${BACKEND_AUTH}.database_username=\"${DB_USER}\" \
+--set idp.${BACKEND_AUTH}.database_password=\"${DB_PASSWORD}\""
 fi
 
 # perform helm command or a dry run
-if [ "$DRY_RUN" = "1" ]; then
-    helm_command="$helm_command --debug --dry-run"
+if [ "${DRY_RUN}" = "1" ]; then
+    helm_command="${helm_command} --debug --dry-run"
 else
-    helm_command="$helm_command --wait"
+    helm_command="${helm_command} --wait"
 fi
 
 # run helm install or upgrade
-echo "Running helm $CHART_OPERATION for the organisation ($SHORT_ORG_NAME)"
-eval $helm_command
+echo "Running helm ${CHART_OPERATION} for the organisation (${SHORT_ORG_NAME})"
+eval ${helm_command}
 
 # download shibboleth metadata post-installation
-if [ "$CHART_OPERATION" == "install" ] && [ "$DRY_RUN" != "1" ]; then
-    download_when_ready $SHIB_METADATA_FILE $SHIB_METADATA_URL "shibboleth metadata"
+if [ "${CHART_OPERATION}" == "install" ] && [ "${DRY_RUN}" != "1" ]; then
+    download_when_ready ${SHIB_METADATA_FILE} ${SHIB_METADATA_URL} "shibboleth metadata"
 fi
