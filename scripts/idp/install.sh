@@ -212,6 +212,7 @@ if [ -z "${CHART}" ]; then
     # set chart to default
     CHART="ifirexman/ifirexman-shibboleth-idp"
 fi
+echo "Helm installation chart has been set (${CHART})"
 
 # check if the following files exist, if any of them is missing, create the files:
 # - idp-signing.crt
