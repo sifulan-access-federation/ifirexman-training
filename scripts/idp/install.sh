@@ -18,7 +18,7 @@ function check_env() {
     done
 
     # check if user would like to continue with all values
-    read -p "Would you like to continue with the above values? (y/n): " -n 1 -r
+    read -p "Would you like to continue with the above values? (y/N): " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]
     then
