@@ -49,7 +49,7 @@ function get_user_input() {
 function set_default() {
     # first var is the ENV variable, second var is the default value
     if [ -z "${!1}" ]; then
-        echo "\$$1 is not set, setting it to '$2'"
+        echo "Setting \$$1 to its default value ($2)"
         export $1=$2
     fi
 }
