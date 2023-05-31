@@ -8,20 +8,17 @@ function check_env() {
         default_value="${v#*=}"
 
         if [ -z "${!var}" ]; then
-            # get value and make sure not empty and set to environment
-            while [ -z "${!var}" ]; do
-                read -p "$var = " value
-                export "$var"="$value"
-            done
+            echo "ERROR: ${var} has not been set"
+            exit 1
         else
-            echo "$var = \"${!var}\""
+            echo "${var} = \"${!var}\""
         fi
     done
 
     # check if user would like to continue with all values
-    read -p "Would you like to continue with the above values? (y/N): " -n 1 -r
+    read -p "Would you like to continue with the above values? [y/N]: " -n 1 -r
     echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]
+    if [[ ! ${REPLY} =~ ^[Yy]$ ]]
     then
         exit 1
     fi
