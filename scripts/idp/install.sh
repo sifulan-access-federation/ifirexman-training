@@ -166,6 +166,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # get backend authenticator
+print_title "IdP Backend Authenticator"
 get_user_input "BACKEND_AUTH=vikings"
 echo "Backend authenticator for the IdP has been set (${BACKEND_AUTH})"
 
@@ -195,12 +196,15 @@ else
 fi
 
 # get required variables
+print_title "IdP Configuration"
 get_user_input "${required_variables[@]}"
 
 # check if all environment variables are set
+print_title "Confirm IdP Values"
 check_env "${required_variables[@]}"
 
 # set ENV variables default values if not set
+print_title "Default Values"
 set_default VALUES_FILE "values.yaml" \
 && set_default FED_SIGNER_FILE "fed_signer.crt" \
 && set_default AZURE_METADATA_FILE "azure.xml" \
@@ -209,6 +213,7 @@ set_default VALUES_FILE "values.yaml" \
 && set_default SHIB_METADATA_URL "https://${SHIBBOLETH_SUBDOMAIN}/idp/shibboleth"
 
 # check for required files
+print_title "Required Files"
 check_local_file_exists ${VALUES_FILE} \
 && check_local_file_exists ${FED_SIGNER_FILE}
 
@@ -221,6 +226,7 @@ elif [ "${BACKEND_AUTH}" == "google" ]; then
 fi
 
 # set installation chart
+print_title "Helm Installation Chart"
 if [ -z "${CHART}" ]; then
     echo "Adding/updating helm repo (ifirexman)"
     # add sifulan helm repo if haven't and update
@@ -240,6 +246,7 @@ echo "Helm installation chart has been set (${CHART})"
 # - sealer.jks
 # - sealer.kver
 # - secrets.properties
+print_title "Shibboleth Credentials"
 for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.key idp-backchannel.crt idp-backchannel.p12 sealer.jks sealer.kver secrets.properties; do
     if [ ! -f "${file}" ]; then
         echo "WARNING: Required Shibboleth credential is missing (${file})"
@@ -273,6 +280,8 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
         echo "Required Shibboleth credential is found (${file})"
     fi
 done
+
+print_title "Helm Install/Upgrade Preparation"
 
 # extract the entity ID from the idp metadata file if applicable
 if [ -f "${IDP_METADATA_FILE}" ]; then
@@ -380,10 +389,12 @@ else
 fi
 
 # run helm install or upgrade
+print_title "Helm Install/Upgrade"
 echo "Running helm ${CHART_OPERATION} for the organisation (${SHORT_ORG_NAME})"
 eval ${helm_command}
 
 # download shibboleth metadata post-installation
+print_title "Shibboleth Metadata"
 if [ "${CHART_OPERATION}" == "install" ] && [ "${DRY_RUN}" != "1" ]; then
     download_when_ready ${SHIB_METADATA_FILE} ${SHIB_METADATA_URL} "shibboleth metadata"
 fi
