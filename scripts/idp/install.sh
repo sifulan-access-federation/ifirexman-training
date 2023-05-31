@@ -166,7 +166,7 @@ required_variables=(
 
 if [ "${BACKEND_AUTH}" == "azure_ad" ] || [ "${BACKEND_AUTH}" == "google" ]; then
     required_variables+=(
-        "STAFF_EMAIL_DOMAIN="
+        "STAFF_EMAIL_DOMAIN=\${ORG_DOMAIN}"
         "STUDENT_EMAIL_DOMAIN=-"
     )
 else
