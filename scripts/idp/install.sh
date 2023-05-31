@@ -111,6 +111,22 @@ function add_helm_repo() {
     helm repo update "$1"
 }
 
+# function to print title message
+function print_title() {
+    local text="$1"
+    local length=${#text}
+    local symbol="*"
+    local line="${symbol}"
+
+    for ((i=0; i<length+3; i++)); do
+        line+="${symbol}"
+    done
+
+    if [ "${text}" ]; then
+        echo; echo "${line}"; echo "${symbol} ${text} ${symbol}"; echo "${line}"; echo
+    fi
+}
+
 # function to print help message
 function print_help() {
     echo "Usage: $0 [options]"; echo
