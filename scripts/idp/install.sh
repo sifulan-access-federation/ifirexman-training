@@ -70,7 +70,7 @@ function check_local_file_exists() {
     if [ -n "${found_file}" ]; then
         echo "Required file is available (${found_file})"
     else
-        echo "NONE of the specified files were found ($*)"
+        echo "ERROR: None of the specified files were found ($*)"
         exit 1
     fi
 
@@ -128,7 +128,7 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         -c|--chart)
             if [ -z "$2" ]; then
-                echo "Please specify an installation chart!"
+                echo "ERROR: Please specify an installation chart"
                 exit 1
             fi
             CHART="$2"
@@ -142,7 +142,7 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         *)
-            echo "Invalid argument: $1"
+            echo "ERROR: Invalid argument ($1)"
             exit 1
             ;;
     esac
