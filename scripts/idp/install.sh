@@ -3,9 +3,10 @@
 # function to check if all environment variables are set correctly
 function check_env() {
     # check if all variables are set
-    for var in "$@"
-    do
-        # check if all is set
+    for v in "$@"; do
+        var="${v%=*}"
+        default_value="${v#*=}"
+
         if [ -z "${!var}" ]; then
             # get value and make sure not empty and set to environment
             while [ -z "${!var}" ]; do
