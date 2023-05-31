@@ -226,6 +226,8 @@ echo "Helm installation chart has been set (${CHART})"
 # - secrets.properties
 for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.key idp-backchannel.crt idp-backchannel.p12 sealer.jks sealer.kver secrets.properties; do
     if [ ! -f "${file}" ]; then
+        echo "WARNING: Required Shibboleth credential is missing (${file})"
+
         # determine container runtime
         if [ -x "$(command -v docker)" ]; then
             CONTAINER_RUNTIME="docker"
@@ -251,6 +253,8 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
         salt=`openssl rand -hex 32` && sed "s/\#idp.persistentId.salt = changethistosomethingrandom/idp.persistentId.salt = `echo ${salt}`/" secrets.properties > secrets.properties.tmp && mv secrets.properties.tmp secrets.properties
 
         break
+    else
+        echo "Required Shibboleth credential is found (${file})"
     fi
 done
 
