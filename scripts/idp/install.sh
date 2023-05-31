@@ -233,7 +233,7 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
         elif [ -x "$(command -v nerdctl)" ]; then
             CONTAINER_RUNTIME="nerdctl"
         else
-            echo "You must have a supporting container runtime installed"
+            echo "ERROR: You must have a supported container runtime installed"
             exit 1
         fi
 
