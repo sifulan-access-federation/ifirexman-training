@@ -260,7 +260,7 @@ done
 
 # extract the entity ID from the idp metadata file if applicable
 if [ -f "${IDP_METADATA_FILE}" ]; then
-    echo "Extracting the entity ID from the idp metadata file (${IDP_METADATA_FILE})"
+    echo "Extracting the entity ID from the IdP metadata file (${IDP_METADATA_FILE})"
     ENTITY_ID=`xmllint --pretty 1 ${IDP_METADATA_FILE} | grep entityID | sed 's/.*entityID="\([^"]*\)".*/\1/'`
 fi
 
