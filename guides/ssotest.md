@@ -60,9 +60,9 @@ You need to have the following setup before you can proceed with this tutorial:
 
 Run helm uninstall to uninstall the `ifirexman-ssotest` release.
 
-    ```bash
-    helm uninstall ifirexman-ssotest -n central-svcs
-    ```
+```bash
+helm uninstall ifirexman-ssotest -n central-svcs
+```
 
 ## Upgrade
 
