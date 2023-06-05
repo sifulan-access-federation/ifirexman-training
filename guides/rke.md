@@ -262,7 +262,7 @@ node-taint:
 disable: rke2-ingress-nginx
 ```
 
-- Replace ```<node 1 fqdn>```, ```<node 2 fqdn>```, and ```<node 3 fqdn>``` with the fully qualified domain names of node 1,2, and 3.
+- Replace ```<node 1 fqdn>```, ```<node 2 fqdn>```, and ```<node 3 fqdn>``` with the fully qualified domain names of node 1, 2, and 3.
 - Replace ```<token>``` with the pre-shared secret key you copied in the previous step.
 
 ### Enable the rke2-server service
@@ -281,7 +281,7 @@ systemctl start rke2-server.service
 
 Generally, the procedure to setup a worker node is the same as the procedure to setup a server node. The only difference is that you need to set the ```INSTALL_RKE2_TYPE``` flag to ```agent``` when you run the ```install.sh``` script.
 
-Below is the complete procedure to setup a worker node (repeat these steps for node 4,5, and 6):
+Below is the complete procedure to setup a worker node (repeat these steps for node 4, 5, and 6):
 
 Login to the worker node by using SSH.
 
@@ -307,7 +307,7 @@ server: https://<node 1 fqdn>:9345
 token: <token>
 ```
 
-Replace ```<node 1 fqdn>``` with the fully qualified domain names of the node 1,2, and 3. Replace ```<token>``` with the pre-shared secret key you copied in the previous step.
+Replace ```<node 1 fqdn>``` with the fully qualified domain name of node 1. Replace ```<token>``` with the pre-shared secret key you copied in the previous step.
 
 ### Enable the rke2-agent service
 
