@@ -99,7 +99,7 @@ federation:
   mdq_url: ""
   # WAYF Server URL
   # Example:
-  # wayf_url: "https://ds.ifirexman.edu/WAYF"
+  # wayf_url: "https://ds.ifirexman.edu/ds/WAYF"
   wayf_url: ""
   # Federation signing certificate
   # Refer to README on how to get fed-signer.crt file
