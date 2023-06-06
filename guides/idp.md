@@ -97,7 +97,7 @@ From the login node:
 2. Change the ownership of the files to the service user (e.g. `ifirexman`):
 
     ```bash
-    sudo chown ifirexman: idp-* sealer-* secrets.properties
+    sudo chown ifirexman: idp-* sealer.jks secrets.properties
     ```
 
 3. Generate a random string for the persistentId salt:
