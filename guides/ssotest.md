@@ -31,8 +31,8 @@ You need to have the following setup before you can proceed with this tutorial:
 1. Generate the signing and encryption keypairs.
 
     ```bash
-    openssl req -newkey rsa:3072 -new -x509 -days 3652 -nodes -out signing.crt -keyout signing.pem
-    openssl req -newkey rsa:3072 -new -x509 -days 3652 -nodes -out encrypt.crt -keyout encrypt.pem
+    openssl req -newkey rsa:3072 -new -x509 -days 3652 -nodes -out signing.crt -keyout signing.key
+    openssl req -newkey rsa:3072 -new -x509 -days 3652 -nodes -out encrypt.crt -keyout encrypt.key
     ```
     
 2. Edit the `values.yaml` file (see [the example](../manifest/ssotest/values.yaml) at the `ssotest` sub-folder inside the `manifest` folder). A brief explanation and sample entries are provided in the file and in the [Parameters](#parameters) section.
