@@ -23,21 +23,6 @@ image:
     # Default: "IfNotPresent"
     pullPolicy: "IfNotPresent"
 
-  # Shibd
-  shibd:
-    # Shibd image registry
-    # Default: "ghcr.io"
-    registry: "ghcr.io"
-    # Shibd image repository
-    # Default: "sifulan-access-federation/ifirexman-shibboleth-sp"
-    repository: "sifulan-access-federation/ifirexman-shibboleth-sp"
-    # Shibd image version
-    # Default: "0.1.0"
-    tag: "0.1.0"
-    # Shibd image pull policy
-    # Default: "IfNotPresent"
-    pullPolicy: "IfNotPresent"
-
 # Ingress configuration
 ingress:
   # Ingress cluster issuer
@@ -66,33 +51,13 @@ resources:
       # Example:
       # memory: "2Gi"
       memory: "1Gi"
-  # Shibd
-  shibd:
-    requests:
-      # Minimum CPU allocation
-      # Example:
-      # cpu: "10m"
-      cpu: "0.5"
-      # Minimum memory allocation
-      # Example:
-      # memory: "10Mi"
-      memory: "0.5Gi"
-    limits:
-      # Maximum CPU allocation
-      # Example:
-      # cpu: "2"
-      cpu: "1"
-      # Maximum memory allocation
-      # Example:
-      # memory: "2Gi"
-      memory: "2Gi"
 
 # SSO Test configuration
 ssotest:
-  # Portal domain
+  # Portal hostname
   # Example:
-  # domain: "ssotest.ifirexman.edu"
-  domain: ""
+  # hostname: "ssotest.ifirexman.edu"
+  hostname: ""
   # Shibboleth SP Entity ID
   # Example:
   # entity_id: "https://ssotest.ifirexman.edu/shibboleth"
@@ -117,8 +82,6 @@ ssotest:
   sp_config: ""
   # Optional: attribute-map.xml file
   attribute_map: ""
-  # Optional: servername.conf file
-  apache_config: ""
 
 # Federation configuration
 federation:
@@ -130,10 +93,14 @@ federation:
   # Example:
   # support_email: "support@ifirexman.edu"
   support: ""
-  # Federation Manager Metadata URL
+  # MDQ Server URL
   # Example:
-  # metadata_url: "https://fedmanager.ifirexman.edu/metadata.xml"
-  metadata_url: ""
+  # mdq_url: "https://mdq.ifirexman.edu/"
+  mdq_url: ""
+  # WAYF Server URL
+  # Example:
+  # wayf_url: "https://ds.ifirexman.edu/ds/WAYF"
+  wayf_url: ""
   # Federation signing certificate
   # Refer to README on how to get fed-signer.crt file
   signer: ""
