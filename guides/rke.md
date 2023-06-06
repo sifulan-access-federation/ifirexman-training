@@ -92,11 +92,12 @@ Finally, restart the node.
 
 #### ```docker```
 
-Run the following command to install Docker Engine on the login node as user `root`:
+Run the following command to install and enable Docker Engine on the login node as user `root`:
 
 ```bash
 curl https://releases.rancher.com/install-docker/20.10.sh | sh
 usermod -aG docker ifirexman
+systemctl enable --now docker
 ```
 
 #### ```git```
