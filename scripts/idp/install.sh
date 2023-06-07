@@ -166,7 +166,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # get backend authenticator
-print_title "IdP Configuration"
+print_title "Shibboleth IdPaaS Assisted Installer"
 echo "Please refer to https://github.com/sifulan-access-federation/ifirexman-training/blob/master/guides/idp.md#assisted-installation for more information."; echo
 get_user_input "BACKEND_AUTH=vikings"
 
@@ -197,9 +197,10 @@ else
     )
 fi
 
-echo "Backend authenticator for the IdP has been set (${BACKEND_AUTH})"; echo
+echo "Backend authenticator for the IdP has been set (${BACKEND_AUTH})"
 
 # get required variables
+print_title "IdP Configuration"
 get_user_input "${required_variables[@]}"
 
 # check if all environment variables are set
