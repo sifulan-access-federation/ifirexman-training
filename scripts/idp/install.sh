@@ -198,6 +198,7 @@ fi
 
 # get required variables
 print_title "IdP Configuration"
+echo "Please refer to https://github.com/sifulan-access-federation/ifirexman-training/blob/master/guides/idp.md#assisted-installation for more information."; echo
 get_user_input "${required_variables[@]}"
 
 # check if all environment variables are set
