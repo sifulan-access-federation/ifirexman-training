@@ -111,10 +111,10 @@ From the login node:
 4. Edit the `secrets.properties` file, and uncomment the `idp.persistentId.salt` option and replace its value from:
 
     ```bash
-    idp.persistentId.salt = changethistosomethingrandom
+    #idp.persistentId.salt = changethistosomethingrandom
     ```
 
-    with the random string you generated in the previous step. Below is an example:
+    with the random string you generated in the previous step and remove the comment (```#```) as well. Below is an example:
 
     ```bash
     idp.persistentId.salt = /X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
