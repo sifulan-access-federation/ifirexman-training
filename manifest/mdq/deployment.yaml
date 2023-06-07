@@ -63,7 +63,7 @@ spec:
           secret:
             secretName: metadata-signer-key
             items:
-              - key: cert.crt
+              - key: fed_signer.crt
                 path: cert.crt
-              - key: cert_unencrypted.key
+              - key: fed_signer_unencrypted.key
                 path: cert_unencrypted.key

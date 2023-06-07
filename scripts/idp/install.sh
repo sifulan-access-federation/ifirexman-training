@@ -35,10 +35,10 @@ function get_user_input() {
                 read -p "Enter a value for ${var} [$(eval echo "${default_value}")]: " user_value
                 # if user value is given, set the variable to the user value
                 if [ "${user_value}" ]; then
-                    export "${var}"=$(eval echo "${user_value}")
+                    export "${var}"="$(eval echo ${user_value})"
                 # otherwise, if default value is given, set the variable to the default value
                 elif [ "${default_value}" ]; then
-                    export "${var}"=$(eval echo "${default_value}")
+                    export "${var}"="$(eval echo ${default_value})"
                 fi
             done
         fi
