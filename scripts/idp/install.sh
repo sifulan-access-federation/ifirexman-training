@@ -174,6 +174,7 @@ echo "Backend authenticator for the IdP has been set (${BACKEND_AUTH})"
 required_variables=(
     "LONG_ORG_NAME="
     "SHORT_ORG_NAME="
+    "ORG_COUNTRY=my"
     "ORG_WEBSITE="
     "ORG_SUPPORT_EMAIL="
     "ORG_DOMAIN="
@@ -307,6 +308,7 @@ helm_command="helm ${CHART_OPERATION} ${SHORT_ORG_NAME}-idp ${CHART} \
 --set idp.scope=\"${ORG_SCOPE}\" \
 --set idp.fullname=\"${LONG_ORG_NAME}\" \
 --set idp.shortname=\"${SHORT_ORG_NAME}\" \
+--set idp.country=\"${ORG_COUNTRY}\" \
 --set idp.website=\"${ORG_WEBSITE}\" \
 --set idp.support_email=\"${ORG_SUPPORT_EMAIL}\" \
 --set idp.sealer_jks=\"$(base64 sealer.jks)\" \
