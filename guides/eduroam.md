@@ -113,7 +113,26 @@ You need to have the following setup before you can proceed with this tutorial:
       email: ""
       # Set public and private key for SAML encryption and signing. You can use the command below to generate one.
       # openssl req -x509 -newkey rsa:4096 -keyout cert.key -out cert.crt -days 3650 -nodes
+      # Example:
+      # cert_public_key: |
+      #   -----BEGIN CERTIFICATE-----
+      #   MIIDXTCCAkWgAwIBAgIJAN9Z3Z3Z3Z3ZMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV
+      #   BAYTAkRFMQ8wDQYDVQQIDAZJZnJleDEPMA0GA1UEBwwGRGVubmVyMQ8wDQYDVQQK
+      #   DAZJZnJleDEPMA0GA1UECwwGRGVubmVyMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAe
+      #   ....
+      #   ....
+      #   -----END CERTIFICATE-----
       cert_public_key: ""
+      # Example:
+      # cert_private_key: |
+      #   -----BEGIN PRIVATE KEY-----
+      #   MIIJQwIBADANBgkqhkiG9w0BAQEFAASCCS0wggkpAgEAAoICAQC2Y6pdjFC9gFWb
+      #   0upmSFZCYQaQK0H0jQtSFACV+auWxwstvxO+8BL9hRH4UPVOkEThrYlFWjaBvdEf
+      #   xqYCHl/BpCsmZIMAWpP/6bUhMgzK/6mu/ixSQkJiTFur+xXKiw6zHzlRDPYRVk7x
+      #   e34HYheZJmdnVJ57WeoOSdOuFw1FGbp61QTpaS1r5rDU4kgnqmN3XvjP91Qphk0O
+      #   ....
+      #   ....
+      #   -----END PRIVATE KEY-----
       cert_private_key: ""
 
     # Let's Wifi Portal configuration.
