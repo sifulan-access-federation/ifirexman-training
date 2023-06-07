@@ -255,16 +255,18 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
     if [ ! -f "${file}" ]; then
         echo "WARNING: Required Shibboleth credential is missing (${file})"
 
-        # determine container runtime
-        if [ -x "$(command -v docker)" ]; then
-            CONTAINER_RUNTIME="docker"
-        elif [ -x "$(command -v podman)" ]; then
-            CONTAINER_RUNTIME="podman"
-        elif [ -x "$(command -v nerdctl)" ]; then
-            CONTAINER_RUNTIME="nerdctl"
-        else
-            echo "ERROR: You must have a supported container runtime installed"
-            exit 1
+        # determine container runtime only if not set
+        if [ -z "${CONTAINER_RUNTIME}" ]; then
+            if [ -x "$(command -v docker)" ]; then
+                CONTAINER_RUNTIME="docker"
+            elif [ -x "$(command -v podman)" ]; then
+                CONTAINER_RUNTIME="podman"
+            elif [ -x "$(command -v nerdctl)" ]; then
+                CONTAINER_RUNTIME="nerdctl"
+            else
+                echo "ERROR: You must have a supported container runtime installed"
+                exit 1
+            fi
         fi
 
         # create shibboleth certificates
