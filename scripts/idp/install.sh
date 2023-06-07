@@ -188,6 +188,7 @@ if [ "${BACKEND_AUTH}" == "azure_ad" ] || [ "${BACKEND_AUTH}" == "google" ]; the
         "STUDENT_EMAIL_DOMAIN=-"
     )
 else
+    BACKEND_AUTH="vikings"
     required_variables+=(
         "DB_HOSTNAME="
         "DB_NAME="
@@ -195,6 +196,8 @@ else
         "DB_PASSWORD="
     )
 fi
+
+echo "Backend authenticator for the IdP has been set (${BACKEND_AUTH})"; echo
 
 # get required variables
 get_user_input "${required_variables[@]}"
