@@ -605,8 +605,8 @@ On the login node:
       namespace: metallb-system
     spec:
       addresses:
-      - 192.168.1.240-192.168.1.250
-      - 2001:db8:1::1-2001:db8:1::ff
+      - 192.168.1.240-192.168.1.241
+      - 2001:db8:1::1-2001:db8:1::2
     ---
       apiVersion: metallb.io/v1beta1
       kind: L2Advertisement
@@ -618,8 +618,8 @@ On the login node:
       - rke-ip-pool
     ```
 
-    You shall replace the IPv4 address range ```192.168.1.240-192.168.1.250``` with your dedicated private ip as mentioned earlier.
-    Optionally, you can also replace the IPv6 address range ```2001:db8:1::1-2001:db8:1::ff``` with your IPv6 address range. If you do not have an public IPv6 address range, you can remove the IPv6 address range from the manifest.
+    You shall replace the IPv4 address range ```192.168.1.240-192.168.1.241``` with your dedicated private IP as mentioned earlier.
+    Optionally, you can also replace the IPv6 address range ```2001:db8:1::1-2001:db8:1::2``` with your IPv6 address range. If you do not have an public IPv6 address range, you can remove the IPv6 address range from the manifest.
 
 3. Apply the newly created manifest ```metallb-configuration.yaml```:
 
