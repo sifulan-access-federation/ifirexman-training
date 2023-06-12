@@ -423,14 +423,16 @@ For each __worker__ node:
    /dev/sdb                /var/lib/longhorn       ext4    defaults        0 0
    ```
 
-4. From the the Login Node, install NFSv4 client and open-iscsi
+From the __Login__ node:
+
+1. Install open-iscsi and NFSv4 client
 
    ```bash
    kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.1/deploy/prerequisite/longhorn-iscsi-installation.yaml
    kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.4.1/deploy/prerequisite/longhorn-nfs-installation.yaml
    ```
 
-5. After the deployment, run the following command to check pods’ status of the installer:
+2. After the deployment, run the following command to check pods’ status of the installer:
 
    ```bash
    kubectl get pod | grep longhorn-iscsi-installation
@@ -482,7 +484,7 @@ For each __worker__ node:
     nfs install successfully
     ```
 
-6. Run the following command to ensure that the nodes have all the necessary to install longhorn:
+3. Run the following command to ensure that the nodes have all the necessary to install longhorn:
 
    ```bash
    curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.4.1/scripts/environment_check.sh | bash
