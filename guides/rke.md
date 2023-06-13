@@ -42,7 +42,8 @@ Create the following file, save it as ```rke2-canal.conf``` and place it in ```/
 In Rocky Linux 8, two extra services are included on the NetworkManager: nm-cloud-setup.service and nm-cloud-setup.timer. These services add a routing table that interferes with the CNI plugin’s configuration. If these services are enabled, you must disable them using the command below, and then reboot the node to restore connectivity:
 
 ```bash
-  systemctl disable nm-cloud-setup.service nm-cloud-setup.timer
+  systemctl disable nm-cloud-setup.service
+  systemctl disable nm-cloud-setup.timer
 ```
 
 ### Stop and disable firewall
