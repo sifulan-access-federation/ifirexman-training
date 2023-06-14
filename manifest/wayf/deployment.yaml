@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: wayf
-          image: ghcr.io/sifulan-access-federation/ifirexman-wayf:0.1.4
+          image: ghcr.io/sifulan-access-federation/ifirexman-wayf:0.1.5
           imagePullPolicy: "IfNotPresent"
           resources:
             requests:
@@ -38,7 +38,7 @@ spec:
               readOnly: true
       volumes:
         - name: wayf-config
-          configMap: 
+          configMap:
             name: wayf-config
             items:
               - key: config.php
