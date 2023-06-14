@@ -1,0 +1,55 @@
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: mdq-restart-deployment
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mdq-restart-deployment
+rules:
+  - apiGroups: ["apps", "extensions"]
+    resources: ["deployments"]
+    resourceNames: ["mdq"]
+    verbs: ["get", "patch", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mdq-restart-deployment
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mdq-restart-deployment
+subjects:
+  - kind: ServiceAccount
+    name: mdq-restart-deployment
+    namespace: central-svcs
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restart-mdq
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  concurrencyPolicy: Forbid
+  schedule: '15 */1 * * *'
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 600
+      template:
+        spec:
+          serviceAccountName: mdq-restart-deployment
+          restartPolicy: Never
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl
+              imagePullPolicy: "IfNotPresent"
+              command:
+                - bash
+                - -c
+                - >-
+                  kubectl rollout restart deployment/mdq &&
+                  kubectl rollout status deployment/mdq

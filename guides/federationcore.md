@@ -272,6 +272,7 @@ From the login node:
    kubectl apply -f deployment.yaml -n central-svcs
    kubectl apply -f svc.yaml -n central-svcs
    kubectl apply -f ingress.yaml -n central-svcs
+   kubectl apply -f cron.yaml -n central-svcs
    ```
 
    Kubernetes will create a pod that will serve the metadata query. The metadata query will be accessible at ```https://mdq.ifirexman.edu/```. Of course you need to replace `ifirexman.edu` with your domain name.
