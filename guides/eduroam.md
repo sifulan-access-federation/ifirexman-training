@@ -108,6 +108,12 @@ You need to have the following setup before you can proceed with this tutorial:
       # Set metadata query host.
       # Example: mdq.ifirexman.edu
       mdqhost: ""
+      # Set the shibboleth IdP entity id.
+      # Example: https://idp.ifirexman.edu/idp/shibboleth
+      idp_entity_id: ""
+      # Set the discovery service/WAYF url.
+      # Example: https://ds.ifirexman.edu/ds/WAYF
+      disco_url: ""
       # Set service email address.
       # Example: support@ifirexman.edu
       email: ""
@@ -154,9 +160,6 @@ You need to have the following setup before you can proceed with this tutorial:
       # Set the realm.
       # Example: ifirexman.edu
       realm: ""
-      # Set the shibboleth IdP entity id.
-      # Example: https://idp.ifirexman.edu/idp/shibboleth
-      idp_entity_id: ""
       # Set the attribute name that will be used as user identifier.
       # Example: mail
       userIdAttribute: ""
