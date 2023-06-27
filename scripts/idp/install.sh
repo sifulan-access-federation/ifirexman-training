@@ -125,6 +125,19 @@ function add_helm_repo() {
     helm repo update "$1"
 }
 
+# function to make a base64 secret out of a file
+function make_secret() {
+    # identify platform
+    local platform=$(identify_platform)
+    # if linux, use base64 -w 0
+    if [ "${platform}" == "linux" ]; then
+        cat "$1" | base64 -w 0
+    # else, use base64
+    else
+        cat "$1" | base64
+    fi
+}
+
 # function to print title message
 function print_title() {
     local text="$1"
