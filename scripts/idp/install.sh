@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# function to identify platform
+function identify_platform() {
+    if [ "$(uname)" == "Darwin" ]; then
+        PLATFORM="macos"
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+        PLATFORM="linux"
+    elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+        PLATFORM="windows"
+    else
+        PLATFORM="unknown"
+    fi
+    echo "$PLATFORM"
+}
+
 # function to check if all environment variables are set correctly
 function check_env() {
     # check if all variables are set
