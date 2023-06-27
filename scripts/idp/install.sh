@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# function to identify platform
+function identify_platform() {
+    if [ "$(uname)" == "Darwin" ]; then
+        PLATFORM="macos"
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+        PLATFORM="linux"
+    elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+        PLATFORM="windows"
+    else
+        PLATFORM="unknown"
+    fi
+    echo "$PLATFORM"
+}
+
 # function to check if all environment variables are set correctly
 function check_env() {
     # check if all variables are set
@@ -109,6 +123,19 @@ function add_helm_repo() {
     fi
 
     helm repo update "$1"
+}
+
+# function to make a base64 secret out of a file
+function make_secret() {
+    # identify platform
+    local platform=$(identify_platform)
+    # if linux, use base64 -w 0
+    if [ "${platform}" == "linux" ]; then
+        cat "$1" | base64 -w 0
+    # else, use base64
+    else
+        cat "$1" | base64
+    fi
 }
 
 # function to print title message
@@ -316,7 +343,7 @@ helm_command="helm ${CHART_OPERATION} ${SHORT_ORG_NAME}-idp ${CHART} \
 --set idp.country=\"${ORG_COUNTRY}\" \
 --set idp.website=\"${ORG_WEBSITE}\" \
 --set idp.support_email=\"${ORG_SUPPORT_EMAIL}\" \
---set idp.sealer_jks=\"$(base64 sealer.jks)\" \
+--set idp.sealer_jks=\"$(make_secret sealer.jks)\" \
 --set-file idp.signing_cert=idp-signing.crt \
 --set-file idp.signing_key=idp-signing.key \
 --set-file idp.encryption_cert=idp-encryption.crt \
@@ -400,8 +427,14 @@ print_title "Helm Install/Upgrade"
 echo "Running helm ${CHART_OPERATION} for the organisation (${SHORT_ORG_NAME})"
 eval ${helm_command}
 
-# download shibboleth metadata post-installation
-print_title "Shibboleth Metadata"
-if [ "${CHART_OPERATION}" == "install" ] && [ "${DRY_RUN}" != "1" ]; then
-    download_when_ready ${SHIB_METADATA_FILE} ${SHIB_METADATA_URL} "shibboleth metadata"
+if [ "${DRY_RUN}" != "1" ]; then
+    # download shibboleth metadata post-installation
+    if [ "${CHART_OPERATION}" == "install" ]; then
+        print_title "Shibboleth Metadata"
+        download_when_ready ${SHIB_METADATA_FILE} ${SHIB_METADATA_URL} "shibboleth metadata"
+    fi
+else
+    print_title "Debug Information"
+    # print helm command
+    echo "${helm_command}"
 fi
