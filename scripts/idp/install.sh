@@ -395,13 +395,16 @@ else
     helm_command="${helm_command} --wait"
 fi
 
+# print helm command
+echo "${helm_command}"
+
 # run helm install or upgrade
 print_title "Helm Install/Upgrade"
 echo "Running helm ${CHART_OPERATION} for the organisation (${SHORT_ORG_NAME})"
 eval ${helm_command}
 
 # download shibboleth metadata post-installation
-print_title "Shibboleth Metadata"
 if [ "${CHART_OPERATION}" == "install" ] && [ "${DRY_RUN}" != "1" ]; then
+    print_title "Shibboleth Metadata"
     download_when_ready ${SHIB_METADATA_FILE} ${SHIB_METADATA_URL} "shibboleth metadata"
 fi
