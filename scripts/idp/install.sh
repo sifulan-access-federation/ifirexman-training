@@ -324,7 +324,7 @@ fi
 
 # determine if chart is to be installed or upgraded
 echo "Checking if release exists in the namespace (${SHORT_ORG_NAME})"
-if helm ls -n ${SHORT_ORG_NAME} | grep "${SHORT_ORG_NAME}-idp" > /dev/null; then
+if helm ls -n ${SHORT_ORG_NAME} | grep "${SHORT_ORG_NAME}-idp" >/dev/null 2>/dev/null; then
     CHART_OPERATION="upgrade"
 else
     CHART_OPERATION="install"
