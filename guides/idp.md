@@ -46,7 +46,7 @@ The assisted installation method supports the **Azure AD**, **Google Directory**
 
 From the login node:
 
-1. Install the [IdP installation script](../scripts/idp/install.sh) by linking it from this repo locally (e.g. `~/ifirexman-training/scripts/idp/install.sh`) to the `/usr/local/bin` folder:
+1. Install the [IdP installation script](../scripts/idp/install.sh) by linking it from this repo locally (i.e. `~/ifirexman-training/scripts/idp/install.sh`) to the `/usr/local/bin` folder:
 
     ```bash
     sudo ln -sf ~/ifirexman-training/scripts/idp/install.sh /usr/local/bin/idp-install
@@ -90,7 +90,7 @@ From the login node:
 
 From the login node:
 
-1. Get into the working folder (e.g. `ifirexman-organisation`) and generate signing and encryption algorithms for the IdP:
+1. Get into the working folder (i.e. `ifirexman-organisation`) and generate signing and encryption algorithms for the IdP:
 
     ```bash
     cd ifirexman-organisation
