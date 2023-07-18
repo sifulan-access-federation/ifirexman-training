@@ -272,13 +272,11 @@ echo "Helm installation chart has been set (${CHART})"
 # - idp-signing.key
 # - idp-encryption.crt
 # - idp-encryption.key
-# - idp-backchannel.crt
-# - idp-backchannel.p12
 # - sealer.jks
 # - sealer.kver
 # - secrets.properties
 print_title "Shibboleth Credentials"
-for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.key idp-backchannel.crt idp-backchannel.p12 sealer.jks sealer.kver secrets.properties; do
+for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.key sealer.jks sealer.kver secrets.properties; do
     if [ ! -f "${file}" ]; then
         echo "WARNING: Required Shibboleth credential is missing (${file})"
 
