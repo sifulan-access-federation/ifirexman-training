@@ -123,6 +123,11 @@ idp:
   # Example:
   # password_reset_url: "https://ifirexman.edu/password-reset"
   password_reset_url: ""
+  # The attribute used as a source for generating persistent identifiers in SAML authentication.
+  # Default: "azureName" if `azure_ad` is enabled, "gcdsEmailaddress" if `google` is enabled, "uid" for the rest
+  # Example:
+  # persistent_source_attribute: "mail"
+  persistent_source_attribute: ""
   # Attribute Release Policy.
   # Example:
   # attribute_release_policy:
