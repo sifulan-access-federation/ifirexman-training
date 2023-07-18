@@ -62,14 +62,14 @@ From the login node:
     | Variable | Description | Example | Default Value | Required |
     | --- | --- | --- | --- | --- |
     | BACKEND_AUTH | The backend authenticator of the IdP. | `azure_ad`, `google`, or `vikings` | `vikings` | True |
-    | LONG_ORG_NAME | The full name of the organisation where this IdP belongs to. | `iFIRExMAN Virtual Organization` | - | True |
-    | SHORT_ORG_NAME | The short name/acronym of the organisation where this IdP belongs to. | `ifirexman` | - | True |
+    | ORG_LONGNAME | The full name of the organisation where this IdP belongs to. | `iFIRExMAN Virtual Organization` | - | True |
+    | ORG_SHORTNAME | The short name/acronym of the organisation where this IdP belongs to. | `ifirexman` | - | True |
     | ORG_COUNTRY | The country code (in lower letter) of the organisation where this IdP belongs to. | `au`, `my`, `sg`, `th`, etc. | `my` | True |
     | ORG_WEBSITE | The website url of the organisation where this IdP belongs to. | `https://ifirexman.edu` | - | True |
     | ORG_SUPPORT_EMAIL | The support email address of the organisation where this IdP belongs to. Should be a role-based email instead of a personal email. | `support@ifirexman.edu` | - | True |
     | ORG_DOMAIN | The domain name of the IdP. | `ifirexman.edu` | - | True |
     | ORG_SCOPE | The scope name of the IdP. Typically set to the domain name. | `ifirexman.edu` | `$ORG_DOMAIN` | True |
-    | SHIBBOLETH_SUBDOMAIN | The subdomain name of the IdP. | `idp.ifirexman.edu` | `idp.$ORG_DOMAIN` | True |
+    | ORG_SHIB_SUBDOMAIN | The subdomain name of the IdP. | `idp.ifirexman.edu` | `idp.$ORG_DOMAIN` | True |
     | STAFF_EMAIL_DOMAIN | The IdP's staff email domain. | `ifirexman.edu` | `$ORG_DOMAIN` | True **if** using **Azure AD** or **Google Directory** as the backend authenticator |
     | STUDENT_EMAIL_DOMAIN | The IdP's student email domain. | `student.ifirexman.edu` | `-` | True **if** using **Azure AD** or **Google Directory** as the backend authenticator |
     | DB_HOSTNAME | The hostname or IP address of the database server used by VIKINGS. | `mariadb.central-svcs.svc.cluster.local` | - | True **if** using **VIKINGS** as the backend authenticator |
@@ -79,7 +79,7 @@ From the login node:
 
 7. After providing the required values and confirming them, the installation process will begin automatically.
 
-8. At the end of the installation process, copy the content of the IdP's Shibboleth metadata file (i.e. `ifirexman-shib-metadata.xml` if the `SHORT_ORG_NAME` is set to `ifirexman`) and register it to the Federation Manager (Jagger).
+8. At the end of the installation process, copy the content of the IdP's Shibboleth metadata file (i.e. `ifirexman-shib-metadata.xml` if the `ORG_SHORTNAME` is set to `ifirexman`) and register it to the Federation Manager (Jagger).
 
 ### Manual Installation
 

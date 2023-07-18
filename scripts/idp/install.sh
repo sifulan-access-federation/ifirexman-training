@@ -199,14 +199,14 @@ get_user_input "BACKEND_AUTH=vikings"
 
 # set required variables
 required_variables=(
-    "LONG_ORG_NAME="
-    "SHORT_ORG_NAME="
+    "ORG_LONGNAME="
+    "ORG_SHORTNAME="
     "ORG_COUNTRY=my"
     "ORG_WEBSITE="
     "ORG_SUPPORT_EMAIL="
     "ORG_DOMAIN="
     "ORG_SCOPE=\${ORG_DOMAIN}"
-    "SHIBBOLETH_SUBDOMAIN=idp.\${ORG_DOMAIN}"
+    "ORG_SHIB_SUBDOMAIN=idp.\${ORG_DOMAIN}"
 )
 
 if [ "${BACKEND_AUTH}" == "azure_ad" ] || [ "${BACKEND_AUTH}" == "google" ]; then
@@ -240,8 +240,8 @@ set_default VALUES_FILE "values.yaml" \
 && set_default FED_SIGNER_FILE "fed_signer.crt" \
 && set_default AZURE_METADATA_FILE "azure.xml" \
 && set_default GOOGLE_METADATA_FILE "GoogleIDPMetadata.xml" \
-&& set_default SHIB_METADATA_FILE "${SHORT_ORG_NAME}-shib-metadata.xml" \
-&& set_default SHIB_METADATA_URL "https://${SHIBBOLETH_SUBDOMAIN}/idp/shibboleth"
+&& set_default SHIB_METADATA_FILE "${ORG_SHORTNAME}-shib-metadata.xml" \
+&& set_default SHIB_METADATA_URL "https://${ORG_SHIB_SUBDOMAIN}/idp/shibboleth"
 
 # check for required files
 print_title "Required Files"
@@ -298,7 +298,7 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
 
         # create shibboleth certificates
         echo "Creating shibboleth certificates"
-        ${CONTAINER_RUNTIME} run -it --rm -v ${PWD}:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh ${SHIBBOLETH_SUBDOMAIN} ${ORG_DOMAIN}
+        ${CONTAINER_RUNTIME} run -it --rm -v ${PWD}:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh ${ORG_SHIB_SUBDOMAIN} ${ORG_DOMAIN}
 
         # change ownership of the certificates
         echo "Changing ownership of the certificates to the user (${USER})"
@@ -323,8 +323,8 @@ if [ -f "${IDP_METADATA_FILE}" ]; then
 fi
 
 # determine if chart is to be installed or upgraded
-echo "Checking if release exists in the namespace (${SHORT_ORG_NAME})"
-if helm ls -n ${SHORT_ORG_NAME} | grep "${SHORT_ORG_NAME}-idp" >/dev/null 2>/dev/null; then
+echo "Checking if release exists in the namespace (${ORG_SHORTNAME})"
+if helm ls -n ${ORG_SHORTNAME} | grep "${ORG_SHORTNAME}-idp" >/dev/null 2>/dev/null; then
     CHART_OPERATION="upgrade"
 else
     CHART_OPERATION="install"
@@ -332,14 +332,14 @@ fi
 
 # prepare helm command
 echo "Preparing helm command (${CHART_OPERATION})"
-helm_command="helm ${CHART_OPERATION} ${SHORT_ORG_NAME}-idp ${CHART} \
---namespace ${SHORT_ORG_NAME} \
+helm_command="helm ${CHART_OPERATION} ${ORG_SHORTNAME}-idp ${CHART} \
+--namespace ${ORG_SHORTNAME} \
 --create-namespace \
 --values ${VALUES_FILE} \
---set idp.domain=\"${SHIBBOLETH_SUBDOMAIN}\" \
+--set idp.domain=\"${ORG_SHIB_SUBDOMAIN}\" \
 --set idp.scope=\"${ORG_SCOPE}\" \
---set idp.fullname=\"${LONG_ORG_NAME}\" \
---set idp.shortname=\"${SHORT_ORG_NAME}\" \
+--set idp.fullname=\"${ORG_LONGNAME}\" \
+--set idp.shortname=\"${ORG_SHORTNAME}\" \
 --set idp.country=\"${ORG_COUNTRY}\" \
 --set idp.website=\"${ORG_WEBSITE}\" \
 --set idp.support_email=\"${ORG_SUPPORT_EMAIL}\" \
@@ -424,7 +424,7 @@ fi
 
 # run helm install or upgrade
 print_title "Helm Install/Upgrade"
-echo "Running helm ${CHART_OPERATION} for the organisation (${SHORT_ORG_NAME})"
+echo "Running helm ${CHART_OPERATION} for the organisation (${ORG_SHORTNAME})"
 eval ${helm_command}
 
 if [ "${DRY_RUN}" != "1" ]; then
