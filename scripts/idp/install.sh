@@ -201,6 +201,7 @@ get_user_input "BACKEND_AUTH=vikings"
 required_variables=(
     "ORG_LONGNAME="
     "ORG_SHORTNAME="
+    "ORG_NAMESPACE=\${ORG_SHORTNAME}"
     "ORG_COUNTRY=my"
     "ORG_WEBSITE="
     "ORG_SUPPORT_EMAIL="
@@ -321,8 +322,8 @@ if [ -f "${IDP_METADATA_FILE}" ]; then
 fi
 
 # determine if chart is to be installed or upgraded
-echo "Checking if release exists in the namespace (${ORG_SHORTNAME})"
-if helm ls -n ${ORG_SHORTNAME} | grep "${ORG_SHORTNAME}-idp" >/dev/null 2>/dev/null; then
+echo "Checking if release exists in the namespace (${ORG_NAMESPACE})"
+if helm ls -n ${ORG_NAMESPACE} | grep "${ORG_SHORTNAME}-idp" >/dev/null 2>/dev/null; then
     CHART_OPERATION="upgrade"
 else
     CHART_OPERATION="install"
@@ -331,7 +332,7 @@ fi
 # prepare helm command
 echo "Preparing helm command (${CHART_OPERATION})"
 helm_command="helm ${CHART_OPERATION} ${ORG_SHORTNAME}-idp ${CHART} \
---namespace ${ORG_SHORTNAME} \
+--namespace ${ORG_NAMESPACE} \
 --create-namespace \
 --values ${VALUES_FILE} \
 --set idp.domain=\"${ORG_SHIB_SUBDOMAIN}\" \

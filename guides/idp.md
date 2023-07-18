@@ -64,6 +64,7 @@ From the login node:
     | BACKEND_AUTH | The backend authenticator of the IdP. | `azure_ad`, `google`, or `vikings` | `vikings` | True |
     | ORG_LONGNAME | The full name of the organisation where this IdP belongs to. | `iFIRExMAN Virtual Organization` | - | True |
     | ORG_SHORTNAME | The short name/acronym of the organisation where this IdP belongs to. | `ifirexman` | - | True |
+    | ORG_NAMESPACE | The Kubernetes namespace where the IdP will be deployed to. | `example` | `$ORG_SHORTNAME` | True |
     | ORG_COUNTRY | The country code (in lower letter) of the organisation where this IdP belongs to. | `au`, `my`, `sg`, `th`, etc. | `my` | True |
     | ORG_WEBSITE | The website url of the organisation where this IdP belongs to. | `https://ifirexman.edu` | - | True |
     | ORG_SUPPORT_EMAIL | The support email address of the organisation where this IdP belongs to. Should be a role-based email instead of a personal email. | `support@ifirexman.edu` | - | True |
