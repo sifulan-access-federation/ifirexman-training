@@ -71,6 +71,7 @@ From the login node:
     | ORG_DOMAIN | The domain name of the IdP. | `ifirexman.edu` | - | True |
     | ORG_SCOPE | The scope name of the IdP. Typically set to the domain name. | `ifirexman.edu` | `$ORG_DOMAIN` | True |
     | ORG_SHIB_SUBDOMAIN | The subdomain name of the IdP. | `idp.ifirexman.edu` | `idp.$ORG_DOMAIN` | True |
+    | ORG_PWD_RESET_URL | The password reset url of the organisation where this IdP belongs to. | `https://ifirexman.edu/password-reset` | `#` | True |
     | STAFF_EMAIL_DOMAIN | The IdP's staff email domain. | `ifirexman.edu` | `$ORG_DOMAIN` | True **if** using **Azure AD** or **Google Directory** as the backend authenticator |
     | STUDENT_EMAIL_DOMAIN | The IdP's student email domain. | `student.ifirexman.edu` | `-` | True **if** using **Azure AD** or **Google Directory** as the backend authenticator |
     | DB_HOSTNAME | The hostname or IP address of the database server used by VIKINGS. | `mariadb.central-svcs.svc.cluster.local` | - | True **if** using **VIKINGS** as the backend authenticator |

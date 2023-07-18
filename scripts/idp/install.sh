@@ -208,6 +208,7 @@ required_variables=(
     "ORG_DOMAIN="
     "ORG_SCOPE=\${ORG_DOMAIN}"
     "ORG_SHIB_SUBDOMAIN=idp.\${ORG_DOMAIN}"
+    "ORG_PWD_RESET_URL=\#"
 )
 
 if [ "${BACKEND_AUTH}" == "azure_ad" ] || [ "${BACKEND_AUTH}" == "google" ]; then
@@ -342,6 +343,7 @@ helm_command="helm ${CHART_OPERATION} ${ORG_SHORTNAME}-idp ${CHART} \
 --set idp.country=\"${ORG_COUNTRY}\" \
 --set idp.website=\"${ORG_WEBSITE}\" \
 --set idp.support_email=\"${ORG_SUPPORT_EMAIL}\" \
+--set idp.password_reset_url=\"${ORG_PWD_RESET_URL}\" \
 --set idp.sealer_jks=\"$(make_secret sealer.jks)\" \
 --set-file idp.signing_cert=idp-signing.crt \
 --set-file idp.signing_key=idp-signing.key \
