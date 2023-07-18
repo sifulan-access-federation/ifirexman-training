@@ -415,7 +415,7 @@ else
 --set idp.${BACKEND_AUTH}.database_password=\"${DB_PASSWORD}\""
 fi
 
-# perform helm command or a dry run
+# execute helm command or perform a dry run
 if [ "${DRY_RUN}" = "1" ]; then
     helm_command="${helm_command} --debug --dry-run"
 else
