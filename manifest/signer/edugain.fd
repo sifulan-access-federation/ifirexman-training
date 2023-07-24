@@ -1,7 +1,7 @@
 - load:
     - file:///metadata/edugain-metadata-feed.xml as edugain-md /cert/eduGAIN-signer-ca.pem
 - select:
-    - "edugain-md!//md:EntityDescriptor[md:Extensions/mdrpi:RegistrationInfo/@registrationAuthority and not(md:Extensions/mdrpi:RegistrationInfo/@registrationAuthority='https://ifirexman.edu)]"
+    - "edugain-md!//md:EntityDescriptor[md:Extensions/mdrpi:RegistrationInfo/@registrationAuthority and not(md:Extensions/mdrpi:RegistrationInfo/@registrationAuthority='https://ifirexman.edu')]"
 - xslt:
     stylesheet: tidy.xsl
 - finalize:
