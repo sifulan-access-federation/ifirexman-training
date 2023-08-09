@@ -49,7 +49,7 @@ From the login node:
 1. Install the [IdP installation script](../scripts/idp/install.sh) by linking it from this repo locally (i.e. `~/ifirexman-training/scripts/idp/install.sh`) to the `/usr/local/bin` folder:
 
     ```bash
-    sudo ln -sf ~/ifirexman-training/scripts/idp/install.sh /usr/local/bin/idp-install
+    sudo ln -sf ~/ifirexman-training/scripts/idp/install.sh /usr/local/bin/ifirexman-idp-installer
     ```
 
 2. Edit the `values.yaml` file according to your IdP. Generally, you will **ONLY** need to update the `Federation Configuration` section. A brief explanation and sample entries are provided in the file.
@@ -57,7 +57,7 @@ From the login node:
 3. Start the installation process by running the installation script:
 
     ```bash
-    idp-install
+    ifirexman-idp-installer
     ```
 
 4. You will be prompted to enter some values pertaining to your IdP. The required variables are detailed in the table below:
