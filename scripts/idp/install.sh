@@ -37,6 +37,20 @@ function check_env() {
     fi
 }
 
+# function to read a variable value from a file
+function read_value_from_file() {
+    var="${1}"
+    file="${2}"
+    if [ -f "${file}" ]; then
+        # if variable is found in file, get the value
+        if grep -q "${var}" "${file}"; then
+            l=$(grep "${var}" "${file}")
+            existing_value="${l#*=}"
+            echo "${existing_value}"
+        fi
+    fi
+}
+
 # function to get input from user
 function get_user_input() {
     for v in "$@"; do
