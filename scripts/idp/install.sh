@@ -59,6 +59,11 @@ function get_user_input() {
 
         if [ -z "${!var}" ]; then
             while [ -z "${!var}" ]; do
+                # override default value if existing value is found in values.txt file
+                existing_value=$(read_value_from_file "${var}" "values.txt")
+                if [ "${existing_value}" ]; then
+                    default_value="${existing_value}"
+                fi
                 read -p "Enter a value for ${var} [$(eval echo "${default_value}")]: " user_value
                 # if user value is given, set the variable to the user value
                 if [ "${user_value}" ]; then
