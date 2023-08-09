@@ -31,9 +31,20 @@ function check_env() {
     # check if user would like to continue with all values
     read -p "Would you like to continue with the above values? [y/N]: " -n 1 -r
     echo
-    if [[ ! ${REPLY} =~ ^[Yy]$ ]]
-    then
+    if [[ ! ${REPLY} =~ ^[Yy]$ ]]; then
         exit 1
+    else
+        # backup values.txt file if exists
+        if [ -f "values.txt" ]; then
+            cp -f "values.txt" "values.txt.bak"
+        fi
+        # clear values.txt file
+        > "values.txt"
+        # save values to values.txt file
+        for v in "$@"; do
+            var="${v%=*}"
+            echo "${var}=${!var}" >> "values.txt"
+        done
     fi
 }
 
