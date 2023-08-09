@@ -74,14 +74,16 @@ function get_user_input() {
                 existing_value=$(read_value_from_file "${var}" "values.txt")
                 if [ "${existing_value}" ]; then
                     default_value="${existing_value}"
+                else
+                    default_value="$(eval echo ${default_value})"
                 fi
-                read -p "Enter a value for ${var} [$(eval echo "${default_value}")]: " user_value
+                read -p "Enter a value for ${var} [${default_value}]: " user_value
                 # if user value is given, set the variable to the user value
                 if [ "${user_value}" ]; then
-                    export "${var}"="$(eval echo ${user_value})"
+                    export "${var}"="${user_value}"
                 # otherwise, if default value is given, set the variable to the default value
                 elif [ "${default_value}" ]; then
-                    export "${var}"="$(eval echo ${default_value})"
+                    export "${var}"="${default_value}"
                 fi
             done
         fi
