@@ -19,7 +19,6 @@ function check_env() {
     # check if all variables are set
     for v in "$@"; do
         var="${v%=*}"
-        default_value="${v#*=}"
 
         if [ -z "${!var}" ]; then
             echo "ERROR: ${var} has not been set"
