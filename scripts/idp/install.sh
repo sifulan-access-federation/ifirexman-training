@@ -267,6 +267,11 @@ get_user_input "${required_variables[@]}"
 print_title "Confirm IdP Values"
 check_env "${required_variables[@]}"
 
+# add BACKEND_AUTH value to the top of the values.txt file
+if [ -f "values.txt" ]; then
+    sed -i "1s/^/BACKEND_AUTH=${BACKEND_AUTH}\n/" "values.txt"
+fi
+
 # set ENV variables default values if not set
 print_title "Default Values"
 set_default VALUES_FILE "values.yaml" \
