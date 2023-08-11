@@ -269,7 +269,11 @@ check_env "${required_variables[@]}"
 
 # add BACKEND_AUTH value to the top of the values.txt file
 if [ -f "values.txt" ]; then
-    sed -i "1s/^/BACKEND_AUTH=${BACKEND_AUTH}\n/" "values.txt"
+    if [ "$(identify_platform)" == "macos" ]; then
+        sed -i "" "1s/^/BACKEND_AUTH=${BACKEND_AUTH}\n/" "values.txt"
+    else
+        sed -i "1s/^/BACKEND_AUTH=${BACKEND_AUTH}\n/" "values.txt"
+    fi
 fi
 
 # set ENV variables default values if not set
