@@ -2,7 +2,7 @@
 ingress:
   # The name of the cluster issuers for ingress. By default is set to letsencrypt with http01 challenge.
   # Default: "letsencrypt-http-prod"
-  clusterIssuers: "letsencrypt-http-prod"
+  clusterIssuers: ""
 
 # Number of replicas of this Shibboleth IdP.
 # Default: 1
@@ -14,31 +14,31 @@ image:
   shibboleth:
     # Shibboleth IdP image registry.
     # Default: "ghcr.io"
-    registry: "ghcr.io"
+    registry: ""
     # Shibboleth IdP image repository.
     # Default: "sifulan-access-federation/ifirexman-shibboleth-idp-base"
-    repository: "sifulan-access-federation/ifirexman-shibboleth-idp-base"
+    repository: ""
     # Shibboleth IdP image version.
     # Default: Chart appVersion
     tag: ""
     # Shibboleth IdP image pull policy.
     # Default: "IfNotPresent"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: ""
 
   # HTTPD.
   httpd:
     # HTTPD image registry.
     # Default: "ghcr.io"
-    registry: "ghcr.io"
+    registry: ""
     # HTTPD image repository.
     # Default: "sifulan-access-federation/shibboleth-idp-httpd"
-    repository: "sifulan-access-federation/shibboleth-idp-httpd"
+    repository: ""
     # HTTPD image version.
     # Default: "master"
     tag: ""
     # HTTPD image pull policy.
     # Default: "IfNotPresent"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: ""
 
 # Set the minimum and maximum number of memory and cpu for the containers.
 resources:
@@ -83,9 +83,9 @@ resources:
       # memory: "2Gi"
       memory: "2Gi"
 
-# IdP Configuration
+# IdP Configuration.
 idp:
-  # The sub-domain name of the IdP.
+  # The subdomain name of the IdP.
   # Example:
   # domain: "idp.ifirexman.edu"
   domain: ""
@@ -102,9 +102,10 @@ idp:
   # shortname: "iFIRExMAN"
   shortname: ""
   # Brief description of the organisation where this IdP belongs to.
+  # Default: "Research and Education Communities"
   # Example:
   # description: "Research and Education Communities"
-  description: "Research and Education Communities"
+  description: ""
   # The website url of the organisation where this IdP belongs to.
   # Example:
   # website: "https://ifirexman.edu"
@@ -122,7 +123,12 @@ idp:
   # Example:
   # password_reset_url: "https://ifirexman.edu/password-reset"
   password_reset_url: ""
-  # Attribute Release Policy
+  # The attribute used as a source for generating persistent identifiers in SAML authentication.
+  # Default: "azureName" if `azure_ad` is enabled, "gcdsEmailaddress" if `google` is enabled, "username" if `vikings` is enabled, "uid" for the rest
+  # Example:
+  # persistent_source_attribute: "mail"
+  persistent_source_attribute: ""
+  # Attribute Release Policy.
   # Example:
   # attribute_release_policy:
   # - name: "releaseEpSA"
@@ -137,15 +143,19 @@ idp:
   # Log Persistence Configuration.
   persistent_log:
     # Enable log persistence.
+    # Example:
+    # enabled: true
     enabled: false
-    # Set the storage class to use for the persistent log.
+    # The storage class to use for the persistent log.
+    # Default: "longhorn"
     # Example:
     # storage_class: "longhorn"
-    storage_class: "longhorn"
-    # Set the maximum size of the persistent log.
+    storage_class: ""
+    # The maximum size of the persistent log.
+    # Default: "1Gi"
     # Example:
     # size: "1Gi"
-    size: "1Gi"
+    size: ""
   # Fticks Configuration.
   fticks:
     # Enable fticks support.
@@ -180,7 +190,7 @@ idp:
     # Example:
     # enabled: true
     enabled: false
-    # Set Azure AD's entity_id.
+    # Azure AD IdP Entity ID.
     # Example:
     # entity_id: "https://sts.windows.net/9f8177eb-5934-427f-9748-f38e86a0a475/"
     entity_id: ""
@@ -224,17 +234,17 @@ idp:
       valueMap: []
     # Azure AD IdP metadata file.
     metadata: ""
-  # Google Workspace Specific Configuration.
+  # Google Directory Specific Configuration.
   google:
-    # Set to true if this IdP uses Google Workspace as the backend authenticator.
+    # Set to true if this IdP uses Google Directory as the backend authenticator.
     # Example:
     # enabled: true
     enabled: false
-    # Set Google Workspace's entity_id.
+    # Google Directory IdP Entity ID.
     # Example:
     # entity_id: "https://accounts.google.com/o/saml2?idpid=LqF825zMf"
     entity_id: ""
-    # Google eduPersonAffiliation Attribute Mapping.
+    # Google Directory eduPersonAffiliation Attribute Mapping.
     # Example:
     # eduPersonAffiliationAttributeMap:
     #   attribute: "mail"
@@ -252,7 +262,7 @@ idp:
     eduPersonAffiliationAttributeMap:
       attribute: ""
       valueMap: []
-    # Google eduPersonEntitlement Attribute Mapping.
+    # Google Directory eduPersonEntitlement Attribute Mapping.
     # Example:
     # eduPersonEntitlementAttributeMap:
     #   attribute: "eduPersonAffiliation"
@@ -272,7 +282,7 @@ idp:
     eduPersonEntitlementAttributeMap:
       attribute: ""
       valueMap: []
-    # Google Workspace IdP metadata file.
+    # Google Directory IdP metadata file.
     metadata: ""
   # IdP Signing Certificate file.
   signing_cert: ""
@@ -286,7 +296,7 @@ idp:
   sealer_jks: ""
   # IdP Sealer kver file.
   sealer_kver: ""
-  # IdP secrets.properties file.
+  # IdP Secrets Properties file.
   secrets_properties: ""
 
 # Federation Configuration.

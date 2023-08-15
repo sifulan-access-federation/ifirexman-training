@@ -19,7 +19,6 @@ function check_env() {
     # check if all variables are set
     for v in "$@"; do
         var="${v%=*}"
-        default_value="${v#*=}"
 
         if [ -z "${!var}" ]; then
             echo "ERROR: ${var} has not been set"
@@ -32,9 +31,34 @@ function check_env() {
     # check if user would like to continue with all values
     read -p "Would you like to continue with the above values? [y/N]: " -n 1 -r
     echo
-    if [[ ! ${REPLY} =~ ^[Yy]$ ]]
-    then
+    if [[ ! ${REPLY} =~ ^[Yy]$ ]]; then
         exit 1
+    else
+        # backup values.txt file if exists
+        if [ -f "values.txt" ]; then
+            cp -f "values.txt" "values.txt.bak"
+        fi
+        # clear values.txt file
+        > "values.txt"
+        # save values to values.txt file
+        for v in "$@"; do
+            var="${v%=*}"
+            echo "${var}=${!var}" >> "values.txt"
+        done
+    fi
+}
+
+# function to read a variable value from a file
+function read_value_from_file() {
+    var="${1}"
+    file="${2}"
+    if [ -f "${file}" ]; then
+        # if variable is found in file, get the value
+        if grep -q "${var}" "${file}"; then
+            l=$(grep "${var}" "${file}")
+            existing_value="${l#*=}"
+            echo "${existing_value}"
+        fi
     fi
 }
 
@@ -46,13 +70,20 @@ function get_user_input() {
 
         if [ -z "${!var}" ]; then
             while [ -z "${!var}" ]; do
-                read -p "Enter a value for ${var} [$(eval echo "${default_value}")]: " user_value
+                # override default value if existing value is found in values.txt file
+                existing_value=$(read_value_from_file "${var}" "values.txt")
+                if [ "${existing_value}" ]; then
+                    default_value="${existing_value}"
+                else
+                    default_value="$(eval echo ${default_value})"
+                fi
+                read -p "Enter a value for ${var} [${default_value}]: " user_value
                 # if user value is given, set the variable to the user value
                 if [ "${user_value}" ]; then
-                    export "${var}"="$(eval echo ${user_value})"
+                    export "${var}"="${user_value}"
                 # otherwise, if default value is given, set the variable to the default value
                 elif [ "${default_value}" ]; then
-                    export "${var}"="$(eval echo ${default_value})"
+                    export "${var}"="${default_value}"
                 fi
             done
         fi
@@ -199,14 +230,16 @@ get_user_input "BACKEND_AUTH=vikings"
 
 # set required variables
 required_variables=(
-    "LONG_ORG_NAME="
-    "SHORT_ORG_NAME="
+    "ORG_LONGNAME="
+    "ORG_SHORTNAME="
+    "ORG_NAMESPACE=\${ORG_SHORTNAME}"
     "ORG_COUNTRY=my"
     "ORG_WEBSITE="
     "ORG_SUPPORT_EMAIL="
     "ORG_DOMAIN="
     "ORG_SCOPE=\${ORG_DOMAIN}"
-    "SHIBBOLETH_SUBDOMAIN=idp.\${ORG_DOMAIN}"
+    "ORG_SHIB_SUBDOMAIN=idp.\${ORG_DOMAIN}"
+    "ORG_PWD_RESET_URL=\#"
 )
 
 if [ "${BACKEND_AUTH}" == "azure_ad" ] || [ "${BACKEND_AUTH}" == "google" ]; then
@@ -234,14 +267,23 @@ get_user_input "${required_variables[@]}"
 print_title "Confirm IdP Values"
 check_env "${required_variables[@]}"
 
+# add BACKEND_AUTH value to the top of the values.txt file
+if [ -f "values.txt" ]; then
+    if [ "$(identify_platform)" == "macos" ]; then
+        sed -i "" "1s/^/BACKEND_AUTH=${BACKEND_AUTH}\n/" "values.txt"
+    else
+        sed -i "1s/^/BACKEND_AUTH=${BACKEND_AUTH}\n/" "values.txt"
+    fi
+fi
+
 # set ENV variables default values if not set
 print_title "Default Values"
 set_default VALUES_FILE "values.yaml" \
 && set_default FED_SIGNER_FILE "fed_signer.crt" \
 && set_default AZURE_METADATA_FILE "azure.xml" \
 && set_default GOOGLE_METADATA_FILE "GoogleIDPMetadata.xml" \
-&& set_default SHIB_METADATA_FILE "${SHORT_ORG_NAME}-shib-metadata.xml" \
-&& set_default SHIB_METADATA_URL "https://${SHIBBOLETH_SUBDOMAIN}/idp/shibboleth"
+&& set_default SHIB_METADATA_FILE "${ORG_SHORTNAME}-shib-metadata.xml" \
+&& set_default SHIB_METADATA_URL "https://${ORG_SHIB_SUBDOMAIN}/idp/shibboleth"
 
 # check for required files
 print_title "Required Files"
@@ -272,13 +314,11 @@ echo "Helm installation chart has been set (${CHART})"
 # - idp-signing.key
 # - idp-encryption.crt
 # - idp-encryption.key
-# - idp-backchannel.crt
-# - idp-backchannel.p12
 # - sealer.jks
 # - sealer.kver
 # - secrets.properties
 print_title "Shibboleth Credentials"
-for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.key idp-backchannel.crt idp-backchannel.p12 sealer.jks sealer.kver secrets.properties; do
+for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.key sealer.jks sealer.kver secrets.properties; do
     if [ ! -f "${file}" ]; then
         echo "WARNING: Required Shibboleth credential is missing (${file})"
 
@@ -298,7 +338,7 @@ for file in idp-signing.crt idp-signing.key idp-encryption.crt idp-encryption.ke
 
         # create shibboleth certificates
         echo "Creating shibboleth certificates"
-        ${CONTAINER_RUNTIME} run -it --rm -v ${PWD}:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh ${SHIBBOLETH_SUBDOMAIN} ${ORG_DOMAIN}
+        ${CONTAINER_RUNTIME} run -it --rm -v ${PWD}:/opt/shibboleth-idp/credentials ghcr.io/sifulan-access-federation/shibboleth-idp-base:4.2.1 /scripts/install.sh ${ORG_SHIB_SUBDOMAIN} ${ORG_DOMAIN}
 
         # change ownership of the certificates
         echo "Changing ownership of the certificates to the user (${USER})"
@@ -323,8 +363,8 @@ if [ -f "${IDP_METADATA_FILE}" ]; then
 fi
 
 # determine if chart is to be installed or upgraded
-echo "Checking if release exists in the namespace (${SHORT_ORG_NAME})"
-if helm ls -n ${SHORT_ORG_NAME} | grep "${SHORT_ORG_NAME}-idp" > /dev/null; then
+echo "Checking if release exists in the namespace (${ORG_NAMESPACE})"
+if helm ls -n ${ORG_NAMESPACE} | grep "${ORG_SHORTNAME}-idp" >/dev/null 2>/dev/null; then
     CHART_OPERATION="upgrade"
 else
     CHART_OPERATION="install"
@@ -332,17 +372,18 @@ fi
 
 # prepare helm command
 echo "Preparing helm command (${CHART_OPERATION})"
-helm_command="helm ${CHART_OPERATION} ${SHORT_ORG_NAME}-idp ${CHART} \
---namespace ${SHORT_ORG_NAME} \
+helm_command="helm ${CHART_OPERATION} ${ORG_SHORTNAME}-idp ${CHART} \
+--namespace ${ORG_NAMESPACE} \
 --create-namespace \
 --values ${VALUES_FILE} \
---set idp.domain=\"${SHIBBOLETH_SUBDOMAIN}\" \
+--set idp.domain=\"${ORG_SHIB_SUBDOMAIN}\" \
 --set idp.scope=\"${ORG_SCOPE}\" \
---set idp.fullname=\"${LONG_ORG_NAME}\" \
---set idp.shortname=\"${SHORT_ORG_NAME}\" \
+--set idp.fullname=\"${ORG_LONGNAME}\" \
+--set idp.shortname=\"${ORG_SHORTNAME}\" \
 --set idp.country=\"${ORG_COUNTRY}\" \
 --set idp.website=\"${ORG_WEBSITE}\" \
 --set idp.support_email=\"${ORG_SUPPORT_EMAIL}\" \
+--set idp.password_reset_url=\"${ORG_PWD_RESET_URL}\" \
 --set idp.sealer_jks=\"$(make_secret sealer.jks)\" \
 --set-file idp.signing_cert=idp-signing.crt \
 --set-file idp.signing_key=idp-signing.key \
@@ -415,7 +456,7 @@ else
 --set idp.${BACKEND_AUTH}.database_password=\"${DB_PASSWORD}\""
 fi
 
-# perform helm command or a dry run
+# execute helm command or perform a dry run
 if [ "${DRY_RUN}" = "1" ]; then
     helm_command="${helm_command} --debug --dry-run"
 else
@@ -424,7 +465,7 @@ fi
 
 # run helm install or upgrade
 print_title "Helm Install/Upgrade"
-echo "Running helm ${CHART_OPERATION} for the organisation (${SHORT_ORG_NAME})"
+echo "Running helm ${CHART_OPERATION} for the organisation (${ORG_SHORTNAME})"
 eval ${helm_command}
 
 if [ "${DRY_RUN}" != "1" ]; then
