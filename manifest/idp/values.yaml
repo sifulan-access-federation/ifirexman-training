@@ -284,6 +284,63 @@ idp:
       valueMap: []
     # Google Directory IdP metadata file.
     metadata: ""
+  # LDAP Specific Configuration.
+  ldap:
+    # Set to true if this IdP uses LDAP as the backend authenticator.
+    # Example:
+    # enabled: true
+    enabled: false
+    # LDAP server hostname.
+    # Example:
+    # hostname: "ldap.ifirexman.edu"
+    hostname: ""
+    # LDAP server port.
+    # Default: "389"
+    # Example:
+    # port: "389"
+    port: ""
+    # LDAP server bind DN.
+    # Example:
+    # bind_dn: "cn=ldapuser,cn=users,cn=accounts,dc=ifirexman,dc=edu"
+    bind_dn: ""
+    # LDAP server base DN.
+    # Example:
+    # base_dn: "cn=users,cn=accounts,dc=ifirexman,dc=edu"
+    base_dn: ""
+    # LDAP eduPersonAffiliation Attribute Mapping.
+    # Example:
+    # eduPersonAffiliationAttributeMap:
+    #   attribute: "memberOf"
+    #   valueMap:
+    #     - attributeReturn: "staff"
+    #       attributeValues:
+    #         - "cn=staff,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    #     - attributeReturn: "student"
+    #       attributeValues:
+    #         - "cn=student,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    #     - attributeReturn: "affiliate"
+    #       attributeValues:
+    #         - "cn=affiliate,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    #     - attributeReturn: "member"
+    #       attributeValues:
+    #         - "cn=staff,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    eduPersonAffiliationAttributeMap:
+      attribute: ""
+      valueMap: []
+    # LDAP eduPersonEntitlement Attribute Mapping.
+    # Example:
+    # eduPersonEntitlementAttributeMap:
+    #   attribute: "memberOf"
+    #   valueMap:
+    #     - attributeReturn: "urn:mace:ifirexman.edu:staff"
+    #       attributeValues:
+    #         - "cn=staff,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    #     - attributeReturn: "urn:mace:dir:entitlement:common-lib-terms"
+    #       attributeValues:
+    #         - "cn=staff,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    eduPersonEntitlementAttributeMap:
+      attribute: ""
+      valueMap: []
   # IdP Signing Certificate file.
   signing_cert: ""
   # IdP Signing Key file.
