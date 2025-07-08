@@ -290,6 +290,15 @@ idp:
     # Example:
     # enabled: true
     enabled: false
+    # Set to true if this IdP uses AD as the backend authorizer.
+    # Example:
+    # ad_mode: true
+    ad_mode: false
+    # AD Domain
+    # Currently only support single domain.
+    # Example:
+    # ad_domain: "ifirexman.edu"
+    ad_domain: ""
     # LDAP server hostname.
     # Example:
     # hostname: "ldap.ifirexman.edu"
@@ -302,10 +311,14 @@ idp:
     # LDAP server bind DN.
     # Example:
     # bind_dn: "cn=ldapuser,cn=users,cn=accounts,dc=ifirexman,dc=edu"
+    # for AD:
+    # bind_dn: "adminuser@ifirexman.edu"
     bind_dn: ""
     # LDAP server base DN.
     # Example:
     # base_dn: "cn=users,cn=accounts,dc=ifirexman,dc=edu"
+    # for AD:
+    # base_dn: "CN=Users,DC=ifirexman,DC=edu"
     base_dn: ""
     # LDAP eduPersonAffiliation Attribute Mapping.
     # Example:
@@ -324,6 +337,26 @@ idp:
     #     - attributeReturn: "member"
     #       attributeValues:
     #         - "cn=staff,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    #         - "cn=student,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    #
+    # for AD:
+    #
+    # eduPersonAffiliationAttributeMap:
+    #   attribute: "memberOf"
+    #   valueMap:
+    #     - attributeReturn: "staff"
+    #       attributeValues:
+    #         - "CN=staff,CN=Users,DC=ifirexman,DC=edu"
+    #     - attributeReturn: "student"
+    #       attributeValues:
+    #         - "CN=student,CN=Users,DC=ifirexman,DC=edu"
+    #     - attributeReturn: "affiliate"
+    #       attributeValues:
+    #         - "CN=affiliate,CN=Users,DC=ifirexman,DC=edu"
+    #     - attributeReturn: "member"
+    #       attributeValues:
+    #         - "CN=staff,CN=Users,DC=ifirexman,DC=edu"
+    #         - "CN=student,CN=Users,DC=ifirexman,DC=edu"
     eduPersonAffiliationAttributeMap:
       attribute: ""
       valueMap: []
@@ -338,6 +371,22 @@ idp:
     #     - attributeReturn: "urn:mace:dir:entitlement:common-lib-terms"
     #       attributeValues:
     #         - "cn=staff,cn=groups,cn=accounts,dc=ifirexman,dc=edu"
+    #
+    # for AD:
+    #
+    # eduPersonEntitlementAttributeMap:
+    #   attribute: "memberOf"
+    #   valueMap:
+    #     - attributeReturn: "urn:mace:ifirexman.edu:staff"
+    #       attributeValues:
+    #         - "CN=staff,CN=Users,DC=ifirexman,DC=edu"
+    #     - attributeReturn: "urn:mace:ifirexman.edu:student"
+    #       attributeValues:
+    #         - "CN=student,CN=Users,DC=ifirexman,DC=edu"
+    #     - attributeReturn: "urn:mace:dir:entitlement:common-lib-terms"
+    #       attributeValues:
+    #         - "CN=staff,CN=Users,DC=ifirexman,DC=edu"
+    #         - "CN=student,CN=Users,DC=ifirexman,DC=edu"
     eduPersonEntitlementAttributeMap:
       attribute: ""
       valueMap: []
