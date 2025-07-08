@@ -125,6 +125,8 @@ From the login node:
     idp.persistentId.salt = /X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
     ```
 
+    If you are using LDAP as the backend authenticator, you also need to update `idp.authn.LDAP.bindDNCredential` with the LDAP bind password.
+
 5. Edit the `values.yaml` file (see an example [here](../manifest/idp/values.yaml)). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
 
 6. Add the `ifirexman` repository to Helm:
@@ -134,6 +136,24 @@ From the login node:
     ```
 
 7. Below is an example to install the chart with the release name `ifirexman-organisation` with `VIKINGS` as the backend authenticator (set at the `values.yaml` file):
+
+    ```bash
+    helm install ifirexman-organisation \
+    --namespace ifirexman-organisation \
+    --create-namespace \
+    --values values.yaml \
+    --set idp.sealer_jks="$(base64 sealer.jks)" \
+    --set-file idp.signing_cert=idp-signing.crt \
+    --set-file idp.signing_key=idp-signing.key \
+    --set-file idp.encryption_cert=idp-encryption.crt \
+    --set-file idp.encryption_key=idp-encryption.key \
+    --set-file federation.signer_cert=fed_signer.crt \
+    --set-file idp.sealer_kver=sealer.kver \
+    --set-file idp.secrets_properties=secrets.properties \
+    --wait ifirexman/ifirexman-shibboleth-idp
+    ```
+
+    Below is an example to install the chart with the release name `ifirexman-organisation` with `LDAP` as the backend authenticator (set at the `values.yaml` file):
 
     ```bash
     helm install ifirexman-organisation \
