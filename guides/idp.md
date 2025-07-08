@@ -19,6 +19,8 @@ You need to have the following setup before you can proceed with this tutorial:
 
 - [Google Directory Integration](google.md) if the IdP will be using **Google Directory** as the backend authenticator.
 
+- LDAP/Active Directory (AD) as the backend authenticator is now supported. Please refer to the [Manual Installation](#manual-installation) for the steps.
+
 ## Shibboleth IdP Installation and Configuration
 
 This deployment is meant for each organisation that would like to use your Shibboleth IdPaaS service. It is highly recommended to create a dedicated working folder and Kubernetes namespace for each deployment to avoid confusion and also for ease of management.
@@ -125,7 +127,7 @@ From the login node:
     idp.persistentId.salt = /X81vwg0l1SYBfgzYLid8CCXx3Zz6y123pKDKQAMuPU=
     ```
 
-    If you are using LDAP as the backend authenticator, you also need to update `idp.authn.LDAP.bindDNCredential` with the LDAP bind password.
+    If you are using LDAP/AD as the backend authenticator, you also need to update `idp.authn.LDAP.bindDNCredential` with the LDAP/AD bind password.
 
 5. Edit the `values.yaml` file (see an example [here](../manifest/idp/values.yaml)). Generally, there are 2 sections that you would need to update: `IdP Configuration` and `Federation Configuration`. A brief explanation and sample entries are provided in the file.
 
@@ -153,7 +155,7 @@ From the login node:
     --wait ifirexman/ifirexman-shibboleth-idp
     ```
 
-    Below is an example to install the chart with the release name `ifirexman-organisation` with `LDAP` as the backend authenticator (set at the `values.yaml` file):
+    Below is an example to install the chart with the release name `ifirexman-organisation` with `LDAP/AD` as the backend authenticator (set at the `values.yaml` file):
 
     ```bash
     helm install ifirexman-organisation \
